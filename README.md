@@ -2,6 +2,21 @@
 
 Distributable agent skills for Composio developers. This repository contains comprehensive guides and best practices for building AI agents with Composio's Tool Router and Triggers.
 
+## Quick Start
+
+Add Composio skills to your AI assistant:
+
+```bash
+npx skills add composiohq/skills
+```
+
+This command installs the Composio agent skills, giving your AI assistant access to:
+- **Tool Router best practices** - Session management, authentication, and framework integration
+- **Triggers & Events** - Real-time webhooks and event handling
+- **Production patterns** - Security, error handling, and deployment guides
+
+Your AI assistant can now reference these skills when helping you build with Composio!
+
 ## Overview
 
 This skills repository follows a **simple markdown-only approach** inspired by [Remotion Skills](https://github.com/remotion-dev/skills). No build tooling, no TypeScript compilation—just pure markdown files that AI assistants can read directly.
