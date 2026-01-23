@@ -1,0 +1,17 @@
+{
+  "name": "@composiohq/skills",
+  "version": "1.0.0",
+  "description": "Agent skills for Composio developers",
+  "type": "module",
+  "license": "MIT",
+  "author": "Composio",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/composiohq/skills.git"
+  },
+  "scripts": {
+    "build:agents": "node scripts/build-agents.cjs",
+    "watch:agents": "node scripts/watch-agents.cjs",
+    "build": "npm run build:agents"
+  }
+}
