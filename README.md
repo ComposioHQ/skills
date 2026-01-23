@@ -19,7 +19,7 @@ Your AI assistant can now reference these skills when helping you build with Com
 
 ## Overview
 
-This skills repository follows a **simple markdown-only approach** inspired by [Remotion Skills](https://github.com/remotion-dev/skills). No build tooling, no TypeScript compilation—just pure markdown files that AI assistants can read directly.
+This skills repository provides comprehensive guides and best practices for building AI agents with Composio, organized as markdown files that AI assistants can easily reference.
 
 ## Structure
 

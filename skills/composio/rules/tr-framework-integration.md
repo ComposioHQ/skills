@@ -16,6 +16,42 @@ Tool Router works with any AI framework through two methods: **Native Tools** (r
 | **Native Tools** | ✅ Faster execution<br>✅ Full control with modifiers<br>✅ No MCP overhead | ❌ Framework lock-in | Single framework, production apps |
 | **MCP** | ✅ Framework independent<br>✅ Works with any MCP client<br>✅ Easy framework switching | ⚠️ Slower (extra API roundtrip)<br>⚠️ Less control | Multi-framework, prototyping |
 
+## MCP Headers Configuration
+
+When using MCP, the `session.mcp.headers` object contains the authentication headers required to connect to the Composio MCP server:
+
+```typescript
+{
+  "x-api-key": "your_composio_api_key"
+}
+```
+
+### Using with MCP Clients
+
+When configuring MCP clients (like Claude Desktop), you need to provide the Composio API key in the headers:
+
+```json
+{
+  "mcpServers": {
+    "composio": {
+      "type": "http",
+      "url": "https://mcp.composio.dev/session/your_session_id",
+      "headers": {
+        "x-api-key": "your_composio_api_key"
+      }
+    }
+  }
+}
+```
+
+**Where to find your Composio API key:**
+- Login to [Composio Platform](https://platform.composio.dev)
+- Select your project
+- Navigate to Settings to find your API keys
+- Or set it via environment variable: `COMPOSIO_API_KEY`
+
+When using Tool Router sessions programmatically, the headers are automatically included in `session.mcp.headers`.
+
 ## ❌ Incorrect - Using Tools Without Tool Router
 
 ```typescript
