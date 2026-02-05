@@ -1,48 +1,51 @@
 ---
-name: composio-tool-router
-description: Build AI agents with Composio Tool Router - the fastest way to add tools to your agents
-tags: [composio, tool-router, agents, mcp]
+name: composio
+description: Build AI agents and apps with Composio - access 200+ external tools with Tool Router or direct execution
+tags: [composio, tool-router, agents, mcp, tools, api, automation]
 ---
 
-# composio-tool-router
+# composio
 
-Build AI agents with Composio Tool Router - the fastest way to add tools to your agents
+Build AI agents and apps with Composio - access 200+ external tools with Tool Router or direct execution
 
 ## Table of Contents
 
-1. [Building Agents with Tool Router](#building-agents-with-tool-router)
+1. [Building Agents](#building-agents)
    1.1. [User ID Best Practices](#user-id-best-practices)
    1.2. [Creating Basic Sessions](#creating-basic-sessions)
    1.3. [Session Lifecycle Best Practices](#session-lifecycle-best-practices)
    1.4. [Session Configuration](#session-configuration)
    1.5. [Using Native Tools](#using-native-tools)
    1.6. [Framework Integration](#framework-integration)
+   1.7. [Auto Authentication in Chat](#auto-authentication-in-chat)
+   1.8. [Manual Authorization](#manual-authorization)
+   1.9. [Connection Management](#connection-management)
+   1.10. [Query Toolkit States](#query-toolkit-states)
+   1.11. [Creating Triggers](#creating-triggers)
+   1.12. [Subscribing to Events](#subscribing-to-events)
+   1.13. [Webhook Verification](#webhook-verification)
+   1.14. [Managing Triggers](#managing-triggers)
 
-2. [Authenticating Users](#authenticating-users)
-   2.1. [Auto Authentication in Chat](#auto-authentication-in-chat)
-   2.2. [Manual Authorization](#manual-authorization)
-   2.3. [Connection Management](#connection-management)
-   2.4. [Wait for Connections](#wait-for-connections)
-   2.5. [Custom Callback URLs](#custom-callback-urls)
-
-3. [Fetching Toolkits and Connection Status](#fetching-toolkits-and-connection-status)
-   3.1. [Query Toolkit States](#query-toolkit-states)
-   3.2. [Build Connection UI](#build-connection-ui)
-   3.3. [Filter Toolkits](#filter-toolkits)
-   3.4. [Pagination](#pagination)
-   3.5. [Connection Details](#connection-details)
-
-4. [Advanced Features (Triggers & Events)](#advanced-features-triggers-events)
-   4.1. [Creating Triggers](#creating-triggers)
-   4.2. [Subscribing to Events](#subscribing-to-events)
-   4.3. [Webhook Verification](#webhook-verification)
-   4.4. [Managing Triggers](#managing-triggers)
+2. [Building Apps with Composio Tools](#building-apps-with-composio-tools)
+   2.1. [Fetching Tools](#fetching-tools)
+   2.2. [Direct Tool Execution](#direct-tool-execution)
+   2.3. [Tool Version Management](#tool-version-management)
+   2.4. [Connected Accounts CRUD](#connected-accounts-crud)
+   2.5. [Auth Config Management](#auth-config-management)
+   2.6. [Toolkit Management](#toolkit-management)
+   2.7. [Creating Custom Tools](#creating-custom-tools)
+   2.8. [Tool Modifiers](#tool-modifiers)
+   2.9. [Creating Triggers](#creating-triggers)
+   2.10. [Subscribing to Events](#subscribing-to-events)
+   2.11. [Webhook Verification](#webhook-verification)
+   2.12. [Managing Triggers](#managing-triggers)
+   2.13. [User ID Patterns](#user-id-patterns)
 
 ---
 
-## 1. Building Agents with Tool Router
+## 1. Building Agents
 
-<a name="building-agents-with-tool-router"></a>
+<a name="building-agents"></a>
 
 ### 1.1. User ID Best Practices
 
@@ -2232,11 +2235,7 @@ const client3 = hostedMcpTool({
 
 ---
 
-## 2. Authenticating Users
-
-<a name="authenticating-users"></a>
-
-### 2.1. Auto Authentication in Chat
+### 1.7. Auto Authentication in Chat
 
 <a name="auto-authentication-in-chat"></a>
 
@@ -2350,7 +2349,7 @@ session = composio.tool_router.create(
 
 ---
 
-### 2.2. Manual Authorization
+### 1.8. Manual Authorization
 
 <a name="manual-authorization"></a>
 
@@ -2515,7 +2514,7 @@ async def settings_page_handler(user_id: str, toolkit: str):
 
 ---
 
-### 2.3. Connection Management
+### 1.9. Connection Management
 
 <a name="connection-management"></a>
 
@@ -2686,19 +2685,7 @@ With `manageConnections: true`, **you never need to check connections before age
 
 ---
 
-### 2.4. Wait for Connections
-
-_Rule file not found: tr-auth-wait.md_
-
-### 2.5. Custom Callback URLs
-
-_Rule file not found: tr-auth-callbacks.md_
-
-## 3. Fetching Toolkits and Connection Status
-
-<a name="fetching-toolkits-and-connection-status"></a>
-
-### 3.1. Query Toolkit States
+### 1.10. Query Toolkit States
 
 <a name="query-toolkit-states"></a>
 
@@ -2837,27 +2824,7 @@ With `manageConnections: true` (default), you don't need to check connections be
 
 ---
 
-### 3.2. Build Connection UI
-
-_Rule file not found: tr-toolkit-ui.md_
-
-### 3.3. Filter Toolkits
-
-_Rule file not found: tr-toolkit-filter.md_
-
-### 3.4. Pagination
-
-_Rule file not found: tr-toolkit-pagination.md_
-
-### 3.5. Connection Details
-
-_Rule file not found: tr-toolkit-details.md_
-
-## 4. Advanced Features (Triggers & Events)
-
-<a name="advanced-features-triggers-events"></a>
-
-### 4.1. Creating Triggers
+### 1.11. Creating Triggers
 
 <a name="creating-triggers"></a>
 
@@ -2867,1314 +2834,418 @@ _Rule file not found: tr-toolkit-details.md_
 
 # Create Triggers for Real-Time Events
 
-Triggers allow you to receive real-time events from connected accounts (e.g., new Gmail messages, GitHub pushes, Slack mentions). Create trigger instances using `composio.triggers.create()` to subscribe to specific events.
+Triggers receive real-time events from connected accounts (Gmail, GitHub, Slack, etc.). Create trigger instances to subscribe to specific events.
 
-## ❌ Incorrect
+## Basic Usage
 
 ```typescript
-// DON'T: Use 'default' user ID in production
-const trigger = await composio.triggers.create('default', 'GMAIL_NEW_GMAIL_MESSAGE', {
+import { Composio } from '@composio/core';
+
+const composio = new Composio({ apiKey: process.env.COMPOSIO_API_KEY });
+
+// Create trigger for specific connected account
+const trigger = await composio.triggers.create(
+  'user_123',
+  'GMAIL_NEW_GMAIL_MESSAGE',
+  {
+    connectedAccountId: 'conn_abc123',
+    triggerConfig: {
+      labelIds: 'INBOX',
+      userId: 'me',
+      interval: 60
+    }
+  }
+);
+
+console.log('Trigger ID:', trigger.triggerId);
+```
+
+## SDK Auto-Discovery
+
+Omit `connectedAccountId` to let SDK find the account automatically:
+
+```typescript
+// SDK finds user's Gmail connection
+const trigger = await composio.triggers.create(
+  'user_123',
+  'GMAIL_NEW_GMAIL_MESSAGE',
+  {
+    triggerConfig: { labelIds: 'INBOX', interval: 60 }
+  }
+);
+```
+
+## Automatic Reuse
+
+Triggers with identical configuration are automatically reused:
+
+```typescript
+// First call creates trigger
+const trigger1 = await composio.triggers.create(
+  'user_123',
+  'GMAIL_NEW_GMAIL_MESSAGE',
+  { triggerConfig: { labelIds: 'INBOX' } }
+);
+
+// Second call returns same trigger (no duplicate)
+const trigger2 = await composio.triggers.create(
+  'user_123',
+  'GMAIL_NEW_GMAIL_MESSAGE',
+  { triggerConfig: { labelIds: 'INBOX' } }
+);
+
+console.log(trigger1.triggerId === trigger2.triggerId); // true
+```
+
+## Version Pinning
+
+Pin trigger versions in production to prevent breaking changes:
+
+```typescript
+const composio = new Composio({
+  apiKey: process.env.COMPOSIO_API_KEY,
+  triggerVersions: {
+    'GMAIL_NEW_GMAIL_MESSAGE': '12082025_00',
+    'GITHUB_COMMIT_EVENT': '12082025_00'
+  }
+});
+
+// Uses pinned version
+const trigger = await composio.triggers.create(
+  'user_123',
+  'GMAIL_NEW_GMAIL_MESSAGE',
+  { triggerConfig: { labelIds: 'INBOX' } }
+);
+```
+
+**Why pin versions:**
+- Prevents config schema changes
+- Ensures production stability
+- Updates on your schedule
+
+## Trigger Configuration Examples
+
+```typescript
+// Gmail - New messages in specific label
+await composio.triggers.create('user_123', 'GMAIL_NEW_GMAIL_MESSAGE', {
   triggerConfig: {
     labelIds: 'INBOX',
+    userId: 'me',
     interval: 60
   }
 });
 
-// ❌ No user isolation
-// ❌ All users share the same trigger
-// ❌ Security risk
-```
-
-```python
-# DON'T: Use 'default' user ID in production
-trigger = composio.triggers.create(
-    user_id="default",
-    trigger_slug="GMAIL_NEW_GMAIL_MESSAGE",
-    trigger_config={
-        "labelIds": "INBOX",
-        "interval": 60
-    }
-)
-
-# ❌ No user isolation
-# ❌ All users share the same trigger
-# ❌ Security risk
-```
-
-```typescript
-// DON'T: Create triggers without connected accounts
-try {
-  const trigger = await composio.triggers.create(userId, 'GMAIL_NEW_GMAIL_MESSAGE', {
-    triggerConfig: { labelIds: 'INBOX' }
-  });
-} catch (error) {
-  // ❌ Will fail with ComposioConnectedAccountNotFoundError
-  // User must connect account first
-}
-```
-
-## ✅ Correct - Create Trigger with User ID
-
-```typescript
-// DO: Use proper user ID for isolation
-import { Composio } from '@composio/core';
-
-const composio = new Composio({
-  apiKey: process.env.COMPOSIO_API_KEY
-});
-
-async function createGmailTrigger(userId: string, connectedAccountId: string) {
-  try {
-    const trigger = await composio.triggers.create(
-      userId,
-      'GMAIL_NEW_GMAIL_MESSAGE',
-      {
-        connectedAccountId, // Specify which connected account
-        triggerConfig: {
-          labelIds: 'INBOX', // Trigger-specific config
-          userId: 'me',
-          interval: 60 // Check every 60 seconds
-        }
-      }
-    );
-
-    console.log('Trigger created:', trigger.triggerId);
-
-    // ✅ User-specific trigger
-    // ✅ Isolated event delivery
-    // ✅ Secure and scalable
-    return trigger;
-  } catch (error) {
-    console.error('Failed to create trigger:', error);
-    throw error;
-  }
-}
-```
-
-```python
-# DO: Use proper user ID for isolation
-from composio import Composio
-
-composio = Composio(api_key=os.environ["COMPOSIO_API_KEY"])
-
-async def create_gmail_trigger(user_id: str, connected_account_id: str):
-    try:
-        trigger = composio.triggers.create(
-            user_id=user_id,
-            trigger_slug="GMAIL_NEW_GMAIL_MESSAGE",
-            connected_account_id=connected_account_id,  # Specify which connected account
-            trigger_config={
-                "labelIds": "INBOX",  # Trigger-specific config
-                "userId": "me",
-                "interval": 60  # Check every 60 seconds
-            }
-        )
-
-        print(f"Trigger created: {trigger.trigger_id}")
-
-        # ✅ User-specific trigger
-        # ✅ Isolated event delivery
-        # ✅ Secure and scalable
-        return trigger
-    except Exception as error:
-        print(f"Failed to create trigger: {error}")
-        raise
-```
-
-## ✅ Correct - Let SDK Find Connected Account
-
-```typescript
-// DO: SDK automatically finds first available connected account
-async function createTriggerSimple(userId: string) {
-  // If user has only one Gmail account connected
-  const trigger = await composio.triggers.create(
-    userId,
-    'GMAIL_NEW_GMAIL_MESSAGE',
-    {
-      // No connectedAccountId - uses first available
-      triggerConfig: {
-        labelIds: 'INBOX'
-      }
-    }
-  );
-
-  // ✅ Convenient for single-account users
-  // ⚠️  SDK logs warning if multiple accounts exist
-  return trigger;
-}
-```
-
-```python
-# DO: SDK automatically finds first available connected account
-async def create_trigger_simple(user_id: str):
-    # If user has only one Gmail account connected
-    trigger = composio.triggers.create(
-        user_id=user_id,
-        trigger_slug="GMAIL_NEW_GMAIL_MESSAGE",
-        trigger_config={
-            "labelIds": "INBOX"
-        }
-    )
-
-    # ✅ Convenient for single-account users
-    # ⚠️  SDK logs warning if multiple accounts exist
-    return trigger
-```
-
-## ✅ Correct - Triggers Are Automatically Reused
-
-```typescript
-// DO: Same config = same trigger (no duplicates)
-async function ensureTriggerExists(userId: string, connectedAccountId: string) {
-  // First call: Creates new trigger
-  const trigger1 = await composio.triggers.create(
-    userId,
-    'GMAIL_NEW_GMAIL_MESSAGE',
-    {
-      connectedAccountId,
-      triggerConfig: {
-        labelIds: 'INBOX',
-        interval: 60
-      }
-    }
-  );
-
-  console.log('First call:', trigger1.triggerId);
-
-  // Second call with SAME config: Returns existing trigger
-  const trigger2 = await composio.triggers.create(
-    userId,
-    'GMAIL_NEW_GMAIL_MESSAGE',
-    {
-      connectedAccountId,
-      triggerConfig: {
-        labelIds: 'INBOX',
-        interval: 60
-      }
-    }
-  );
-
-  console.log('Second call:', trigger2.triggerId);
-  // ✅ trigger1.triggerId === trigger2.triggerId
-  // ✅ No duplicate triggers created
-  // ✅ Idempotent operation
-}
-```
-
-```python
-# DO: Same config = same trigger (no duplicates)
-async def ensure_trigger_exists(user_id: str, connected_account_id: str):
-    # First call: Creates new trigger
-    trigger1 = composio.triggers.create(
-        user_id=user_id,
-        trigger_slug="GMAIL_NEW_GMAIL_MESSAGE",
-        connected_account_id=connected_account_id,
-        trigger_config={
-            "labelIds": "INBOX",
-            "interval": 60
-        }
-    )
-
-    print(f"First call: {trigger1.trigger_id}")
-
-    # Second call with SAME config: Returns existing trigger
-    trigger2 = composio.triggers.create(
-        user_id=user_id,
-        trigger_slug="GMAIL_NEW_GMAIL_MESSAGE",
-        connected_account_id=connected_account_id,
-        trigger_config={
-            "labelIds": "INBOX",
-            "interval": 60
-        }
-    )
-
-    print(f"Second call: {trigger2.trigger_id}")
-    # ✅ trigger1.trigger_id == trigger2.trigger_id
-    # ✅ No duplicate triggers created
-    # ✅ Idempotent operation
-```
-
-**Important:** Triggers are deduplicated based on:
-- User ID
-- Trigger slug
-- Connected account ID
-- Trigger configuration
-
-If all these match, Composio returns the existing trigger instead of creating a duplicate.
-
-## ✅ Correct - Pin Trigger Versions
-
-```typescript
-// DO: Pin toolkit versions for production stability
-const composio = new Composio({
-  apiKey: process.env.COMPOSIO_API_KEY,
-  toolkitVersions: {
-    gmail: '12082025_00',
-    github: '10082025_01',
-    slack: '15082025_00'
+// GitHub - New commits
+await composio.triggers.create('user_123', 'GITHUB_COMMIT_EVENT', {
+  triggerConfig: {
+    owner: 'composio',
+    repo: 'sdk',
+    branch: 'main'
   }
 });
 
-// Triggers created will use these specific versions
-const trigger = await composio.triggers.create(
-  userId,
-  'GMAIL_NEW_GMAIL_MESSAGE',
-  {
-    connectedAccountId,
-    triggerConfig: { labelIds: 'INBOX' }
+// Slack - New messages in channel
+await composio.triggers.create('user_123', 'SLACK_NEW_MESSAGE', {
+  triggerConfig: {
+    channelId: 'C123456',
+    botUserId: 'U123456'
   }
-);
-
-// ✅ Predictable behavior
-// ✅ No breaking changes from 'latest'
-// ✅ Production-ready
-```
-
-```python
-# DO: Pin toolkit versions for production stability
-composio = Composio(
-    api_key=os.environ["COMPOSIO_API_KEY"],
-    toolkit_versions={
-        "gmail": "12082025_00",
-        "github": "10082025_01",
-        "slack": "15082025_00"
-    }
-)
-
-# Triggers created will use these specific versions
-trigger = composio.triggers.create(
-    user_id=user_id,
-    trigger_slug="GMAIL_NEW_GMAIL_MESSAGE",
-    connected_account_id=connected_account_id,
-    trigger_config={"labelIds": "INBOX"}
-)
-
-# ✅ Predictable behavior
-# ✅ No breaking changes from 'latest'
-# ✅ Production-ready
-```
-
-## Common Trigger Configurations
-
-### GitHub Push Events
-```typescript
-const trigger = await composio.triggers.create(
-  userId,
-  'GITHUB_PUSH_EVENT',
-  {
-    connectedAccountId,
-    triggerConfig: {
-      owner: 'username',
-      repo: 'repository-name',
-      branch: 'main' // Optional: specific branch
-    }
-  }
-);
-```
-
-### Slack Mentions
-```typescript
-const trigger = await composio.triggers.create(
-  userId,
-  'SLACK_RECEIVE_MESSAGE',
-  {
-    connectedAccountId,
-    triggerConfig: {
-      channel: '#general',
-      keywords: ['@bot', 'help'] // Trigger on mentions
-    }
-  }
-);
-```
-
-### Google Calendar Events
-```typescript
-const trigger = await composio.triggers.create(
-  userId,
-  'GOOGLECALENDAR_EVENT_CREATED',
-  {
-    connectedAccountId,
-    triggerConfig: {
-      calendarId: 'primary',
-      interval: 300 // Check every 5 minutes
-    }
-  }
-);
-```
-
-### Linear Issue Updates
-```typescript
-const trigger = await composio.triggers.create(
-  userId,
-  'LINEAR_ISSUE_UPDATED',
-  {
-    connectedAccountId,
-    triggerConfig: {
-      teamId: 'team-uuid',
-      labelIds: ['bug', 'urgent']
-    }
-  }
-);
+});
 ```
 
 ## Error Handling
 
 ```typescript
-import {
-  ComposioTriggerTypeNotFoundError,
-  ComposioConnectedAccountNotFoundError,
-  ValidationError
-} from '@composio/core';
-
-async function createTriggerSafely(
-  userId: string,
-  triggerSlug: string,
-  connectedAccountId: string
-) {
-  try {
-    const trigger = await composio.triggers.create(
-      userId,
-      triggerSlug,
-      {
-        connectedAccountId,
-        triggerConfig: {}
-      }
-    );
-
-    return { success: true, triggerId: trigger.triggerId };
-  } catch (error) {
-    if (error instanceof ComposioTriggerTypeNotFoundError) {
-      // Invalid trigger slug
-      console.error('Trigger type not found:', triggerSlug);
-      return { success: false, error: 'INVALID_TRIGGER_TYPE' };
-    }
-
-    if (error instanceof ComposioConnectedAccountNotFoundError) {
-      // User hasn't connected the account
-      console.error('No connected account for user:', userId);
-      return { success: false, error: 'ACCOUNT_NOT_CONNECTED' };
-    }
-
-    if (error instanceof ValidationError) {
-      // Invalid configuration
-      console.error('Invalid trigger config:', error.message);
-      return { success: false, error: 'INVALID_CONFIG' };
-    }
-
-    // Unexpected error
-    console.error('Unexpected error:', error);
-    return { success: false, error: 'UNKNOWN_ERROR' };
+try {
+  const trigger = await composio.triggers.create(
+    'user_123',
+    'GMAIL_NEW_GMAIL_MESSAGE',
+    { triggerConfig: { labelIds: 'INBOX' } }
+  );
+} catch (error) {
+  if (error.name === 'ComposioConnectedAccountNotFoundError') {
+    // User hasn't connected Gmail yet
+    console.log('Please connect your Gmail account');
+  } else if (error.name === 'ValidationError') {
+    // Invalid trigger config
+    console.error('Invalid configuration:', error.message);
+  } else {
+    throw error;
   }
 }
 ```
 
-## Discovering Available Triggers
-
-### List Triggers Available in a Toolkit
+## Discover Available Triggers
 
 ```typescript
-// DO: Fetch all available trigger types for a toolkit
-async function getAvailableTriggers(toolkit: string) {
-  const triggers = await composio.triggers.listTypes({
-    toolkits: [toolkit],
-    limit: 50
-  });
+// Get all triggers
+const triggers = await composio.triggers.list();
 
-  console.log(`Available ${toolkit} triggers:`);
-  triggers.items.forEach(trigger => {
-    console.log(`  ${trigger.slug}`);
-    console.log(`    ${trigger.description}`);
-    console.log(`    Required config: ${JSON.stringify(trigger.config)}`);
-  });
+// Search by keyword
+const emailTriggers = await composio.triggers.list({ search: 'email' });
 
-  return triggers;
-}
+// Filter by toolkit
+const slackTriggers = await composio.triggers.list({ toolkit: 'slack' });
 
-// Example: Get all Gmail triggers
-await getAvailableTriggers('gmail');
-
-// Example: Get all GitHub triggers
-await getAvailableTriggers('github');
+// Get trigger details
+const trigger = await composio.triggers.getTrigger('GMAIL_NEW_GMAIL_MESSAGE');
+console.log(trigger.config); // Shows required config fields
 ```
 
-```python
-# DO: Fetch all available trigger types for a toolkit
-async def get_available_triggers(toolkit: str):
-    triggers = composio.triggers.list_types(
-        toolkits=[toolkit],
-        limit=50
-    )
-
-    print(f"Available {toolkit} triggers:")
-    for trigger in triggers.items:
-        print(f"  {trigger.slug}")
-        print(f"    {trigger.description}")
-        print(f"    Required config: {trigger.config}")
-
-    return triggers
-
-# Example: Get all Gmail triggers
-await get_available_triggers("gmail")
-
-# Example: Get all GitHub triggers
-await get_available_triggers("github")
-```
-
-### Get Details About Specific Trigger Type
+## List Active Triggers
 
 ```typescript
-// Get schema and configuration requirements
-const triggerType = await composio.triggers.getType('GMAIL_NEW_GMAIL_MESSAGE');
+// All active triggers
+const active = await composio.triggers.getActiveTriggers();
 
-console.log('Trigger:', triggerType.slug);
-console.log('Description:', triggerType.description);
-console.log('Toolkit:', triggerType.toolkit.slug);
-console.log('Config schema:', triggerType.config);
-console.log('Required fields:', triggerType.config.required);
+// By trigger slug
+const gmailTriggers = await composio.triggers.getActiveTriggers({
+  triggerSlugs: ['GMAIL_NEW_GMAIL_MESSAGE']
+});
+
+// By connected account
+const accountTriggers = await composio.triggers.getActiveTriggers({
+  connectedAccountIds: ['conn_abc123']
+});
+
+// Combine filters
+const userSlackTriggers = await composio.triggers.getActiveTriggers({
+  triggerSlugs: ['SLACK_NEW_MESSAGE'],
+  connectedAccountIds: ['conn_def456']
+});
 ```
 
-```python
-# Get schema and configuration requirements
-trigger_type = composio.triggers.get_type("GMAIL_NEW_GMAIL_MESSAGE")
+## Common Patterns
 
-print(f"Trigger: {trigger_type.slug}")
-print(f"Description: {trigger_type.description}")
-print(f"Toolkit: {trigger_type.toolkit.slug}")
-print(f"Config schema: {trigger_type.config}")
-print(f"Required fields: {trigger_type.config.required}")
-```
-
-## Fetching Active Triggers
-
-### List All Active Triggers for a User
+### Check Before Creating
 
 ```typescript
-// DO: Fetch all active triggers for a user
-async function getUserActiveTriggers(userId: string) {
-  const triggers = await composio.triggers.listActive({
-    connectedAccountIds: [], // Leave empty to get all user triggers
-    showDisabled: false, // Only active triggers
-    limit: 50
+async function ensureTrigger(userId: string, triggerSlug: string, config: any) {
+  // Check if trigger exists
+  const existing = await composio.triggers.getActiveTriggers({
+    triggerSlugs: [triggerSlug]
   });
 
-  // Filter by user (if needed, API may already filter)
-  const userTriggers = triggers.items.filter(t => t.userId === userId);
+  if (existing.items.length > 0) {
+    return existing.items[0];
+  }
 
-  console.log(`Active triggers for user ${userId}:`);
-  userTriggers.forEach(trigger => {
-    console.log(`  Trigger ID: ${trigger.id}`);
-    console.log(`  Type: ${trigger.triggerSlug}`);
-    console.log(`  Toolkit: ${trigger.toolkitSlug}`);
-    console.log(`  Status: ${trigger.status}`);
-    console.log(`  Config: ${JSON.stringify(trigger.config)}`);
+  // Create if doesn't exist
+  return await composio.triggers.create(userId, triggerSlug, {
+    triggerConfig: config
   });
-
-  return userTriggers;
 }
 ```
 
-```python
-# DO: Fetch all active triggers for a user
-async def get_user_active_triggers(user_id: str):
-    triggers = composio.triggers.list_active(
-        connected_account_ids=[],  # Leave empty to get all user triggers
-        show_disabled=False,  # Only active triggers
-        limit=50
-    )
-
-    # Filter by user (if needed, API may already filter)
-    user_triggers = [t for t in triggers.items if t.user_id == user_id]
-
-    print(f"Active triggers for user {user_id}:")
-    for trigger in user_triggers:
-        print(f"  Trigger ID: {trigger.id}")
-        print(f"  Type: {trigger.trigger_slug}")
-        print(f"  Toolkit: {trigger.toolkit_slug}")
-        print(f"  Status: {trigger.status}")
-        print(f"  Config: {trigger.config}")
-
-    return user_triggers
-```
-
-### List Active Triggers for Specific Connected Account
-
-```typescript
-// DO: Fetch triggers for a specific connected account
-async function getAccountActiveTriggers(connectedAccountId: string) {
-  const triggers = await composio.triggers.listActive({
-    connectedAccountIds: [connectedAccountId],
-    showDisabled: false,
-    limit: 50
-  });
-
-  console.log(`Active triggers for account ${connectedAccountId}:`);
-  triggers.items.forEach(trigger => {
-    console.log(`  ${trigger.triggerSlug} (${trigger.id})`);
-  });
-
-  return triggers;
-}
-```
-
-```python
-# DO: Fetch triggers for a specific connected account
-async def get_account_active_triggers(connected_account_id: str):
-    triggers = composio.triggers.list_active(
-        connected_account_ids=[connected_account_id],
-        show_disabled=False,
-        limit=50
-    )
-
-    print(f"Active triggers for account {connected_account_id}:")
-    for trigger in triggers.items:
-        print(f"  {trigger.trigger_slug} ({trigger.id})")
-
-    return triggers
-```
-
-### Filter Active Triggers with Advanced Options
-
-```typescript
-// DO: Use advanced filtering
-async function filterActiveTriggers() {
-  const triggers = await composio.triggers.listActive({
-    // Filter by specific auth configs
-    authConfigIds: ['auth-config-id-1', 'auth-config-id-2'],
-
-    // Filter by connected accounts
-    connectedAccountIds: ['ca_account1', 'ca_account2'],
-
-    // Filter by trigger IDs
-    triggerIds: ['trigger-id-1'],
-
-    // Filter by trigger names
-    triggerNames: ['GMAIL_NEW_GMAIL_MESSAGE', 'GITHUB_PUSH_EVENT'],
-
-    // Include disabled triggers
-    showDisabled: true,
-
-    // Pagination
-    limit: 20,
-    cursor: 'cursor-for-next-page'
-  });
-
-  console.log(`Found ${triggers.items.length} triggers`);
-  console.log(`Next cursor: ${triggers.nextCursor}`);
-
-  return triggers;
-}
-```
-
-```python
-# DO: Use advanced filtering
-async def filter_active_triggers():
-    triggers = composio.triggers.list_active(
-        # Filter by specific auth configs
-        auth_config_ids=["auth-config-id-1", "auth-config-id-2"],
-
-        # Filter by connected accounts
-        connected_account_ids=["ca_account1", "ca_account2"],
-
-        # Filter by trigger IDs
-        trigger_ids=["trigger-id-1"],
-
-        # Filter by trigger names
-        trigger_names=["GMAIL_NEW_GMAIL_MESSAGE", "GITHUB_PUSH_EVENT"],
-
-        # Include disabled triggers
-        show_disabled=True,
-
-        # Pagination
-        limit=20,
-        cursor="cursor-for-next-page"
-    )
-
-    print(f"Found {len(triggers.items)} triggers")
-    print(f"Next cursor: {triggers.next_cursor}")
-
-    return triggers
-```
-
-## Best Practices
-
-### 1. **Always Use Real User IDs**
-- Never use 'default' in production multi-user apps
-- Use database UUIDs or auth provider IDs
-- Ensures proper event isolation
-
-### 2. **Specify Connected Account ID**
-- Recommended when users have multiple accounts
-- Prevents ambiguity and unexpected behavior
-- More explicit and maintainable
-
-### 3. **Pin Toolkit Versions in Production**
-- Use specific versions (e.g., '12082025_00')
-- Avoid 'latest' for production triggers
-- Prevents breaking changes
-
-### 4. **Validate Trigger Configurations**
-- Use getType() to understand config schema
-- Validate user inputs before creating triggers
-- Handle errors gracefully
-
-### 5. **Store Trigger IDs**
-- Save trigger.triggerId to your database
-- Needed for updating or disabling triggers later
-- Link triggers to user accounts
-
-### 6. **Check Connected Accounts First**
-- Verify user has connected account before creating trigger
-- Guide users through connection flow if needed
-- Better UX than showing error after creation attempt
-
-## Pattern: Onboarding with Triggers
+### Onboarding Flow
 
 ```typescript
 async function setupUserTriggers(userId: string) {
-  // 1. Check if user has connected Gmail
-  const accounts = await composio.connectedAccounts.list(userId, {
-    toolkit: 'gmail'
+  // Check connected accounts
+  const accounts = await composio.connectedAccounts.list({
+    userIds: [userId]
   });
 
-  if (accounts.length === 0) {
-    // Guide user to connect account first
-    const authReq = await composio.connectedAccounts.initiate({
-      userId,
-      toolkit: 'gmail'
-    });
-    return { needsAuth: true, redirectUrl: authReq.redirectUrl };
-  }
-
-  // 2. Create trigger with first connected account
-  // If trigger already exists with same config, returns existing one
-  const trigger = await composio.triggers.create(
-    userId,
-    'GMAIL_NEW_GMAIL_MESSAGE',
-    {
-      connectedAccountId: accounts[0].id,
-      triggerConfig: { labelIds: 'INBOX' }
+  // Create triggers for each service
+  for (const account of accounts.items) {
+    if (account.toolkit.slug === 'gmail') {
+      await composio.triggers.create(userId, 'GMAIL_NEW_GMAIL_MESSAGE', {
+        connectedAccountId: account.id,
+        triggerConfig: { labelIds: 'INBOX' }
+      });
     }
-  );
-
-  // 3. Save trigger ID to database (idempotent)
-  await database.userTriggers.upsert({
-    userId,
-    triggerId: trigger.triggerId,
-    type: 'GMAIL_NEW_GMAIL_MESSAGE',
-    status: 'active'
-  });
-
-  return { needsAuth: false, triggerId: trigger.triggerId };
+  }
 }
 ```
 
-## Pattern: Check Existing Triggers Before Creating
+## Key Points
 
-```typescript
-async function ensureTriggerSetup(
-  userId: string,
-  connectedAccountId: string,
-  triggerSlug: string
-) {
-  // 1. Check if trigger already exists
-  const existingTriggers = await composio.triggers.listActive({
-    connectedAccountIds: [connectedAccountId],
-    triggerNames: [triggerSlug],
-    showDisabled: false
-  });
-
-  if (existingTriggers.items.length > 0) {
-    console.log('Trigger already exists:', existingTriggers.items[0].id);
-    return {
-      created: false,
-      triggerId: existingTriggers.items[0].id
-    };
-  }
-
-  // 2. Create new trigger if not exists
-  const trigger = await composio.triggers.create(
-    userId,
-    triggerSlug,
-    {
-      connectedAccountId,
-      triggerConfig: { labelIds: 'INBOX' }
-    }
-  );
-
-  console.log('New trigger created:', trigger.triggerId);
-  return {
-    created: true,
-    triggerId: trigger.triggerId
-  };
-}
-```
-
-```python
-async def ensure_trigger_setup(
-    user_id: str,
-    connected_account_id: str,
-    trigger_slug: str
-):
-    # 1. Check if trigger already exists
-    existing_triggers = composio.triggers.list_active(
-        connected_account_ids=[connected_account_id],
-        trigger_names=[trigger_slug],
-        show_disabled=False
-    )
-
-    if len(existing_triggers.items) > 0:
-        print(f"Trigger already exists: {existing_triggers.items[0].id}")
-        return {
-            "created": False,
-            "trigger_id": existing_triggers.items[0].id
-        }
-
-    # 2. Create new trigger if not exists
-    trigger = composio.triggers.create(
-        user_id=user_id,
-        trigger_slug=trigger_slug,
-        connected_account_id=connected_account_id,
-        trigger_config={"labelIds": "INBOX"}
-    )
-
-    print(f"New trigger created: {trigger.trigger_id}")
-    return {
-        "created": True,
-        "trigger_id": trigger.trigger_id
-    }
-```
-
-## Key Principles
-
-1. **User isolation** - Use proper user IDs, never 'default' in production
-2. **Explicit accounts** - Specify connectedAccountId when multiple accounts exist
-3. **Version pinning** - Use specific toolkit versions for production stability
-4. **Error handling** - Catch and handle specific error types gracefully
-5. **Persistence** - Store trigger IDs for later management
-6. **Validation** - Check connected accounts before creating triggers
-7. **Idempotency** - Same config = same trigger, no duplicates created
-8. **Discovery** - Use listTypes() to find available triggers, listActive() to see existing ones
-
-## Reference
-
-- [Triggers API Documentation](https://docs.composio.dev/sdk/typescript/api/triggers)
-- [Connected Accounts](https://docs.composio.dev/sdk/typescript/api/connected-accounts)
-- [Toolkit Versions](https://docs.composio.dev/sdk/typescript/getting-started#toolkit-versions)
+- **Use proper user IDs** - Never use 'default' in production
+- **Requires connected account** - User must authenticate first
+- **Automatic reuse** - Identical configs share same trigger instance
+- **Pin versions** - Prevents breaking changes in production
+- **Error handling** - Handle missing connections gracefully
 
 ---
 
-### 4.2. Subscribing to Events
+### 1.12. Subscribing to Events
 
 <a name="subscribing-to-events"></a>
 
 **Impact:** 🟡 MEDIUM
 
-> Use real-time subscription for local development and testing, not production
+> Listen to real-time trigger events during development using subscribe()
 
-# Subscribe to Trigger Events (Development Only)
+# Subscribe to Trigger Events
 
-The `composio.triggers.subscribe()` method provides real-time event delivery over WebSocket connections. **Use this ONLY for local development and testing.** For production, use webhooks for reliability and scalability.
+Use `subscribe()` to listen to trigger events in **development only**. For production, use webhooks via `listenToTriggers()`.
 
-## ⚠️ Important: Development vs Production
+## Development vs Production
 
-| Feature | Subscribe (WebSocket) | Webhooks (HTTP) |
-|---------|----------------------|-----------------|
-| **Use Case** | Development, testing, debugging | Production applications |
-| **Reliability** | ❌ Connection drops, no retry | ✅ Automatic retries, delivery guarantees |
-| **Scalability** | ❌ Single connection, stateful | ✅ Horizontal scaling, stateless |
-| **Persistence** | ❌ Events lost if disconnected | ✅ Events queued and delivered |
-| **Deployment** | ❌ Requires long-lived process | ✅ Works with serverless, containers |
-| **Debugging** | ✅ Instant feedback | ⚠️ Requires endpoint setup |
-| **Recommendation** | Development only | Production required |
+**Development (subscribe):**
+- Real-time event listening in CLI/local development
+- Simple callback function
+- No webhook URLs needed
+- **Do NOT use in production**
 
-## ❌ Incorrect - Using Subscribe in Production
+**Production (webhooks):**
+- Scalable webhook delivery
+- Reliable event processing
+- Use `listenToTriggers()` with Express/HTTP server
+- See triggers-webhook.md
+
+## Basic Subscribe
 
 ```typescript
-// DON'T: Use subscribe() in production
 import { Composio } from '@composio/core';
 
 const composio = new Composio({ apiKey: process.env.COMPOSIO_API_KEY });
 
-// Production server
-app.listen(3000, () => {
-  // ❌ WebSocket connection is fragile
-  // ❌ Connection drops = missed events
-  // ❌ No retry mechanism
-  // ❌ Doesn't scale horizontally
-  // ❌ Process restart = all events lost
-  composio.triggers.subscribe(triggerData => {
-    console.log('Trigger received:', triggerData);
-    // Process event...
-  });
-});
-```
-
-```python
-# DON'T: Use subscribe() in production
-from composio import Composio
-
-composio = Composio(api_key=os.environ["COMPOSIO_API_KEY"])
-
-# Production server
-def start_server():
-    # ❌ WebSocket connection is fragile
-    # ❌ Connection drops = missed events
-    # ❌ No retry mechanism
-    # ❌ Doesn't scale horizontally
-    # ❌ Process restart = all events lost
-    composio.triggers.subscribe(
-        callback=lambda trigger_data: print(f"Trigger: {trigger_data}")
-    )
-```
-
-## ✅ Correct - Subscribe for Local Development
-
-```typescript
-// DO: Use subscribe() for local development and debugging
-import { Composio } from '@composio/core';
-
-const composio = new Composio({
-  apiKey: process.env.COMPOSIO_API_KEY
+// Subscribe to trigger events
+const unsubscribe = await composio.triggers.subscribe((event) => {
+  console.log('Trigger received:', event.triggerSlug);
+  console.log('Payload:', event.payload);
+  console.log('User:', event.userId);
+  console.log('Account:', event.connectedAccountId);
 });
 
-async function developmentListener() {
-  console.log('🔧 Starting development trigger listener...');
-  console.log('⚠️  This is for local testing only!');
-  console.log('📦 For production, use webhooks instead.');
-
-  // Subscribe to all triggers
-  composio.triggers.subscribe(triggerData => {
-    console.log('\n🔔 Trigger received:');
-    console.log('  Trigger:', triggerData.triggerSlug);
-    console.log('  Toolkit:', triggerData.toolkitSlug);
-    console.log('  User:', triggerData.userId);
-    console.log('  Payload:', JSON.stringify(triggerData.payload, null, 2));
-
-    // ✅ Perfect for debugging
-    // ✅ Instant feedback
-    // ✅ See events as they happen
-  });
-
-  console.log('✅ Listening for triggers...');
-}
-
-// Run only in development
-if (process.env.NODE_ENV === 'development') {
-  developmentListener();
-}
+// Keep process alive
+console.log('Listening for events... Press Ctrl+C to stop');
 ```
 
-```python
-# DO: Use subscribe() for local development and debugging
-from composio import Composio
-import os
-
-composio = Composio(api_key=os.environ["COMPOSIO_API_KEY"])
-
-def development_listener():
-    print("🔧 Starting development trigger listener...")
-    print("⚠️  This is for local testing only!")
-    print("📦 For production, use webhooks instead.")
-
-    # Subscribe to all triggers
-    def on_trigger(trigger_data):
-        print("\n🔔 Trigger received:")
-        print(f"  Trigger: {trigger_data.trigger_slug}")
-        print(f"  Toolkit: {trigger_data.toolkit_slug}")
-        print(f"  User: {trigger_data.user_id}")
-        print(f"  Payload: {trigger_data.payload}")
-
-        # ✅ Perfect for debugging
-        # ✅ Instant feedback
-        # ✅ See events as they happen
-
-    composio.triggers.subscribe(callback=on_trigger)
-    print("✅ Listening for triggers...")
-
-# Run only in development
-if os.environ.get("NODE_ENV") == "development":
-    development_listener()
-```
-
-## ✅ Correct - Subscribe with Filters
+## Subscribe with Filters
 
 ```typescript
-// DO: Filter triggers for specific testing
-async function testGmailTriggers(userId: string) {
-  console.log('Testing Gmail triggers for user:', userId);
+// Filter by trigger slug
+await composio.triggers.subscribe(
+  (event) => {
+    console.log('Gmail message:', event.payload);
+  },
+  { triggerSlugs: ['GMAIL_NEW_GMAIL_MESSAGE'] }
+);
 
-  composio.triggers.subscribe(
-    triggerData => {
-      console.log('Gmail event:', triggerData.triggerSlug);
-      console.log('Email data:', triggerData.payload);
+// Filter by user ID
+await composio.triggers.subscribe(
+  (event) => {
+    console.log('Event for user_123:', event.payload);
+  },
+  { userIds: ['user_123'] }
+);
 
-      // Test your agent logic here
-      // processEmailEvent(triggerData);
-    },
-    {
-      // Filter options
-      toolkits: ['gmail'], // Only Gmail triggers
-      userId: userId, // Specific user
-      triggerSlug: ['GMAIL_NEW_GMAIL_MESSAGE'] // Specific trigger type
-    }
-  );
+// Filter by connected account
+await composio.triggers.subscribe(
+  (event) => {
+    console.log('Event from specific account:', event.payload);
+  },
+  { connectedAccountIds: ['conn_abc123'] }
+);
 
-  console.log('Listening for Gmail events...');
-}
+// Combine filters
+await composio.triggers.subscribe(
+  (event) => {
+    console.log('Filtered event:', event.payload);
+  },
+  {
+    triggerSlugs: ['SLACK_NEW_MESSAGE'],
+    userIds: ['user_123'],
+    connectedAccountIds: ['conn_def456']
+  }
+);
 ```
 
-```python
-# DO: Filter triggers for specific testing
-def test_gmail_triggers(user_id: str):
-    print(f"Testing Gmail triggers for user: {user_id}")
-
-    def on_gmail_event(trigger_data):
-        print(f"Gmail event: {trigger_data.trigger_slug}")
-        print(f"Email data: {trigger_data.payload}")
-
-        # Test your agent logic here
-        # process_email_event(trigger_data)
-
-    composio.triggers.subscribe(
-        callback=on_gmail_event,
-        filters={
-            "toolkits": ["gmail"],  # Only Gmail triggers
-            "user_id": user_id,  # Specific user
-            "trigger_slug": ["GMAIL_NEW_GMAIL_MESSAGE"]  # Specific trigger type
-        }
-    )
-
-    print("Listening for Gmail events...")
-```
-
-## Subscribe Filter Options
+## Event Payload Structure
 
 ```typescript
-interface SubscribeFilters {
-  // Filter by toolkits
-  toolkits?: string[]; // ['gmail', 'github']
-
-  // Filter by specific trigger ID
-  triggerId?: string; // 'trigger-abc123'
-
-  // Filter by connected account
-  connectedAccountId?: string; // 'ca_account123'
-
-  // Filter by trigger types
-  triggerSlug?: string[]; // ['GMAIL_NEW_GMAIL_MESSAGE']
-
-  // Filter by custom trigger data
-  triggerData?: string; // Custom metadata
-
-  // Filter by user ID
-  userId?: string; // 'user-456'
-}
-```
-
-## Trigger Payload Structure
-
-```typescript
-interface IncomingTriggerPayload {
-  // Trigger instance ID
-  id: string; // 'trigger-nano-123'
-  uuid: string; // 'trigger-uuid-456'
-
-  // Trigger type and toolkit
-  triggerSlug: string; // 'GMAIL_NEW_GMAIL_MESSAGE'
-  toolkitSlug: string; // 'gmail'
-
-  // User information
-  userId: string; // 'user-789'
-
-  // Event data
-  payload: Record<string, unknown>; // Processed event data
-  originalPayload: Record<string, unknown>; // Raw event data
-
-  // Metadata
+interface TriggerEvent {
+  triggerSlug: string;           // 'GMAIL_NEW_GMAIL_MESSAGE'
+  userId: string;                // 'user_123'
+  connectedAccountId: string;    // 'conn_abc123'
+  payload: {
+    // Trigger-specific data
+    // Example for Gmail:
+    // { id: 'msg_123', subject: 'Hello', from: 'user@example.com' }
+  };
   metadata: {
-    id: string;
-    uuid: string;
-    toolkitSlug: string;
-    triggerSlug: string;
-    triggerConfig: Record<string, unknown>;
-    connectedAccount: {
-      id: string; // Connected account nano ID
-      uuid: string; // Connected account UUID
-      authConfigId: string; // Auth config nano ID
-      authConfigUUID: string; // Auth config UUID
-      userId: string; // User ID
-      status: string; // Connection status
-    };
+    triggerId: string;
+    timestamp: string;
   };
 }
 ```
 
-## Development Patterns
-
-### Pattern: Test Trigger Before Production
+## Unsubscribe
 
 ```typescript
-// Test trigger locally before deploying webhook handler
-async function testTriggerSetup() {
-  console.log('🧪 Testing trigger configuration...\n');
-
-  // 1. Create trigger
-  const trigger = await composio.triggers.create(
-    'user_123',
-    'GMAIL_NEW_GMAIL_MESSAGE',
-    {
-      connectedAccountId: 'ca_gmail',
-      triggerConfig: { labelIds: 'INBOX' }
-    }
-  );
-
-  console.log('✅ Trigger created:', trigger.triggerId);
-
-  // 2. Subscribe to test it
-  console.log('👂 Listening for events...\n');
-
-  let eventCount = 0;
-
-  composio.triggers.subscribe(
-    triggerData => {
-      eventCount++;
-      console.log(`\n📬 Event ${eventCount} received:`);
-      console.log('  From:', triggerData.payload.from);
-      console.log('  Subject:', triggerData.payload.subject);
-
-      // Test your processing logic
-      console.log('\n✅ Processing logic:');
-      // processEmail(triggerData);
-      console.log('  Would send notification...');
-      console.log('  Would update database...');
-      console.log('  Would trigger agent...');
-    },
-    {
-      triggerId: trigger.triggerId
-    }
-  );
-
-  console.log('💡 Send a test email to trigger the event');
-  console.log('🛑 Press Ctrl+C to stop when done testing\n');
-}
-```
-
-### Pattern: Debug Event Payload Structure
-
-```typescript
-// Understand event structure before building production handler
-async function debugEventStructure() {
-  composio.triggers.subscribe(triggerData => {
-    console.log('\n📋 Full Event Structure:');
-    console.log(JSON.stringify(triggerData, null, 2));
-
-    console.log('\n🔍 Parsed Fields:');
-    console.log('  ID:', triggerData.id);
-    console.log('  Type:', triggerData.triggerSlug);
-    console.log('  User:', triggerData.userId);
-    console.log('  Payload Keys:', Object.keys(triggerData.payload));
-    console.log('  Metadata:', triggerData.metadata);
-
-    // ✅ Use this to understand what data you'll receive
-    // ✅ Design your webhook handler based on this structure
-  });
-}
-```
-
-### Pattern: Test Multiple Users
-
-```typescript
-// Test multi-user trigger isolation
-async function testMultiUserTriggers() {
-  const users = ['user_1', 'user_2', 'user_3'];
-
-  for (const userId of users) {
-    await composio.triggers.create(userId, 'GMAIL_NEW_GMAIL_MESSAGE', {
-      triggerConfig: { labelIds: 'INBOX' }
-    });
-  }
-
-  composio.triggers.subscribe(triggerData => {
-    console.log(`Event for ${triggerData.userId}:`, triggerData.triggerSlug);
-
-    // ✅ Verify events are properly isolated by user
-    // ✅ Test that user_1 doesn't see user_2's events
-  });
-
-  console.log('Testing multi-user isolation...');
-}
-```
-
-## Unsubscribe from Triggers
-
-```typescript
-// Stop listening to triggers
-async function stopListening() {
-  await composio.triggers.unsubscribe();
-  console.log('Stopped listening to triggers');
-}
-
-// Example: Listen for 5 minutes then stop
-composio.triggers.subscribe(triggerData => {
-  console.log('Event:', triggerData.triggerSlug);
+const unsubscribe = await composio.triggers.subscribe((event) => {
+  console.log('Event:', event);
 });
 
-setTimeout(async () => {
-  await composio.triggers.unsubscribe();
-  console.log('Test complete, stopped listening');
-}, 5 * 60 * 1000);
+// Stop listening
+await unsubscribe();
+console.log('Unsubscribed from all triggers');
 ```
 
-```python
-# Stop listening to triggers
-async def stop_listening():
-    await composio.triggers.unsubscribe()
-    print("Stopped listening to triggers")
-
-# Example: Listen for 5 minutes then stop
-composio.triggers.subscribe(
-    callback=lambda data: print(f"Event: {data.trigger_slug}")
-)
-
-# Later...
-await composio.triggers.unsubscribe()
-print("Test complete, stopped listening")
-```
-
-## When to Use Subscribe
-
-### ✅ Appropriate Use Cases:
-
-1. **Local Development**
-   - Testing trigger configuration
-   - Debugging event payloads
-   - Developing event processing logic
-
-2. **Testing and Debugging**
-   - Verifying trigger setup
-   - Understanding event structure
-   - Testing multi-user isolation
-
-3. **Quick Prototyping**
-   - Building proof of concept
-   - Demonstrating functionality
-   - Internal testing
-
-### ❌ Do NOT Use Subscribe For:
-
-1. **Production Applications**
-   - Use webhooks instead
-   - Unreliable connection
-   - No delivery guarantees
-
-2. **Serverless Deployments**
-   - Lambda, Cloud Functions, etc.
-   - Cannot maintain WebSocket connection
-   - Use webhooks
-
-3. **Horizontal Scaling**
-   - Multiple server instances
-   - Load balancers
-   - Use webhooks with queue
-
-4. **Mission-Critical Events**
-   - Payment confirmations
-   - Security alerts
-   - Important notifications
-   - Use webhooks with retries
-
-## Migration Path: Subscribe → Webhooks
+## Development Pattern
 
 ```typescript
-// Step 1: Test locally with subscribe
-if (process.env.NODE_ENV === 'development') {
-  composio.triggers.subscribe(triggerData => {
-    console.log('Event:', triggerData);
-    processEvent(triggerData);
+async function devMode() {
+  console.log('Starting development mode...');
+
+  // Subscribe to events
+  const unsubscribe = await composio.triggers.subscribe((event) => {
+    console.log(`\n[${event.triggerSlug}]`);
+    console.log('User:', event.userId);
+    console.log('Payload:', JSON.stringify(event.payload, null, 2));
   });
-}
 
-// Step 2: Build webhook handler for production
-if (process.env.NODE_ENV === 'production') {
-  app.post('/webhook', express.raw({ type: 'application/json' }), (req, res) => {
-    try {
-      // Verify webhook signature
-      const result = composio.triggers.verifyWebhook({
-        payload: req.body.toString(),
-        signature: req.headers['webhook-signature'],
-        id: req.headers['webhook-id'],
-        timestamp: req.headers['webhook-timestamp'],
-        secret: process.env.COMPOSIO_WEBHOOK_SECRET
-      });
-
-      // Same processing logic as subscribe
-      processEvent(result.payload);
-
-      res.status(200).send('OK');
-    } catch (error) {
-      console.error('Webhook error:', error);
-      res.status(400).send('Bad Request');
-    }
+  // Handle shutdown
+  process.on('SIGINT', async () => {
+    console.log('\nShutting down...');
+    await unsubscribe();
+    process.exit(0);
   });
+
+  console.log('Listening for events. Press Ctrl+C to stop.');
 }
 
-// Same processing function works for both
-function processEvent(triggerData: IncomingTriggerPayload) {
-  console.log('Processing:', triggerData.triggerSlug);
-  // Your business logic here
-}
+devMode();
 ```
 
-## Best Practices
+## Migration to Production
 
-### 1. **Never Use in Production**
-- Subscribe is for development only
-- Use webhooks for production reliability
-- WebSocket connections are unreliable
+Development (subscribe):
+```typescript
+// Development only
+await composio.triggers.subscribe((event) => {
+  console.log(event);
+});
+```
 
-### 2. **Use Filters for Focused Testing**
-- Filter by user, toolkit, or trigger type
-- Reduces noise during debugging
-- Faster iteration
+Production (webhooks):
+```typescript
+// Production ready
+import express from 'express';
 
-### 3. **Log Full Payloads During Development**
-- Understand event structure
-- Design webhook handlers based on logs
-- Document payload fields for team
+const app = express();
+const composio = new Composio({ apiKey: process.env.COMPOSIO_API_KEY });
 
-### 4. **Test Multi-User Isolation**
-- Verify events are properly scoped
-- Ensure user A doesn't see user B's events
-- Critical for security
+await composio.triggers.listenToTriggers(app, (event) => {
+  console.log('Webhook received:', event);
+});
 
-### 5. **Set Timeouts for Testing**
-- Don't leave connections open indefinitely
-- Unsubscribe when testing is complete
-- Clean up resources
+app.listen(3000);
+```
 
-### 6. **Environment Guards**
-- Only enable subscribe in development
-- Prevent accidental production use
-- Use environment variables
+## Key Points
 
-## Key Principles
-
-1. **Development only** - Never use subscribe() in production
-2. **Webhooks for production** - Reliable, scalable, stateless
-3. **Test before deploy** - Use subscribe to test, then switch to webhooks
-4. **Filter appropriately** - Reduce noise with targeted filters
-5. **Unsubscribe when done** - Clean up connections
-6. **Migration path** - Same event processing logic for both methods
-
-## Reference
-
-- [Triggers API Documentation](https://docs.composio.dev/sdk/typescript/api/triggers#real-time-trigger-subscription)
-- [Webhook Verification](https://docs.composio.dev/sdk/typescript/advanced/webhook-verification)
-- [Production Best Practices](./triggers-webhook.md)
+- **Development only** - Never use subscribe() in production
+- **Use webhooks for production** - More reliable and scalable
+- **Filter events** - Reduce noise with triggerSlugs, userIds, connectedAccountIds
+- **Cleanup** - Always call unsubscribe() when done
+- **Long-running process** - Keep Node.js process alive to receive events
 
 ---
 
-### 4.3. Webhook Verification
+### 1.13. Webhook Verification
 
 <a name="webhook-verification"></a>
 
@@ -4182,700 +3253,230 @@ function processEvent(triggerData: IncomingTriggerPayload) {
 
 > Use webhook verification for reliable, scalable event delivery in production
 
-# Verify Webhooks for Production (Recommended)
+# Webhook Verification for Production
 
-Webhooks are the **recommended and production-ready** way to receive trigger events. Unlike WebSocket subscriptions, webhooks provide reliable delivery, automatic retries, and work with any deployment architecture including serverless.
+Webhooks are the **production-ready** way to receive trigger events. Provides reliable delivery, automatic retries, and works with serverless.
 
-## Why Webhooks Over Subscribe
-
-| Feature | Webhooks (Production) | Subscribe (Development) |
-|---------|----------------------|-------------------------|
-| **Reliability** | ✅ Automatic retries, delivery guarantees | ❌ Connection drops, events lost |
-| **Scalability** | ✅ Horizontal scaling, stateless | ❌ Single connection, stateful |
-| **Serverless** | ✅ Lambda, Cloud Functions, Vercel | ❌ Requires long-lived process |
-| **Persistence** | ✅ Events queued until delivered | ❌ Events lost if disconnected |
-| **Security** | ✅ HMAC signature verification | ⚠️ WebSocket auth only |
-| **Deployment** | ✅ Any architecture | ❌ Limited deployment options |
-| **Recommendation** | ✅ Required for production | ⚠️ Development/testing only |
-
-## ❌ Incorrect - No Webhook Verification
+## Setup with listenToTriggers()
 
 ```typescript
-// DON'T: Process webhooks without verification
-app.post('/webhook', express.json(), (req, res) => {
-  // ❌ No signature verification
-  // ❌ Anyone can send fake events
-  // ❌ Security vulnerability
-  // ❌ Replay attacks possible
-  const triggerData = req.body;
-
-  processEvent(triggerData); // Dangerous!
-  res.status(200).send('OK');
-});
-```
-
-```python
-# DON'T: Process webhooks without verification
-@app.post("/webhook")
-async def webhook_handler(request: Request):
-    # ❌ No signature verification
-    # ❌ Anyone can send fake events
-    # ❌ Security vulnerability
-    # ❌ Replay attacks possible
-    trigger_data = await request.json()
-
-    process_event(trigger_data)  # Dangerous!
-    return {"status": "ok"}
-```
-
-## ✅ Correct - Verify Webhook Signatures
-
-```typescript
-// DO: Always verify webhook signatures in production
 import express from 'express';
-import {
-  Composio,
-  ComposioWebhookSignatureVerificationError,
-  ComposioWebhookPayloadError
-} from '@composio/core';
+import { Composio } from '@composio/core';
 
 const app = express();
 const composio = new Composio({ apiKey: process.env.COMPOSIO_API_KEY });
 
-// IMPORTANT: Use express.raw() to get raw body
-app.post('/webhook', express.raw({ type: 'application/json' }), (req, res) => {
-  try {
-    // Verify webhook signature and parse payload
-    const result = composio.triggers.verifyWebhook({
-      payload: req.body.toString(), // Raw string body
-      signature: req.headers['webhook-signature'] as string,
-      id: req.headers['webhook-id'] as string,
-      timestamp: req.headers['webhook-timestamp'] as string,
-      secret: process.env.COMPOSIO_WEBHOOK_SECRET!,
-      tolerance: 300 // 5 minutes (default)
-    });
+// Automatic webhook verification and handling
+await composio.triggers.listenToTriggers(app, async (event) => {
+  console.log('Webhook:', event.triggerSlug);
+  console.log('User:', event.userId);
+  console.log('Payload:', event.payload);
 
-    // ✅ Signature verified
-    // ✅ Timestamp validated (prevents replay attacks)
-    // ✅ Payload normalized across versions
-    console.log('Verified webhook:', result.version);
-    console.log('Trigger:', result.payload.triggerSlug);
-    console.log('User:', result.payload.userId);
-
-    // Process the verified event
-    processEvent(result.payload);
-
-    res.status(200).send('OK');
-  } catch (error) {
-    if (error instanceof ComposioWebhookSignatureVerificationError) {
-      // Invalid signature or expired timestamp
-      console.error('Webhook verification failed:', error.message);
-      return res.status(401).send('Unauthorized');
-    }
-
-    if (error instanceof ComposioWebhookPayloadError) {
-      // Invalid JSON or unrecognized format
-      console.error('Invalid webhook payload:', error.message);
-      return res.status(400).send('Bad Request');
-    }
-
-    // Unexpected error
-    console.error('Webhook processing error:', error);
-    return res.status(500).send('Internal Server Error');
-  }
+  await handleEvent(event);
 });
 
 app.listen(3000);
 ```
 
-```python
-# DO: Always verify webhook signatures in production
-from fastapi import FastAPI, Request, Response
-from composio import Composio, ComposioWebhookSignatureVerificationError
+**What it does:**
+- Creates `/composio/triggers` endpoint
+- Verifies webhook signatures automatically
+- Parses and validates payloads
+- Calls callback with verified events
 
-app = FastAPI()
-composio = Composio(api_key=os.environ["COMPOSIO_API_KEY"])
+## Manual Verification
 
-@app.post("/webhook")
-async def webhook_handler(request: Request):
-    try:
-        # Get raw body
-        payload = await request.body()
-
-        # Verify webhook signature and parse payload
-        result = composio.triggers.verify_webhook(
-            payload=payload.decode("utf-8"),  # Raw string body
-            signature=request.headers.get("webhook-signature"),
-            id=request.headers.get("webhook-id"),
-            timestamp=request.headers.get("webhook-timestamp"),
-            secret=os.environ["COMPOSIO_WEBHOOK_SECRET"],
-            tolerance=300  # 5 minutes (default)
-        )
-
-        # ✅ Signature verified
-        # ✅ Timestamp validated (prevents replay attacks)
-        # ✅ Payload normalized across versions
-        print(f"Verified webhook: {result.version}")
-        print(f"Trigger: {result.payload.trigger_slug}")
-        print(f"User: {result.payload.user_id}")
-
-        # Process the verified event
-        process_event(result.payload)
-
-        return {"status": "ok"}
-    except ComposioWebhookSignatureVerificationError as error:
-        # Invalid signature or expired timestamp
-        print(f"Webhook verification failed: {error}")
-        return Response(status_code=401, content="Unauthorized")
-    except Exception as error:
-        # Unexpected error
-        print(f"Webhook processing error: {error}")
-        return Response(status_code=500, content="Internal Server Error")
-```
-
-## Webhook Headers
-
-Composio sends these headers with every webhook:
-
-| Header | Description | Example |
-|--------|-------------|---------|
-| `webhook-id` | Unique message identifier | `msg_abc123` |
-| `webhook-timestamp` | Unix timestamp (seconds) | `1704067200` |
-| `webhook-signature` | HMAC-SHA256 signature | `v1,K7gNU3sdo+OL0w...` |
-| `x-composio-webhook-version` | Payload version (V1/V2/V3) | `V3` |
-
-## Signature Verification Algorithm
-
-```
-signature = HMAC-SHA256(
-  "${webhookId}.${webhookTimestamp}.${payload}",
-  webhookSecret
-)
-
-result = "v1," + base64(signature)
-```
-
-The SDK automatically:
-1. ✅ Verifies HMAC-SHA256 signature matches
-2. ✅ Checks timestamp is within tolerance (default 5 minutes)
-3. ✅ Normalizes payload across V1/V2/V3 formats
-
-## Framework Examples
-
-### Next.js (App Router)
+For custom endpoints:
 
 ```typescript
-// app/api/webhook/route.ts
-import { NextRequest, NextResponse } from 'next/server';
-import {
-  Composio,
-  ComposioWebhookSignatureVerificationError
-} from '@composio/core';
+import { verifyWebhookSignature } from '@composio/core';
 
-const composio = new Composio({ apiKey: process.env.COMPOSIO_API_KEY });
+app.post('/custom/webhook', express.raw({ type: 'application/json' }), (req, res) => {
+  const signature = req.headers['x-composio-signature'];
+  const payload = req.body;
 
-export async function POST(request: NextRequest) {
-  try {
-    const payload = await request.text(); // Get raw body
+  const isValid = verifyWebhookSignature(
+    payload,
+    signature,
+    process.env.COMPOSIO_WEBHOOK_SECRET
+  );
 
-    const result = composio.triggers.verifyWebhook({
-      payload,
-      signature: request.headers.get('webhook-signature')!,
-      id: request.headers.get('webhook-id')!,
-      timestamp: request.headers.get('webhook-timestamp')!,
-      secret: process.env.COMPOSIO_WEBHOOK_SECRET!
-    });
-
-    console.log('Trigger received:', result.payload.triggerSlug);
-
-    // Process event
-    await processEvent(result.payload);
-
-    return NextResponse.json({ received: true });
-  } catch (error) {
-    if (error instanceof ComposioWebhookSignatureVerificationError) {
-      return NextResponse.json(
-        { error: 'Unauthorized' },
-        { status: 401 }
-      );
-    }
-    return NextResponse.json(
-      { error: 'Bad Request' },
-      { status: 400 }
-    );
+  if (!isValid) {
+    return res.status(401).json({ error: 'Invalid signature' });
   }
-}
-```
 
-### Fastify
-
-```typescript
-import Fastify from 'fastify';
-import {
-  Composio,
-  ComposioWebhookSignatureVerificationError
-} from '@composio/core';
-
-const fastify = Fastify();
-const composio = new Composio({ apiKey: process.env.COMPOSIO_API_KEY });
-
-// Configure to get raw body
-fastify.addContentTypeParser(
-  'application/json',
-  { parseAs: 'string' },
-  (req, body, done) => done(null, body)
-);
-
-fastify.post('/webhook', async (request, reply) => {
-  try {
-    const result = composio.triggers.verifyWebhook({
-      payload: request.body as string,
-      signature: request.headers['webhook-signature'] as string,
-      id: request.headers['webhook-id'] as string,
-      timestamp: request.headers['webhook-timestamp'] as string,
-      secret: process.env.COMPOSIO_WEBHOOK_SECRET!
-    });
-
-    await processEvent(result.payload);
-
-    return { received: true };
-  } catch (error) {
-    if (error instanceof ComposioWebhookSignatureVerificationError) {
-      reply.code(401);
-      return { error: 'Unauthorized' };
-    }
-    reply.code(400);
-    return { error: 'Bad Request' };
-  }
+  const event = JSON.parse(payload);
+  handleEvent(event);
+  res.json({ success: true });
 });
-
-fastify.listen({ port: 3000 });
 ```
 
-### AWS Lambda (Serverless)
+## Event Structure
 
 ```typescript
-import { APIGatewayProxyHandler } from 'aws-lambda';
-import {
-  Composio,
-  ComposioWebhookSignatureVerificationError
-} from '@composio/core';
-
-const composio = new Composio({ apiKey: process.env.COMPOSIO_API_KEY });
-
-export const handler: APIGatewayProxyHandler = async (event) => {
-  try {
-    const result = composio.triggers.verifyWebhook({
-      payload: event.body!,
-      signature: event.headers['webhook-signature']!,
-      id: event.headers['webhook-id']!,
-      timestamp: event.headers['webhook-timestamp']!,
-      secret: process.env.COMPOSIO_WEBHOOK_SECRET!
-    });
-
-    // ✅ Works perfectly with serverless
-    // ✅ No long-lived connections needed
-    // ✅ Scales automatically
-    await processEvent(result.payload);
-
-    return {
-      statusCode: 200,
-      body: JSON.stringify({ received: true })
-    };
-  } catch (error) {
-    if (error instanceof ComposioWebhookSignatureVerificationError) {
-      return {
-        statusCode: 401,
-        body: JSON.stringify({ error: 'Unauthorized' })
-      };
-    }
-    return {
-      statusCode: 400,
-      body: JSON.stringify({ error: 'Bad Request' })
-    };
-  }
-};
-```
-
-### Vercel Edge Functions
-
-```typescript
-import { NextRequest } from 'next/server';
-import {
-  Composio,
-  ComposioWebhookSignatureVerificationError
-} from '@composio/core';
-
-export const config = { runtime: 'edge' };
-
-const composio = new Composio({ apiKey: process.env.COMPOSIO_API_KEY });
-
-export default async function handler(req: NextRequest) {
-  try {
-    const payload = await req.text();
-
-    const result = composio.triggers.verifyWebhook({
-      payload,
-      signature: req.headers.get('webhook-signature')!,
-      id: req.headers.get('webhook-id')!,
-      timestamp: req.headers.get('webhook-timestamp')!,
-      secret: process.env.COMPOSIO_WEBHOOK_SECRET!
-    });
-
-    // ✅ Runs at the edge
-    // ✅ Low latency
-    // ✅ Globally distributed
-    await processEvent(result.payload);
-
-    return new Response(JSON.stringify({ received: true }), {
-      status: 200,
-      headers: { 'Content-Type': 'application/json' }
-    });
-  } catch (error) {
-    if (error instanceof ComposioWebhookSignatureVerificationError) {
-      return new Response(JSON.stringify({ error: 'Unauthorized' }), {
-        status: 401
-      });
-    }
-    return new Response(JSON.stringify({ error: 'Bad Request' }), {
-      status: 400
-    });
-  }
-}
-```
-
-## Webhook Payload Versions
-
-Composio automatically detects and normalizes three webhook versions:
-
-### V3 (Current Default)
-```json
-{
-  "id": "msg_abc123",
-  "timestamp": "2024-01-01T00:00:00.000Z",
-  "type": "composio.trigger.message",
-  "metadata": {
-    "trigger_slug": "GMAIL_NEW_GMAIL_MESSAGE",
-    "user_id": "user-456"
-  },
-  "data": {
-    "from": "sender@example.com",
-    "subject": "Hello"
-  }
-}
-```
-
-### V2 (Legacy)
-```json
-{
-  "type": "gmail_new_gmail_message",
-  "data": {
-    "user_id": "user-456",
-    "from": "sender@example.com",
-    "subject": "Hello"
-  }
-}
-```
-
-### V1 (Legacy)
-```json
-{
-  "trigger_name": "GMAIL_NEW_GMAIL_MESSAGE",
-  "trigger_id": "trigger-123",
-  "payload": {
-    "from": "sender@example.com",
-    "subject": "Hello"
-  }
-}
-```
-
-**All versions are normalized to:**
-```typescript
-interface IncomingTriggerPayload {
-  id: string;
+interface WebhookEvent {
   triggerSlug: string;
-  toolkitSlug: string;
   userId: string;
-  payload: Record<string, unknown>; // Actual event data
-  originalPayload: Record<string, unknown>; // Raw data
+  connectedAccountId: string;
+  payload: object;
   metadata: {
-    connectedAccount: {
-      id: string;
-      userId: string;
-      status: string;
-    };
+    triggerId: string;
+    timestamp: string;
+    webhookId: string;
   };
 }
 ```
 
-## Timestamp Validation (Replay Attack Prevention)
+## Processing Patterns
+
+### Route by Trigger Type
 
 ```typescript
-// Default: 5 minute tolerance
-const result = composio.triggers.verifyWebhook({
-  ...params,
-  tolerance: 300 // seconds
-});
-
-// Strict: 1 minute tolerance
-const result = composio.triggers.verifyWebhook({
-  ...params,
-  tolerance: 60
-});
-
-// Lenient: 10 minute tolerance
-const result = composio.triggers.verifyWebhook({
-  ...params,
-  tolerance: 600
-});
-
-// Disable (NOT recommended for production)
-const result = composio.triggers.verifyWebhook({
-  ...params,
-  tolerance: 0
-});
-```
-
-**How it works:**
-- Webhook includes `webhook-timestamp` header (Unix seconds)
-- SDK checks: `currentTime - webhookTimestamp <= tolerance`
-- Rejects webhooks older than tolerance
-- Prevents replay attacks with old signatures
-
-## Production Patterns
-
-### Pattern: Webhook with Queue
-
-```typescript
-// Verify webhook, then queue for async processing
-import { Queue } from 'bull';
-
-const eventQueue = new Queue('trigger-events', {
-  redis: { host: 'localhost', port: 6379 }
-});
-
-app.post('/webhook', express.raw({ type: 'application/json' }), async (req, res) => {
-  try {
-    // 1. Verify signature immediately
-    const result = composio.triggers.verifyWebhook({
-      payload: req.body.toString(),
-      signature: req.headers['webhook-signature'] as string,
-      id: req.headers['webhook-id'] as string,
-      timestamp: req.headers['webhook-timestamp'] as string,
-      secret: process.env.COMPOSIO_WEBHOOK_SECRET!
-    });
-
-    // 2. Queue for async processing
-    await eventQueue.add({
-      triggerSlug: result.payload.triggerSlug,
-      userId: result.payload.userId,
-      payload: result.payload.payload,
-      metadata: result.payload.metadata
-    });
-
-    // 3. Return 200 immediately
-    // ✅ Fast response to Composio
-    // ✅ Processing happens async
-    // ✅ Retries handled by queue
-    res.status(200).send('OK');
-  } catch (error) {
-    console.error('Webhook error:', error);
-    res.status(401).send('Unauthorized');
+async function handleEvent(event: WebhookEvent) {
+  switch (event.triggerSlug) {
+    case 'GMAIL_NEW_GMAIL_MESSAGE':
+      await handleGmail(event.userId, event.payload);
+      break;
+    case 'GITHUB_COMMIT_EVENT':
+      await handleGithub(event.userId, event.payload);
+      break;
+    case 'SLACK_NEW_MESSAGE':
+      await handleSlack(event.userId, event.payload);
+      break;
   }
-});
-
-// Process events from queue
-eventQueue.process(async (job) => {
-  await processEvent(job.data);
-});
-```
-
-### Pattern: Webhook with Database Logging
-
-```typescript
-// Log all webhooks for audit and debugging
-app.post('/webhook', express.raw({ type: 'application/json' }), async (req, res) => {
-  const webhookId = req.headers['webhook-id'] as string;
-
-  try {
-    const result = composio.triggers.verifyWebhook({
-      payload: req.body.toString(),
-      signature: req.headers['webhook-signature'] as string,
-      id: webhookId,
-      timestamp: req.headers['webhook-timestamp'] as string,
-      secret: process.env.COMPOSIO_WEBHOOK_SECRET!
-    });
-
-    // Log webhook receipt
-    await db.webhooks.create({
-      webhookId,
-      triggerSlug: result.payload.triggerSlug,
-      userId: result.payload.userId,
-      payload: result.payload,
-      status: 'received',
-      receivedAt: new Date()
-    });
-
-    // Process event
-    await processEvent(result.payload);
-
-    // Update status
-    await db.webhooks.update({ webhookId }, {
-      status: 'processed',
-      processedAt: new Date()
-    });
-
-    res.status(200).send('OK');
-  } catch (error) {
-    // Log failure
-    await db.webhooks.update({ webhookId }, {
-      status: 'failed',
-      error: error.message
-    });
-
-    res.status(401).send('Unauthorized');
-  }
-});
-```
-
-### Pattern: Idempotent Webhook Processing
-
-```typescript
-// Handle duplicate webhook deliveries
-app.post('/webhook', express.raw({ type: 'application/json' }), async (req, res) => {
-  try {
-    const result = composio.triggers.verifyWebhook({
-      payload: req.body.toString(),
-      signature: req.headers['webhook-signature'] as string,
-      id: req.headers['webhook-id'] as string,
-      timestamp: req.headers['webhook-timestamp'] as string,
-      secret: process.env.COMPOSIO_WEBHOOK_SECRET!
-    });
-
-    const webhookId = req.headers['webhook-id'] as string;
-
-    // Check if already processed
-    const existing = await db.processedWebhooks.findOne({ webhookId });
-    if (existing) {
-      console.log('Webhook already processed:', webhookId);
-      return res.status(200).send('OK'); // Return success, don't reprocess
-    }
-
-    // Process event
-    await processEvent(result.payload);
-
-    // Mark as processed
-    await db.processedWebhooks.create({
-      webhookId,
-      processedAt: new Date()
-    });
-
-    res.status(200).send('OK');
-  } catch (error) {
-    console.error('Webhook error:', error);
-    res.status(401).send('Unauthorized');
-  }
-});
-```
-
-## Security Best Practices
-
-### 1. **Always Verify Signatures**
-```typescript
-// ✅ ALWAYS verify
-const result = composio.triggers.verifyWebhook({ ...params });
-
-// ❌ NEVER skip verification
-const payload = JSON.parse(req.body); // Dangerous!
-```
-
-### 2. **Use Raw Body**
-```typescript
-// ✅ Get raw body for verification
-app.use(express.raw({ type: 'application/json' }));
-
-// ❌ Don't use parsed JSON
-app.use(express.json()); // Middleware may modify body
-```
-
-### 3. **Store Secret Securely**
-```typescript
-// ✅ Use environment variables
-secret: process.env.COMPOSIO_WEBHOOK_SECRET
-
-// ❌ Never hardcode
-secret: 'whsec_abc123...' // DON'T DO THIS
-```
-
-### 4. **Use HTTPS**
-- Configure HTTPS for webhook endpoint
-- Prevents man-in-the-middle attacks
-- Required for production
-
-### 5. **Keep Tolerance Reasonable**
-```typescript
-// ✅ Default 5 minutes is good
-tolerance: 300
-
-// ❌ Don't disable
-tolerance: 0 // Vulnerable to replay attacks
-```
-
-### 6. **Handle Errors Gracefully**
-```typescript
-// Return appropriate status codes
-if (verificationError) return res.status(401); // Unauthorized
-if (payloadError) return res.status(400); // Bad Request
-if (processingError) return res.status(500); // Retry
-```
-
-### 7. **Log Verification Failures**
-```typescript
-catch (error) {
-  // ✅ Log for security monitoring
-  console.error('Webhook verification failed:', {
-    webhookId: req.headers['webhook-id'],
-    timestamp: req.headers['webhook-timestamp'],
-    error: error.message,
-    ip: req.ip
-  });
 }
 ```
 
-## Finding Your Webhook Secret
+### With Error Handling
 
-1. Go to [Composio Dashboard](https://app.composio.dev)
-2. Navigate to your project settings
-3. Find "Webhook Secret" section
-4. Copy the secret (starts with `whsec_`)
-5. Store in environment variable: `COMPOSIO_WEBHOOK_SECRET`
+```typescript
+await composio.triggers.listenToTriggers(app, async (event) => {
+  try {
+    await processEvent(event);
+  } catch (error) {
+    console.error('Error:', error);
+    // Don't throw - acknowledge webhook received
+  }
+});
+```
 
-**Never:**
-- Commit secrets to git
-- Expose in client-side code
-- Share publicly
-- Log the full secret
+### With Idempotency
 
-## Key Principles
+```typescript
+await composio.triggers.listenToTriggers(app, async (event) => {
+  const webhookId = event.metadata.webhookId;
 
-1. **Webhooks for production** - Reliable, scalable, required
-2. **Always verify signatures** - Security critical
-3. **Use raw body** - Required for signature verification
-4. **Validate timestamps** - Prevents replay attacks
-5. **HTTPS only** - Secure transport
-6. **Log failures** - Security monitoring
-7. **Return fast** - Queue for async processing
-8. **Idempotent handling** - Handle duplicate deliveries
+  // Check if already processed
+  if (await isProcessed(webhookId)) {
+    console.log('Duplicate webhook, skipping');
+    return;
+  }
 
-## Reference
+  // Mark as processed
+  await markProcessed(webhookId);
 
-- [Webhook Verification Docs](https://docs.composio.dev/sdk/typescript/advanced/webhook-verification)
-- [Triggers API](https://docs.composio.dev/sdk/typescript/api/triggers)
-- [Security Best Practices](https://docs.composio.dev/security)
+  // Process event
+  await handleEvent(event);
+});
+```
+
+## Configuration
+
+Set webhook URL in Composio dashboard:
+
+1. Go to [platform.composio.dev](https://platform.composio.dev)
+2. **Settings** > **Webhooks**
+3. Set URL: `https://your-app.com/composio/triggers`
+
+**Requirements:**
+- HTTPS URL (publicly accessible)
+- Respond with 200 OK within 30 seconds
+- Handle concurrent requests
+
+## Testing Locally
+
+Use ngrok:
+
+```bash
+ngrok http 3000
+# Use https://abc123.ngrok.io/composio/triggers in dashboard
+```
+
+## Security
+
+- **Always verify signatures** - Use `listenToTriggers()` or manual verification
+- **HTTPS only** - Never HTTP in production
+- **Keep secrets secure** - Environment variables only
+- **Validate payloads** - Check required fields
+- **Handle errors gracefully** - Log, don't throw
+- **Implement idempotency** - Use webhookId to deduplicate
+
+## Common Issues
+
+**401 Unauthorized:**
+- Invalid signature - check webhook secret
+- Wrong secret - verify environment variable
+
+**Timeout:**
+- Processing > 30 seconds - move to background queue
+- Return 200 OK immediately
+
+**Duplicates:**
+- Webhooks may deliver multiple times
+- Use webhookId for idempotency
+
+## Complete Example
+
+```typescript
+import express from 'express';
+import { Composio } from '@composio/core';
+
+const app = express();
+const composio = new Composio({ apiKey: process.env.COMPOSIO_API_KEY });
+
+await composio.triggers.listenToTriggers(app, async (event) => {
+  try {
+    // Idempotency check
+    if (await isProcessed(event.metadata.webhookId)) {
+      return;
+    }
+
+    // Process
+    switch (event.triggerSlug) {
+      case 'GMAIL_NEW_GMAIL_MESSAGE':
+        await sendNotification(event.userId, {
+          title: 'New Email',
+          body: event.payload.subject
+        });
+        break;
+    }
+
+    // Mark processed
+    await markProcessed(event.metadata.webhookId);
+  } catch (error) {
+    console.error('Error:', error);
+  }
+});
+
+app.get('/health', (req, res) => res.json({ status: 'ok' }));
+
+app.listen(3000, () => {
+  console.log('Webhook server running on port 3000');
+});
+```
+
+## Key Points
+
+- **Production standard** - Use webhooks, not subscribe()
+- **listenToTriggers()** - Handles verification automatically
+- **HTTPS required** - Security requirement
+- **Quick response** - Return 200 OK within 30s
+- **Idempotency** - Handle duplicates with webhookId
+- **Error handling** - Log but don't throw
 
 ---
 
-### 4.4. Managing Triggers
+### 1.14. Managing Triggers
 
 <a name="managing-triggers"></a>
 
@@ -4883,750 +3484,3065 @@ catch (error) {
 
 > Control trigger states, update configurations, and manage trigger instances
 
-# Manage Trigger Lifecycle (Enable, Disable, Update)
+# Manage Trigger Lifecycle
 
-Once triggers are created, you can manage their lifecycle by enabling, disabling, updating configurations, and listing active triggers. Use these operations to control event delivery without recreating triggers.
+Control trigger states and configurations without recreating triggers.
 
-## ❌ Incorrect - Deleting and Recreating Triggers
-
-```typescript
-// DON'T: Delete and recreate to change config
-async function updateTriggerConfig(triggerId: string) {
-  // ❌ Inefficient
-  // ❌ Loses trigger history
-  // ❌ May miss events during recreation
-  // ❌ Changes trigger ID
-  await composio.triggers.delete(triggerId);
-
-  const newTrigger = await composio.triggers.create(
-    userId,
-    'GMAIL_NEW_GMAIL_MESSAGE',
-    {
-      connectedAccountId,
-      triggerConfig: { labelIds: 'IMPORTANT' } // Changed config
-    }
-  );
-}
-```
-
-```python
-# DON'T: Delete and recreate to change config
-async def update_trigger_config(trigger_id: str):
-    # ❌ Inefficient
-    # ❌ Loses trigger history
-    # ❌ May miss events during recreation
-    # ❌ Changes trigger ID
-    await composio.triggers.delete(trigger_id)
-
-    new_trigger = composio.triggers.create(
-        user_id=user_id,
-        trigger_slug="GMAIL_NEW_GMAIL_MESSAGE",
-        connected_account_id=connected_account_id,
-        trigger_config={"labelIds": "IMPORTANT"}  # Changed config
-    )
-```
-
-## ✅ Correct - Update Existing Trigger
+## Enable/Disable Triggers
 
 ```typescript
-// DO: Update trigger configuration in place
-import { Composio } from '@composio/core';
+// Disable trigger (stop receiving events)
+await composio.triggers.disable('trigger_id_123');
 
-const composio = new Composio({
-  apiKey: process.env.COMPOSIO_API_KEY
+// Enable trigger (resume receiving events)
+await composio.triggers.enable('trigger_id_123');
+```
+
+**Use cases:**
+- **Disable:** Pause events temporarily, user disconnects account, billing issues
+- **Enable:** Resume after resolving issues, user reconnects account
+
+## Update Trigger Configuration
+
+```typescript
+// Update trigger config
+await composio.triggers.update('trigger_id_123', {
+  triggerConfig: {
+    labelIds: 'SENT', // Changed from 'INBOX'
+    interval: 120     // Changed from 60
+  }
+});
+```
+
+**Updateable fields:**
+- `triggerConfig` - Trigger-specific configuration
+- Cannot change trigger slug or connected account
+
+## Delete Triggers
+
+```typescript
+await composio.triggers.delete('trigger_id_123');
+```
+
+**Warning:** Permanent deletion. Creates new trigger if needed later.
+
+## List Active Triggers
+
+```typescript
+// All active triggers
+const triggers = await composio.triggers.getActiveTriggers();
+
+// By trigger slug
+const gmailTriggers = await composio.triggers.getActiveTriggers({
+  triggerSlugs: ['GMAIL_NEW_GMAIL_MESSAGE']
 });
 
-async function updateTriggerConfig(triggerId: string) {
-  const updatedTrigger = await composio.triggers.update(triggerId, {
-    triggerConfig: {
-      labelIds: 'IMPORTANT', // Updated config
-      interval: 120 // Changed interval
-    }
-  });
+// By user
+const userTriggers = await composio.triggers.getActiveTriggers({
+  userIds: ['user_123']
+});
 
-  console.log('Trigger updated:', updatedTrigger.triggerId);
+// By connected account
+const accountTriggers = await composio.triggers.getActiveTriggers({
+  connectedAccountIds: ['conn_abc123']
+});
 
-  // ✅ Same trigger ID maintained
-  // ✅ No events lost
-  // ✅ Efficient update
-  // ✅ Preserves trigger history
-  return updatedTrigger;
-}
+// By status
+const enabled = await composio.triggers.getActiveTriggers({
+  status: 'enabled'
+});
+const disabled = await composio.triggers.getActiveTriggers({
+  status: 'disabled'
+});
+
+// Combine filters
+const filtered = await composio.triggers.getActiveTriggers({
+  triggerSlugs: ['SLACK_NEW_MESSAGE'],
+  userIds: ['user_123'],
+  status: 'enabled'
+});
 ```
 
-```python
-# DO: Update trigger configuration in place
-from composio import Composio
+**Response includes:**
+- `triggerId` - Unique ID
+- `triggerSlug` - Trigger type
+- `userId` - User ID
+- `connectedAccountId` - Account ID
+- `status` - 'enabled' or 'disabled'
+- `config` - Current configuration
+- `createdAt`, `updatedAt` - Timestamps
 
-composio = Composio(api_key=os.environ["COMPOSIO_API_KEY"])
-
-async def update_trigger_config(trigger_id: str):
-    updated_trigger = composio.triggers.update(
-        trigger_id=trigger_id,
-        trigger_config={
-            "labelIds": "IMPORTANT",  # Updated config
-            "interval": 120  # Changed interval
-        }
-    )
-
-    print(f"Trigger updated: {updated_trigger.trigger_id}")
-
-    # ✅ Same trigger ID maintained
-    # ✅ No events lost
-    # ✅ Efficient update
-    # ✅ Preserves trigger history
-    return updated_trigger
-```
-
-## Enable and Disable Triggers
-
-### Temporarily Disable Trigger
+## Get Trigger Details
 
 ```typescript
-// DO: Disable trigger to pause event delivery
-async function pauseTrigger(triggerId: string) {
-  await composio.triggers.disable(triggerId);
-  console.log('Trigger disabled:', triggerId);
+// Get specific trigger
+const trigger = await composio.triggers.getTriggerById('trigger_id_123');
 
-  // ✅ Events stop being delivered
-  // ✅ Trigger configuration preserved
-  // ✅ Can be re-enabled later
-  // ✅ No data loss
-}
+console.log(trigger.status);                // 'enabled'
+console.log(trigger.triggerSlug);           // 'GMAIL_NEW_GMAIL_MESSAGE'
+console.log(trigger.config.triggerConfig);  // { labelIds: 'INBOX', ... }
 ```
 
-```python
-# DO: Disable trigger to pause event delivery
-async def pause_trigger(trigger_id: str):
-    await composio.triggers.disable(trigger_id)
-    print(f"Trigger disabled: {trigger_id}")
+## Common Patterns
 
-    # ✅ Events stop being delivered
-    # ✅ Trigger configuration preserved
-    # ✅ Can be re-enabled later
-    # ✅ No data loss
-```
-
-### Re-enable Trigger
+### Pause User's Triggers
 
 ```typescript
-// DO: Enable trigger to resume event delivery
-async function resumeTrigger(triggerId: string) {
-  await composio.triggers.enable(triggerId);
-  console.log('Trigger enabled:', triggerId);
-
-  // ✅ Events resume being delivered
-  // ✅ Same configuration
-  // ✅ No reconfiguration needed
-}
-```
-
-```python
-# DO: Enable trigger to resume event delivery
-async def resume_trigger(trigger_id: str):
-    await composio.triggers.enable(trigger_id)
-    print(f"Trigger enabled: {trigger_id}")
-
-    # ✅ Events resume being delivered
-    # ✅ Same configuration
-    # ✅ No reconfiguration needed
-```
-
-## Listing Active Triggers
-
-### List All User Triggers
-
-```typescript
-// DO: Fetch all triggers for a user
-async function getUserTriggers(userId: string) {
-  const triggers = await composio.triggers.listActive({
-    showDisabled: true, // Include disabled triggers
-    limit: 50
+async function pauseUserTriggers(userId: string) {
+  const triggers = await composio.triggers.getActiveTriggers({
+    userIds: [userId],
+    status: 'enabled'
   });
 
-  // Filter by user (API may already filter)
-  const userTriggers = triggers.items.filter(t => t.userId === userId);
-
-  console.log(`User ${userId} has ${userTriggers.length} triggers:`);
-
-  userTriggers.forEach(trigger => {
-    console.log(`  ${trigger.triggerSlug} - ${trigger.status}`);
-    console.log(`    Trigger ID: ${trigger.id}`);
-    console.log(`    Toolkit: ${trigger.toolkitSlug}`);
-    console.log(`    Connected Account: ${trigger.connectedAccountId}`);
-    console.log(`    Config: ${JSON.stringify(trigger.config)}`);
-  });
-
-  return userTriggers;
-}
-```
-
-```python
-# DO: Fetch all triggers for a user
-async def get_user_triggers(user_id: str):
-    triggers = composio.triggers.list_active(
-        show_disabled=True,  # Include disabled triggers
-        limit=50
-    )
-
-    # Filter by user (API may already filter)
-    user_triggers = [t for t in triggers.items if t.user_id == user_id]
-
-    print(f"User {user_id} has {len(user_triggers)} triggers:")
-
-    for trigger in user_triggers:
-        print(f"  {trigger.trigger_slug} - {trigger.status}")
-        print(f"    Trigger ID: {trigger.id}")
-        print(f"    Toolkit: {trigger.toolkit_slug}")
-        print(f"    Connected Account: {trigger.connected_account_id}")
-        print(f"    Config: {trigger.config}")
-
-    return user_triggers
-```
-
-### List Triggers by Toolkit
-
-```typescript
-// DO: Get all triggers for a specific toolkit
-async function getToolkitTriggers(userId: string, toolkit: string) {
-  const triggers = await composio.triggers.listActive({
-    showDisabled: false // Only active triggers
-  });
-
-  const toolkitTriggers = triggers.items.filter(
-    t => t.userId === userId && t.toolkitSlug === toolkit
-  );
-
-  console.log(`${toolkit} triggers for user ${userId}:`);
-  toolkitTriggers.forEach(trigger => {
-    console.log(`  ${trigger.triggerSlug} (${trigger.id})`);
-  });
-
-  return toolkitTriggers;
-}
-```
-
-```python
-# DO: Get all triggers for a specific toolkit
-async def get_toolkit_triggers(user_id: str, toolkit: str):
-    triggers = composio.triggers.list_active(
-        show_disabled=False  # Only active triggers
-    )
-
-    toolkit_triggers = [
-        t for t in triggers.items
-        if t.user_id == user_id and t.toolkit_slug == toolkit
-    ]
-
-    print(f"{toolkit} triggers for user {user_id}:")
-    for trigger in toolkit_triggers:
-        print(f"  {trigger.trigger_slug} ({trigger.id})")
-
-    return toolkit_triggers
-```
-
-### List Triggers by Connected Account
-
-```typescript
-// DO: Get triggers for specific connected account
-async function getAccountTriggers(connectedAccountId: string) {
-  const triggers = await composio.triggers.listActive({
-    connectedAccountIds: [connectedAccountId],
-    showDisabled: true
-  });
-
-  console.log(`Triggers for account ${connectedAccountId}:`);
-
-  triggers.items.forEach(trigger => {
-    const status = trigger.status === 'active' ? '✅' : '⏸️';
-    console.log(`  ${status} ${trigger.triggerSlug}`);
-    console.log(`    ID: ${trigger.id}`);
-    console.log(`    Config: ${JSON.stringify(trigger.config)}`);
-  });
-
-  return triggers.items;
-}
-```
-
-```python
-# DO: Get triggers for specific connected account
-async def get_account_triggers(connected_account_id: str):
-    triggers = composio.triggers.list_active(
-        connected_account_ids=[connected_account_id],
-        show_disabled=True
-    )
-
-    print(f"Triggers for account {connected_account_id}:")
-
-    for trigger in triggers.items:
-        status = "✅" if trigger.status == "active" else "⏸️"
-        print(f"  {status} {trigger.trigger_slug}")
-        print(f"    ID: {trigger.id}")
-        print(f"    Config: {trigger.config}")
-
-    return triggers.items
-```
-
-## Common Management Patterns
-
-### Pattern: User Preference Toggle
-
-```typescript
-// Let users enable/disable specific trigger types
-async function toggleUserTrigger(
-  userId: string,
-  triggerSlug: string,
-  enabled: boolean
-) {
-  // 1. Find user's trigger of this type
-  const triggers = await composio.triggers.listActive({
-    triggerNames: [triggerSlug],
-    showDisabled: true
-  });
-
-  const userTrigger = triggers.items.find(t => t.userId === userId);
-
-  if (!userTrigger) {
-    throw new Error(`User has no ${triggerSlug} trigger`);
+  for (const trigger of triggers.items) {
+    await composio.triggers.disable(trigger.triggerId);
   }
+}
+```
 
-  // 2. Enable or disable
-  if (enabled) {
-    await composio.triggers.enable(userTrigger.id);
-    console.log(`Enabled ${triggerSlug} for user ${userId}`);
-  } else {
-    await composio.triggers.disable(userTrigger.id);
-    console.log(`Disabled ${triggerSlug} for user ${userId}`);
+### Resume User's Triggers
+
+```typescript
+async function resumeUserTriggers(userId: string) {
+  const triggers = await composio.triggers.getActiveTriggers({
+    userIds: [userId],
+    status: 'disabled'
+  });
+
+  for (const trigger of triggers.items) {
+    await composio.triggers.enable(trigger.triggerId);
   }
-
-  return { triggerId: userTrigger.id, enabled };
 }
-
-// Usage: User toggles email notifications
-await toggleUserTrigger('user_123', 'GMAIL_NEW_GMAIL_MESSAGE', false);
 ```
 
-```python
-# Let users enable/disable specific trigger types
-async def toggle_user_trigger(
-    user_id: str,
-    trigger_slug: str,
-    enabled: bool
-):
-    # 1. Find user's trigger of this type
-    triggers = composio.triggers.list_active(
-        trigger_names=[trigger_slug],
-        show_disabled=True
-    )
-
-    user_trigger = next(
-        (t for t in triggers.items if t.user_id == user_id),
-        None
-    )
-
-    if not user_trigger:
-        raise Exception(f"User has no {trigger_slug} trigger")
-
-    # 2. Enable or disable
-    if enabled:
-        await composio.triggers.enable(user_trigger.id)
-        print(f"Enabled {trigger_slug} for user {user_id}")
-    else:
-        await composio.triggers.disable(user_trigger.id)
-        print(f"Disabled {trigger_slug} for user {user_id}")
-
-    return {"trigger_id": user_trigger.id, "enabled": enabled}
-
-# Usage: User toggles email notifications
-await toggle_user_trigger("user_123", "GMAIL_NEW_GMAIL_MESSAGE", False)
-```
-
-### Pattern: Bulk Enable/Disable
+### Clean Up Disconnected Account Triggers
 
 ```typescript
-// Enable or disable all triggers for a user
-async function toggleAllUserTriggers(userId: string, enabled: boolean) {
-  const triggers = await composio.triggers.listActive({
-    showDisabled: true
+async function cleanupTriggers(connectedAccountId: string) {
+  const triggers = await composio.triggers.getActiveTriggers({
+    connectedAccountIds: [connectedAccountId]
   });
 
-  const userTriggers = triggers.items.filter(t => t.userId === userId);
-
-  console.log(`${enabled ? 'Enabling' : 'Disabling'} ${userTriggers.length} triggers...`);
-
-  for (const trigger of userTriggers) {
-    if (enabled) {
-      await composio.triggers.enable(trigger.id);
-    } else {
-      await composio.triggers.disable(trigger.id);
-    }
-    console.log(`  ${enabled ? '✅' : '⏸️'} ${trigger.triggerSlug}`);
+  for (const trigger of triggers.items) {
+    await composio.triggers.delete(trigger.triggerId);
   }
-
-  return userTriggers.length;
 }
-
-// Usage: User pauses all notifications
-await toggleAllUserTriggers('user_123', false);
 ```
 
-```python
-# Enable or disable all triggers for a user
-async def toggle_all_user_triggers(user_id: str, enabled: bool):
-    triggers = composio.triggers.list_active(show_disabled=True)
-
-    user_triggers = [t for t in triggers.items if t.user_id == user_id]
-
-    action = "Enabling" if enabled else "Disabling"
-    print(f"{action} {len(user_triggers)} triggers...")
-
-    for trigger in user_triggers:
-        if enabled:
-            await composio.triggers.enable(trigger.id)
-        else:
-            await composio.triggers.disable(trigger.id)
-
-        status = "✅" if enabled else "⏸️"
-        print(f"  {status} {trigger.trigger_slug}")
-
-    return len(user_triggers)
-
-# Usage: User pauses all notifications
-await toggle_all_user_triggers("user_123", False)
-```
-
-### Pattern: Update Trigger Interval
+### Update All User Gmail Triggers
 
 ```typescript
-// Adjust how frequently triggers check for events
-async function updateTriggerInterval(triggerId: string, interval: number) {
-  const updatedTrigger = await composio.triggers.update(triggerId, {
-    triggerConfig: {
-      interval // seconds between checks
-    }
+async function updateGmailInterval(userId: string, newInterval: number) {
+  const triggers = await composio.triggers.getActiveTriggers({
+    userIds: [userId],
+    triggerSlugs: ['GMAIL_NEW_GMAIL_MESSAGE']
   });
 
-  console.log(`Trigger interval updated to ${interval}s`);
-  return updatedTrigger;
-}
-
-// Usage: Change from 60s to 300s (5 minutes)
-await updateTriggerInterval('trigger_abc123', 300);
-```
-
-```python
-# Adjust how frequently triggers check for events
-async def update_trigger_interval(trigger_id: str, interval: int):
-    updated_trigger = composio.triggers.update(
-        trigger_id=trigger_id,
-        trigger_config={
-            "interval": interval  # seconds between checks
-        }
-    )
-
-    print(f"Trigger interval updated to {interval}s")
-    return updated_trigger
-
-# Usage: Change from 60s to 300s (5 minutes)
-await update_trigger_interval("trigger_abc123", 300)
-```
-
-### Pattern: Clean Up Disconnected Accounts
-
-```typescript
-// Disable triggers for disconnected accounts
-async function cleanupDisconnectedTriggers(userId: string) {
-  // 1. Get all user triggers
-  const triggers = await composio.triggers.listActive({
-    showDisabled: false // Only active triggers
-  });
-
-  const userTriggers = triggers.items.filter(t => t.userId === userId);
-
-  // 2. Check connected accounts status
-  const accounts = await composio.connectedAccounts.list(userId);
-  const activeAccountIds = new Set(
-    accounts.filter(a => a.status === 'ACTIVE').map(a => a.id)
-  );
-
-  // 3. Disable triggers with disconnected accounts
-  let disabledCount = 0;
-
-  for (const trigger of userTriggers) {
-    if (!activeAccountIds.has(trigger.connectedAccountId)) {
-      await composio.triggers.disable(trigger.id);
-      console.log(`Disabled trigger for disconnected account: ${trigger.triggerSlug}`);
-      disabledCount++;
-    }
+  for (const trigger of triggers.items) {
+    await composio.triggers.update(trigger.triggerId, {
+      triggerConfig: {
+        ...trigger.config.triggerConfig,
+        interval: newInterval
+      }
+    });
   }
-
-  console.log(`Disabled ${disabledCount} triggers with disconnected accounts`);
-  return disabledCount;
 }
 ```
 
-```python
-# Disable triggers for disconnected accounts
-async def cleanup_disconnected_triggers(user_id: str):
-    # 1. Get all user triggers
-    triggers = composio.triggers.list_active(show_disabled=False)
-    user_triggers = [t for t in triggers.items if t.user_id == user_id]
-
-    # 2. Check connected accounts status
-    accounts = composio.connected_accounts.list(user_id)
-    active_account_ids = set(
-        a.id for a in accounts if a.status == "ACTIVE"
-    )
-
-    # 3. Disable triggers with disconnected accounts
-    disabled_count = 0
-
-    for trigger in user_triggers:
-        if trigger.connected_account_id not in active_account_ids:
-            await composio.triggers.disable(trigger.id)
-            print(f"Disabled trigger for disconnected account: {trigger.trigger_slug}")
-            disabled_count += 1
-
-    print(f"Disabled {disabled_count} triggers with disconnected accounts")
-    return disabled_count
-```
-
-### Pattern: Trigger Status Dashboard
+### Check Trigger Status
 
 ```typescript
-// Build trigger management UI
-async function getTriggerDashboard(userId: string) {
-  const triggers = await composio.triggers.listActive({
-    showDisabled: true
+async function isTriggerActive(triggerId: string): Promise<boolean> {
+  try {
+    const trigger = await composio.triggers.getTriggerById(triggerId);
+    return trigger.status === 'enabled';
+  } catch (error) {
+    return false; // Trigger doesn't exist
+  }
+}
+```
+
+### Get Trigger Count by User
+
+```typescript
+async function getUserTriggerCount(userId: string) {
+  const triggers = await composio.triggers.getActiveTriggers({
+    userIds: [userId]
   });
-
-  const userTriggers = triggers.items.filter(t => t.userId === userId);
-
-  // Group by status
-  const active = userTriggers.filter(t => t.status === 'active');
-  const disabled = userTriggers.filter(t => t.status === 'disabled');
-
-  // Group by toolkit
-  const byToolkit = userTriggers.reduce((acc, trigger) => {
-    const toolkit = trigger.toolkitSlug;
-    if (!acc[toolkit]) acc[toolkit] = [];
-    acc[toolkit].push(trigger);
-    return acc;
-  }, {} as Record<string, typeof userTriggers>);
 
   return {
-    total: userTriggers.length,
-    active: active.length,
-    disabled: disabled.length,
-    byToolkit,
-    triggers: userTriggers.map(t => ({
-      id: t.id,
-      slug: t.triggerSlug,
-      toolkit: t.toolkitSlug,
-      status: t.status,
-      config: t.config,
-      connectedAccountId: t.connectedAccountId
-    }))
+    total: triggers.items.length,
+    enabled: triggers.items.filter(t => t.status === 'enabled').length,
+    disabled: triggers.items.filter(t => t.status === 'disabled').length
   };
 }
-
-// Usage: Display in UI
-const dashboard = await getTriggerDashboard('user_123');
-console.log(`Total: ${dashboard.total}`);
-console.log(`Active: ${dashboard.active}`);
-console.log(`Disabled: ${dashboard.disabled}`);
-console.log('By toolkit:', dashboard.byToolkit);
 ```
 
-```python
-# Build trigger management UI
-async def get_trigger_dashboard(user_id: str):
-    triggers = composio.triggers.list_active(show_disabled=True)
-    user_triggers = [t for t in triggers.items if t.user_id == user_id]
+## Lifecycle Management
 
-    # Group by status
-    active = [t for t in user_triggers if t.status == "active"]
-    disabled = [t for t in user_triggers if t.status == "disabled"]
-
-    # Group by toolkit
-    by_toolkit = {}
-    for trigger in user_triggers:
-        toolkit = trigger.toolkit_slug
-        if toolkit not in by_toolkit:
-            by_toolkit[toolkit] = []
-        by_toolkit[toolkit].append(trigger)
-
-    return {
-        "total": len(user_triggers),
-        "active": len(active),
-        "disabled": len(disabled),
-        "by_toolkit": by_toolkit,
-        "triggers": [
-            {
-                "id": t.id,
-                "slug": t.trigger_slug,
-                "toolkit": t.toolkit_slug,
-                "status": t.status,
-                "config": t.config,
-                "connected_account_id": t.connected_account_id
-            }
-            for t in user_triggers
-        ]
-    }
-
-# Usage: Display in UI
-dashboard = await get_trigger_dashboard("user_123")
-print(f"Total: {dashboard['total']}")
-print(f"Active: {dashboard['active']}")
-print(f"Disabled: {dashboard['disabled']}")
-print(f"By toolkit: {dashboard['by_toolkit']}")
-```
-
-## Advanced Filtering
+### Account Disconnection
 
 ```typescript
-// List triggers with advanced filters
-async function filterTriggers() {
-  const triggers = await composio.triggers.listActive({
-    // Filter by auth configs
-    authConfigIds: ['auth-config-1', 'auth-config-2'],
-
-    // Filter by connected accounts
-    connectedAccountIds: ['ca_account1', 'ca_account2'],
-
-    // Filter by specific trigger IDs
-    triggerIds: ['trigger-id-1', 'trigger-id-2'],
-
-    // Filter by trigger types
-    triggerNames: ['GMAIL_NEW_GMAIL_MESSAGE', 'GITHUB_PUSH_EVENT'],
-
-    // Include disabled triggers
-    showDisabled: true,
-
-    // Pagination
-    limit: 20,
-    cursor: 'next-page-cursor'
+// When user disconnects an account
+async function handleAccountDisconnect(accountId: string) {
+  // Option 1: Disable triggers (can resume later)
+  const triggers = await composio.triggers.getActiveTriggers({
+    connectedAccountIds: [accountId]
   });
+  for (const trigger of triggers.items) {
+    await composio.triggers.disable(trigger.triggerId);
+  }
 
-  console.log(`Found ${triggers.items.length} triggers`);
-  console.log(`Next cursor: ${triggers.nextCursor}`);
-
-  return triggers;
+  // Option 2: Delete triggers (permanent)
+  for (const trigger of triggers.items) {
+    await composio.triggers.delete(trigger.triggerId);
+  }
 }
 ```
 
-```python
-# List triggers with advanced filters
-async def filter_triggers():
-    triggers = composio.triggers.list_active(
-        # Filter by auth configs
-        auth_config_ids=["auth-config-1", "auth-config-2"],
+### Account Reconnection
 
-        # Filter by connected accounts
-        connected_account_ids=["ca_account1", "ca_account2"],
+```typescript
+// When user reconnects
+async function handleAccountReconnect(accountId: string) {
+  const triggers = await composio.triggers.getActiveTriggers({
+    connectedAccountIds: [accountId],
+    status: 'disabled'
+  });
 
-        # Filter by specific trigger IDs
-        trigger_ids=["trigger-id-1", "trigger-id-2"],
+  for (const trigger of triggers.items) {
+    await composio.triggers.enable(trigger.triggerId);
+  }
+}
+```
 
-        # Filter by trigger types
-        trigger_names=["GMAIL_NEW_GMAIL_MESSAGE", "GITHUB_PUSH_EVENT"],
+### Subscription Management
 
-        # Include disabled triggers
-        show_disabled=True,
+```typescript
+// Downgrade: disable non-essential triggers
+async function handleDowngrade(userId: string) {
+  const triggers = await composio.triggers.getActiveTriggers({
+    userIds: [userId],
+    triggerSlugs: ['NON_ESSENTIAL_TRIGGER']
+  });
 
-        # Pagination
-        limit=20,
-        cursor="next-page-cursor"
-    )
+  for (const trigger of triggers.items) {
+    await composio.triggers.disable(trigger.triggerId);
+  }
+}
 
-    print(f"Found {len(triggers.items)} triggers")
-    print(f"Next cursor: {triggers.next_cursor}")
+// Upgrade: enable all triggers
+async function handleUpgrade(userId: string) {
+  const triggers = await composio.triggers.getActiveTriggers({
+    userIds: [userId],
+    status: 'disabled'
+  });
 
-    return triggers
+  for (const trigger of triggers.items) {
+    await composio.triggers.enable(trigger.triggerId);
+  }
+}
+```
+
+## Key Points
+
+- **Disable vs Delete** - Disable pauses events, delete is permanent
+- **Update config** - Change trigger settings without recreating
+- **Filter getActiveTriggers** - Use multiple filters to narrow results
+- **Batch operations** - Loop through triggers for bulk enable/disable
+- **Handle disconnects** - Disable or delete triggers when accounts disconnect
+- **Status check** - Always verify trigger status before operations
+
+---
+
+## 2. Building Apps with Composio Tools
+
+<a name="building-apps-with-composio-tools"></a>
+
+### 2.1. Fetching Tools
+
+<a name="fetching-tools"></a>
+
+**Impact:** 🟠 HIGH
+
+> Essential patterns for discovering and retrieving tools from Composio for direct execution in traditional applications
+
+# Fetching Tools for Applications
+
+When building traditional applications (non-agent workflows), use direct tool fetching methods to discover and retrieve tools from Composio.
+
+## Methods Overview
+
+- **`tools.get()`** - Use when working with a provider (OpenAI, Vercel, etc.). Returns tools wrapped in provider-specific format.
+- **`tools.getRawComposioTools()`** - Use for standalone applications and building UIs. Returns raw tool metadata without provider wrapping.
+
+### 1. tools.get() - For Provider-Based Applications
+
+Use `tools.get()` when you're using Composio with a provider like OpenAI, Vercel AI SDK, or LangChain. This method wraps tools in the format expected by your provider.
+
+**Get tools from a toolkit:**
+```typescript
+// Get important tools only (auto-applies important filter)
+const importantGithubTools = await composio.tools.get('default', {
+  toolkits: ['github']
+});
+
+// Get a limited number of tools (does NOT auto-apply important filter)
+const githubTools = await composio.tools.get('default', {
+  toolkits: ['github'],
+  limit: 10
+});
+```
+
+**Get a specific tool by slug:**
+```typescript
+const tool = await composio.tools.get('default', 'GITHUB_GET_REPO');
+```
+
+### 2. tools.getRawComposioTools() - For Standalone Applications & UIs
+
+Use `getRawComposioTools()` for standalone applications and building UIs. This method returns raw tool metadata without provider-specific wrapping, making it ideal for:
+- Building tool selection UIs
+- Creating tool catalogs or documentation
+- Direct tool execution workflows (without providers)
+- Custom tool management interfaces
+
+```typescript
+// Get important tools (auto-applies important filter)
+const importantTools = await composio.tools.getRawComposioTools({
+  toolkits: ['github']
+});
+
+// Get specific tools by slug
+const specificTools = await composio.tools.getRawComposioTools({
+  tools: ['GITHUB_GET_REPOS', 'SLACK_SEND_MESSAGE']
+});
+
+// Get limited tools (does NOT auto-apply important)
+const limitedTools = await composio.tools.getRawComposioTools({
+  toolkits: ['slack'],
+  limit: 5
+});
+```
+
+## Important Filter Behavior
+
+The `important` filter auto-applies to show only the most commonly used tools.
+
+**Auto-applies when:**
+- Only `toolkits` filter is provided (no other filters)
+
+**Does NOT auto-apply when:**
+- `limit` is specified
+- `search` is used
+- `tools` (specific slugs) are provided
+- `tags` are specified
+- `important` is explicitly set to `false`
+
+```typescript
+// Auto-applies important=true
+await composio.tools.get('default', { toolkits: ['github'] });
+
+// Does NOT auto-apply important (limit specified)
+await composio.tools.get('default', { toolkits: ['github'], limit: 10 });
+
+// Does NOT auto-apply important (search used)
+await composio.tools.get('default', { search: 'repo' });
+
+// Explicitly disable important filter
+await composio.tools.get('default', { toolkits: ['github'], important: false });
+```
+
+## Filter Parameters
+
+Available filters for both `tools.get()` and `tools.getRawComposioTools()`:
+
+- `toolkits`: Array of toolkit names (e.g., `['github', 'slack']`)
+- `tools`: Array of specific tool slugs (e.g., `['GITHUB_GET_REPO']`)
+- `search`: Search string for tool names/descriptions
+- `limit`: Maximum number of tools to return
+- `tags`: Array of tags to filter by
+- `scopes`: Array of scopes to filter by
+- `authConfigIds`: Array of auth config IDs to filter tools by specific auth configs
+- `important`: Boolean to explicitly control important filter (auto-applies in some cases)
+
+**Note:** You cannot use `tools` and `toolkits` filters together.
+
+## Schema Modification
+
+Customize tool schemas at fetch time:
+
+```typescript
+const customizedTools = await composio.tools.get('default', {
+  toolkits: ['github']
+}, {
+  modifySchema: ({ toolSlug, toolkitSlug, schema }) => {
+    return { ...schema, description: 'Custom description' };
+  }
+});
 ```
 
 ## Best Practices
 
-### 1. **Use Disable Instead of Delete**
-- Disable preserves trigger configuration and history
-- Can be re-enabled without reconfiguration
-- Safer for temporary pauses
+1. **Choose the right method:**
+   - Use `tools.get()` when working with providers (OpenAI, Vercel, LangChain)
+   - Use `tools.getRawComposioTools()` for standalone apps, UIs, and catalogs
 
-### 2. **Update Instead of Recreate**
-- Maintains trigger ID
-- No events lost during update
-- Preserves trigger history
+2. **Use important filter for UIs**: Show important tools first, then allow users to discover all tools
 
-### 3. **List Before Operating**
-- Check trigger status before enabling/disabling
-- Verify trigger exists before updating
-- Avoid unnecessary API calls
+3. **Cache tool metadata**: Tools don't change frequently, cache the results
 
-### 4. **Clean Up Regularly**
-- Disable triggers for disconnected accounts
-- Remove unused triggers
-- Keep trigger list manageable
+4. **Filter by toolkit**: Group tools by toolkit for better organization
 
-### 5. **Provide User Controls**
-- Let users enable/disable their triggers
-- Show trigger status in UI
-- Allow configuration updates
+5. **Don't mix tools and toolkits filters**: Cannot use both filters together
 
-### 6. **Monitor Trigger Status**
-- Track active vs disabled triggers
-- Alert on disconnected accounts
-- Log trigger state changes
+---
 
-### 7. **Batch Operations Carefully**
-- Rate limit bulk enable/disable
-- Handle errors gracefully
-- Log each operation
+### 2.2. Direct Tool Execution
 
-## Key Principles
+<a name="direct-tool-execution"></a>
 
-1. **Disable over delete** - Preserve configuration and history
-2. **Update in place** - Don't recreate triggers
-3. **List before operate** - Check current state first
-4. **Clean up proactively** - Remove disconnected account triggers
-5. **User control** - Let users manage their triggers
-6. **Monitor status** - Track active/disabled state
-7. **Handle errors** - Graceful failure handling
+**Impact:** 🟠 HIGH
 
-## Reference
+> Core patterns for manually executing Composio tools in traditional applications without agent frameworks
 
-- [Triggers API Documentation](https://docs.composio.dev/sdk/typescript/api/triggers)
-- [Enable/Disable Methods](https://docs.composio.dev/sdk/typescript/api/triggers#enabledisable-triggers)
-- [Update Trigger Instance](https://docs.composio.dev/sdk/typescript/api/triggers#update-trigger-instance)
-- [List Active Triggers](https://docs.composio.dev/sdk/typescript/api/triggers#list-active-triggers)
+# Direct Tool Execution for Applications
+
+When building traditional applications without agent frameworks, use `composio.tools.execute()` to manually execute tools.
+
+## Basic Execution
+
+```typescript
+// Execute with a specific version (REQUIRED)
+const result = await composio.tools.execute('GITHUB_GET_ISSUES', {
+  userId: 'default',
+  arguments: { owner: 'composio', repo: 'sdk' },
+  version: '12082025_00', // Specific version required
+});
+```
+
+## Version Management
+
+**CRITICAL**: When manually executing tools (especially in workflows), a **specific version is required**. Using `'latest'` will throw an error.
+
+**Why version pinning is required:**
+- Tool argument schemas can change between versions
+- Using `'latest'` in workflows can cause runtime errors when tools are updated
+- Pinned versions ensure workflow stability and predictability
+- Version validation prevents production issues from schema mismatches
+
+See [Tool Version Management](app-tool-versions.md) for detailed version strategies.
+
+## Parameters
+
+### ExecuteParams Object
+
+```typescript
+{
+  userId: string,           // User ID for connected account lookup
+  arguments: object,        // Tool-specific input parameters
+  version?: string,         // Toolkit version (required for manual execution)
+  dangerouslySkipVersionCheck?: boolean  // Bypass version validation (NOT recommended)
+}
+```
+
+### Execution Modifiers
+
+Transform requests and responses with modifiers:
+
+```typescript
+const result = await composio.tools.execute(
+  'GITHUB_GET_ISSUES',
+  {
+    userId: 'default',
+    arguments: { owner: 'composio', repo: 'sdk' },
+    version: '12082025_00',
+  },
+  {
+    beforeExecute: ({ toolSlug, toolkitSlug, params }) => {
+      // Modify params before execution
+      console.log('Executing:', toolSlug);
+      return {
+        ...params,
+        arguments: {
+          ...params.arguments,
+          per_page: 100 // Add default parameter
+        }
+      };
+    },
+    afterExecute: ({ toolSlug, toolkitSlug, result }) => {
+      // Transform result after execution
+      console.log('Completed:', toolSlug);
+      return {
+        ...result,
+        timestamp: new Date().toISOString()
+      };
+    },
+  }
+);
+```
+
+## Response Format
+
+```typescript
+interface ToolExecuteResponse {
+  data: any;           // Tool-specific response data
+  error: string | null;  // Error message if execution failed
+  successful: boolean;   // Whether execution succeeded
+}
+```
+
+## Error Handling
+
+```typescript
+try {
+  const result = await composio.tools.execute('GITHUB_GET_ISSUES', {
+    userId: 'user_123',
+    arguments: { owner: 'composio', repo: 'sdk' },
+    version: '12082025_00',
+  });
+
+  if (!result.successful) {
+    console.error('Tool execution failed:', result.error);
+    // Handle error case
+    return;
+  }
+
+  // Process successful result
+  console.log('Issues:', result.data);
+} catch (error) {
+  if (error.name === 'ComposioToolNotFoundError') {
+    console.error('Tool not found');
+  } else if (error.name === 'ComposioToolExecutionError') {
+    console.error('Execution error:', error.message);
+  } else {
+    console.error('Unexpected error:', error);
+  }
+}
+```
+
+## Common Error Types
+
+- `ComposioCustomToolsNotInitializedError`: Custom tools instance not initialized
+- `ComposioToolNotFoundError`: Tool with the given slug not found
+- `ComposioToolExecutionError`: Error during tool execution
+- Version validation errors: Thrown when version is missing or `'latest'` is used
+
+## Best Practices
+
+1. **Always specify versions**: Use explicit versions or configure at initialization
+2. **Handle errors gracefully**: Check `successful` flag and handle `error` field
+3. **Validate arguments**: Ensure all required parameters are provided
+4. **Use modifiers sparingly**: Only add modifiers when necessary for transformation
+5. **Log execution details**: Track which tools are executed for debugging
+6. **Test with real data**: Validate execution with actual connected accounts
+7. **Handle authentication errors**: User may not have connected account for toolkit
+
+## Common Patterns
+
+### Execute with retry logic
+
+```typescript
+async function executeWithRetry(slug, params, maxRetries = 3) {
+  for (let i = 0; i < maxRetries; i++) {
+    try {
+      const result = await composio.tools.execute(slug, params);
+      if (result.successful) return result;
+
+      console.log(`Retry ${i + 1}/${maxRetries}`);
+      await new Promise(resolve => setTimeout(resolve, 1000 * (i + 1)));
+    } catch (error) {
+      if (i === maxRetries - 1) throw error;
+    }
+  }
+}
+```
+
+### Execute multiple tools in sequence
+
+```typescript
+async function executeWorkflow(userId) {
+  // Step 1: Get repository
+  const repo = await composio.tools.execute('GITHUB_GET_REPO', {
+    userId,
+    arguments: { owner: 'composio', repo: 'sdk' },
+    version: '12082025_00',
+  });
+
+  if (!repo.successful) {
+    throw new Error(`Failed to get repo: ${repo.error}`);
+  }
+
+  // Step 2: Create issue using data from step 1
+  const issue = await composio.tools.execute('GITHUB_CREATE_ISSUE', {
+    userId,
+    arguments: {
+      owner: 'composio',
+      repo: 'sdk',
+      title: `Update for ${repo.data.name}`,
+      body: 'Automated issue creation'
+    },
+    version: '12082025_00',
+  });
+
+  return { repo: repo.data, issue: issue.data };
+}
+```
+
+### Execute with parameter validation
+
+```typescript
+async function sendSlackMessage(userId, channel, text) {
+  // Validate inputs
+  if (!channel.startsWith('#')) {
+    throw new Error('Channel must start with #');
+  }
+  if (text.length > 4000) {
+    throw new Error('Message too long');
+  }
+
+  const result = await composio.tools.execute('SLACK_SEND_MESSAGE', {
+    userId,
+    arguments: { channel, text },
+    version: '10082025_01',
+  });
+
+  return result;
+}
+```
+
+---
+
+### 2.3. Tool Version Management
+
+<a name="tool-version-management"></a>
+
+**Impact:** 🟠 HIGH
+
+> Critical strategies for version pinning to ensure workflow stability and prevent runtime errors in production
+
+# Tool Version Management
+
+Tool versions are critical for workflow stability. When manually executing tools, a specific version is **required** to prevent argument mismatches when tool schemas change.
+
+## Why Version Pinning Matters
+
+- **Tool schemas evolve**: Tool argument schemas can change between versions
+- **Prevent runtime errors**: Using `'latest'` in workflows causes errors when tools update
+- **Workflow stability**: Pinned versions ensure predictable behavior
+- **Production safety**: Version validation prevents schema mismatch issues
+
+## Three Version Management Strategies
+
+### Strategy 1: Explicit Version in Execute Call (Recommended for One-off Executions)
+
+Specify the version directly in the execute call:
+
+```typescript
+const result = await composio.tools.execute('GITHUB_GET_ISSUES', {
+  userId: 'default',
+  arguments: { owner: 'composio', repo: 'sdk' },
+  version: '12082025_00', // Explicit version for this tool
+});
+```
+
+**Pros:**
+- Clear version visibility at execution point
+- Different versions for different tools
+- Easy to update individual tool versions
+
+**Cons:**
+- Repetitive if executing same tool multiple times
+- Version scattered across codebase
+
+**Use when:**
+- One-off tool executions
+- Testing different tool versions
+- Tool versions need to differ within the same app
+
+### Strategy 2: Configure Toolkit Versions at Initialization (Recommended for Production)
+
+Configure versions once at SDK initialization:
+
+```typescript
+const composio = new Composio({
+  toolkitVersions: {
+    github: '12082025_00',
+    slack: '10082025_01',
+    gmail: '15082025_02'
+  }
+});
+
+// Execute without version parameter - uses pinned version from config
+const result = await composio.tools.execute('GITHUB_GET_ISSUES', {
+  userId: 'default',
+  arguments: { owner: 'composio', repo: 'sdk' },
+  // Uses github: '12082025_00' from initialization
+});
+```
+
+**Pros:**
+- Centralized version management
+- Clean execution calls
+- Easy to update all tools from a toolkit
+- Best for production environments
+
+**Cons:**
+- All tools from a toolkit use the same version
+- Requires initialization configuration
+
+**Use when:**
+- Building production applications
+- Managing multiple tools from the same toolkit
+- Want centralized version control
+
+### Strategy 3: dangerouslySkipVersionCheck (NOT Recommended for Production)
+
+Bypass version validation entirely:
+
+```typescript
+const result = await composio.tools.execute('GITHUB_GET_ISSUES', {
+  userId: 'default',
+  arguments: { owner: 'composio', repo: 'sdk' },
+  dangerouslySkipVersionCheck: true, // Uses 'latest' version
+});
+```
+
+**⚠️ Warning:** This bypasses version validation and uses `'latest'` version. Can lead to:
+- Unexpected behavior when tool schemas change
+- Argument mismatches in production
+- Runtime errors when tools are updated
+- Workflow breakage without notice
+
+**Only use for:**
+- Development and testing
+- Prototyping
+- When you explicitly want to test latest versions
+
+**NEVER use in:**
+- Production environments
+- Critical workflows
+- User-facing applications
+
+## Version Format
+
+Versions follow the format: `DDMMYYYY_XX`
+
+Examples:
+- `12082025_00` - August 12, 2025, revision 00
+- `10082025_01` - August 10, 2025, revision 01
+- `15082025_02` - August 15, 2025, revision 02
+
+## Finding Available Versions
+
+Get toolkit metadata to find available versions:
+
+```typescript
+const toolkit = await composio.toolkits.get('github');
+console.log('Available versions:', toolkit.versions);
+```
+
+Or check the Composio dashboard for version information.
+
+## Version Migration Strategy
+
+When updating tool versions:
+
+1. **Test in development first**
+   ```typescript
+   // Dev environment
+   const devComposio = new Composio({
+     toolkitVersions: { github: '20082025_00' } // New version
+   });
+   ```
+
+2. **Validate schema changes**
+   ```typescript
+   const oldTool = await composio.tools.get('default', 'GITHUB_GET_ISSUES');
+   const newTool = await composio.tools.get('default', 'GITHUB_GET_ISSUES');
+   // Compare schemas before migrating
+   ```
+
+3. **Update gradually**
+   - Update one toolkit at a time
+   - Monitor for errors
+   - Roll back if issues occur
+
+4. **Update production**
+   ```typescript
+   // Production environment
+   const prodComposio = new Composio({
+     toolkitVersions: { github: '20082025_00' } // Deploy new version
+   });
+   ```
+
+## Best Practices
+
+1. **Always pin versions in production**: Never use `'latest'` or skip version checks
+2. **Use initialization-level config**: Centralize version management for maintainability
+3. **Document version choices**: Comment why specific versions are used
+4. **Test version updates**: Validate in dev before deploying to production
+5. **Monitor after updates**: Watch for errors after version changes
+6. **Keep versions consistent**: Use same version across environments when possible
+7. **Version control your config**: Track toolkit versions in your repository
+
+## Common Patterns
+
+### Environment-based version config
+
+```typescript
+const toolkitVersions = {
+  development: {
+    github: '12082025_00',
+    slack: '10082025_01',
+  },
+  production: {
+    github: '10082025_00', // Older stable version
+    slack: '08082025_00',
+  }
+};
+
+const composio = new Composio({
+  toolkitVersions: toolkitVersions[process.env.NODE_ENV]
+});
+```
+
+### Override version for specific execution
+
+```typescript
+// Use global config version by default
+const composio = new Composio({
+  toolkitVersions: { github: '12082025_00' }
+});
+
+// Override for specific execution
+const result = await composio.tools.execute('GITHUB_GET_ISSUES', {
+  userId: 'default',
+  arguments: { owner: 'composio', repo: 'sdk' },
+  version: '15082025_00', // Override global version
+});
+```
+
+### Version validation helper
+
+```typescript
+function validateToolVersion(version: string): boolean {
+  // Check format: DDMMYYYY_XX
+  const versionRegex = /^\d{8}_\d{2}$/;
+  return versionRegex.test(version);
+}
+
+const version = '12082025_00';
+if (!validateToolVersion(version)) {
+  throw new Error('Invalid version format');
+}
+```
+
+---
+
+### 2.4. Connected Accounts CRUD
+
+<a name="connected-accounts-crud"></a>
+
+**Impact:** 🟠 HIGH
+
+> Comprehensive guide to CRUD operations on connected accounts with emphasis on secure authentication flows
+
+# Connected Accounts Management
+
+Connected accounts store authentication tokens for external services. Use the `connectedAccounts` API for CRUD operations.
+
+## Create Connected Accounts
+
+### Recommended: link() - Composio-Hosted Authentication
+
+Use `link()` for most flows. Composio handles security, OAuth, and form rendering.
+
+```typescript
+const connectionRequest = await composio.connectedAccounts.link(
+  'user_123',
+  'auth_config_123',
+  { callbackUrl: 'https://your-app.com/callback' }
+);
+
+// Redirect user to authentication page
+window.location.href = connectionRequest.redirectUrl;
+
+// Wait for completion
+const account = await connectionRequest.waitForConnection();
+```
+
+**Why use link():**
+- Handles OAuth security and form UI
+- Works with 200+ services
+- Whitelabel with your app name/logo (Project Settings on dashboard)
+- No custom UI needed
+
+### Advanced: initiate() - Custom Authentication UI
+
+Only use when building custom auth interfaces:
+
+```typescript
+// API Key (custom form)
+const connection = await composio.connectedAccounts.initiate(
+  'user_123',
+  'auth_config_456',
+  {
+    config: AuthScheme.ApiKey({ api_key: apiKey }),
+  }
+);
+
+// OAuth with extra params (Zendesk, PostHog, etc.)
+const connection = await composio.connectedAccounts.initiate(
+  'user_123',
+  'zendesk_config',
+  {
+    config: AuthScheme.OAuth2({ subdomain: "your_subdomain" })
+  }
+);
+window.location.href = connection.redirectUrl;
+```
+
+**AuthScheme helpers:**
+- `AuthScheme.OAuth2({ subdomain: 'example' })`
+- `AuthScheme.ApiKey({ api_key: 'key123' })`
+- `AuthScheme.Basic({ username: 'user', password: 'pass' })`
+- `AuthScheme.BearerToken({ token: 'token123' })`
+
+**Use initiate() only when:**
+- Building custom authentication UI
+- Handling credentials directly in backend
+- OAuth requires extra parameters before redirect
+
+## Read Connected Accounts
+
+```typescript
+// List all
+const allAccounts = await composio.connectedAccounts.list();
+
+// Filter by user
+const userAccounts = await composio.connectedAccounts.list({
+  userIds: ['user_123'],
+});
+
+// Filter by toolkit
+const githubAccounts = await composio.connectedAccounts.list({
+  toolkitSlugs: ['github'],
+});
+
+// Filter by status
+const activeAccounts = await composio.connectedAccounts.list({
+  statuses: ['ACTIVE']
+});
+
+// Filter by auth config
+const configAccounts = await composio.connectedAccounts.list({
+  authConfigIds: ['auth_config_123']
+});
+
+// Combine filters
+const filtered = await composio.connectedAccounts.list({
+  userIds: ['user_123'],
+  toolkitSlugs: ['github', 'slack'],
+  statuses: ['ACTIVE']
+});
+
+// Get specific account
+const account = await composio.connectedAccounts.get('conn_abc123');
+```
+
+**Available filters:**
+- `userIds` - Filter by user IDs
+- `toolkitSlugs` - Filter by toolkit slugs
+- `statuses` - Filter by connection statuses (see below for values)
+- `authConfigIds` - Filter by auth config IDs
+- `limit` - Results per page
+- `cursor` - Pagination cursor
+- `orderBy` - 'created_at' or 'updated_at'
+
+## Update Connected Accounts
+
+```typescript
+// Enable/disable
+await composio.connectedAccounts.enable('conn_abc123');
+await composio.connectedAccounts.disable('conn_abc123');
+
+// Refresh credentials (expired OAuth tokens)
+await composio.connectedAccounts.refresh('conn_abc123');
+```
+
+## Delete Connected Accounts
+
+```typescript
+await composio.connectedAccounts.delete('conn_abc123');
+```
+
+**Warning:** Permanent deletion. User must re-authenticate.
+
+## Wait for Connection Completion
+
+For async OAuth flows:
+
+```typescript
+// Default timeout (60 seconds)
+const account = await composio.connectedAccounts.waitForConnection('conn_123');
+
+// Custom timeout (2 minutes)
+const account = await composio.connectedAccounts.waitForConnection('conn_123', 120000);
+```
+
+**Errors:**
+- `ComposioConnectedAccountNotFoundError` - Account doesn't exist
+- `ConnectionRequestFailedError` - Connection failed/expired
+- `ConnectionRequestTimeoutError` - Timeout exceeded
+
+## Common Patterns
+
+### OAuth Flow
+
+```typescript
+// Create connection
+async function connectUser(userId, authConfigId) {
+  const request = await composio.connectedAccounts.link(
+    userId,
+    authConfigId,
+    { callbackUrl: 'https://app.com/callback' }
+  );
+  return { redirectUrl: request.redirectUrl };
+}
+
+// Handle callback
+async function handleCallback(connectionId) {
+  try {
+    const account = await composio.connectedAccounts.waitForConnection(
+      connectionId,
+      180000
+    );
+    return { success: true, account };
+  } catch (error) {
+    if (error.name === 'ConnectionRequestTimeoutError') {
+      return { error: 'Timeout. Please try again.' };
+    }
+    throw error;
+  }
+}
+```
+
+### Check Active Connections
+
+```typescript
+// Filter by status using statuses parameter
+async function getUserActiveConnections(userId) {
+  const accounts = await composio.connectedAccounts.list({
+    userIds: [userId],
+    statuses: ['ACTIVE']
+  });
+  return accounts.items;
+}
+
+// Check multiple statuses
+async function getUserConnectionsByStatus(userId) {
+  const accounts = await composio.connectedAccounts.list({
+    userIds: [userId],
+    statuses: ['ACTIVE', 'EXPIRED', 'FAILED']
+  });
+  return accounts.items;
+}
+
+async function isToolkitConnected(userId, toolkit) {
+  const accounts = await composio.connectedAccounts.list({
+    userIds: [userId],
+    toolkitSlugs: [toolkit],
+    statuses: ['ACTIVE']
+  });
+  return accounts.items.length > 0;
+}
+```
+
+**Available statuses:**
+- `INITIALIZING` - Connection being set up
+- `INITIATED` - Connection initiated, awaiting completion
+- `ACTIVE` - Connection active and ready to use
+- `FAILED` - Connection failed
+- `EXPIRED` - Credentials expired
+- `INACTIVE` - Connection disabled
+
+## Key Points
+
+- **Prefer link()** - Security, UI, and whitelabeling handled
+- **Store account IDs** - Save in your database, associate with users
+- **Check status** - Verify ACTIVE before use, refresh on errors
+- **Handle lifecycle** - Disable instead of delete when possible
+
+---
+
+### 2.5. Auth Config Management
+
+<a name="auth-config-management"></a>
+
+**Impact:** 🟡 MEDIUM
+
+> Advanced programmatic management of authentication configurations for multi-tenant applications
+
+# Auth Config Management
+
+> **Note:** This is an **advanced use case**. Most users should create and manage auth configs through the Composio dashboard at [platform.composio.dev](https://platform.composio.dev). Use the SDK methods below only when you need programmatic auth config management.
+
+Auth configs define how authentication works for a toolkit. They specify the authentication scheme (OAuth2, API Key, etc.) and control which tools can be accessed.
+
+## When to Use the SDK
+
+Use these methods when you need to:
+- Programmatically create auth configs for multi-tenant applications
+- Dynamically manage auth configs based on user actions
+- Automate auth config creation in CI/CD pipelines
+
+For most cases, **use the dashboard** instead.
+
+## Read Auth Configs
+
+### List auth configs
+
+```typescript
+// List all auth configs
+const configs = await composio.authConfigs.list();
+
+// List for a specific toolkit
+const githubConfigs = await composio.authConfigs.list({
+  toolkit: 'github',
+});
+
+// Filter by Composio-managed
+const managedConfigs = await composio.authConfigs.list({
+  isComposioManaged: true,
+});
+```
+
+### Get a specific auth config
+
+```typescript
+const authConfig = await composio.authConfigs.get('auth_config_123');
+console.log(authConfig.name);
+console.log(authConfig.authScheme); // 'OAUTH2', 'API_KEY', etc.
+console.log(authConfig.toolkit.slug);
+```
+
+## Create Auth Configs
+
+### Composio-Managed Authentication (Recommended)
+
+Use Composio's OAuth credentials (simplest option):
+
+```typescript
+const authConfig = await composio.authConfigs.create('github', {
+  type: 'use_composio_managed_auth',
+  name: 'GitHub Auth Config',
+});
+```
+
+### Custom OAuth Credentials
+
+Use your own OAuth app credentials:
+
+```typescript
+const authConfig = await composio.authConfigs.create('slack', {
+  type: 'use_custom_auth',
+  name: 'My Slack Auth',
+  authScheme: 'OAUTH2',
+  credentials: {
+    client_id: 'your_client_id',
+    client_secret: 'your_client_secret',
+  }
+});
+```
+
+### Custom API Key Authentication
+
+For services using API keys:
+
+```typescript
+const authConfig = await composio.authConfigs.create('openai', {
+  type: 'use_custom_auth',
+  name: 'OpenAI API Key Auth',
+  authScheme: 'API_KEY',
+  credentials: {
+    api_key: 'your_api_key',
+  }
+});
+```
+
+## Update Auth Configs
+
+### Update custom auth credentials
+
+```typescript
+const updated = await composio.authConfigs.update('auth_config_123', {
+  type: 'custom',
+  credentials: {
+    client_id: 'new_client_id',
+    client_secret: 'new_client_secret',
+  }
+});
+```
+
+### Update OAuth scopes
+
+```typescript
+const updated = await composio.authConfigs.update('auth_config_456', {
+  type: 'default',
+  scopes: 'read:user,repo'
+});
+```
+
+### Restrict tools (for security)
+
+```typescript
+const restricted = await composio.authConfigs.update('auth_config_789', {
+  type: 'custom',
+  credentials: { /* ... */ },
+  toolAccessConfig: {
+    toolsAvailableForExecution: ['SLACK_SEND_MESSAGE', 'SLACK_GET_CHANNEL']
+  }
+});
+```
+
+## Enable/Disable Auth Configs
+
+```typescript
+// Enable an auth config
+await composio.authConfigs.enable('auth_config_123');
+
+// Disable an auth config
+await composio.authConfigs.disable('auth_config_123');
+```
+
+## Delete Auth Configs
+
+```typescript
+await composio.authConfigs.delete('auth_config_123');
+```
+
+**Warning:** Deleting an auth config will affect all connected accounts using it.
+
+## Available Parameters
+
+### List Parameters
+
+- `toolkit` (string) - Filter by toolkit slug
+- `isComposioManaged` (boolean) - Filter Composio-managed vs custom
+- `limit` (number) - Results per page
+- `cursor` (string) - Pagination cursor
+
+### Create Parameters
+
+**For `use_composio_managed_auth`:**
+- `type`: `'use_composio_managed_auth'`
+- `name` (optional): Display name
+- `credentials` (optional): Object with `scopes` field
+- `toolAccessConfig` (optional): Tool restrictions
+- `isEnabledForToolRouter` (optional): Enable for Tool Router
+
+**For `use_custom_auth`:**
+- `type`: `'use_custom_auth'`
+- `authScheme`: `'OAUTH2'`, `'API_KEY'`, `'BASIC_AUTH'`, etc.
+- `name` (optional): Display name
+- `credentials`: Object with auth-specific fields (client_id, client_secret, api_key, etc.)
+- `toolAccessConfig` (optional): Tool restrictions
+- `isEnabledForToolRouter` (optional): Enable for Tool Router
+
+### Update Parameters
+
+**For custom type:**
+```typescript
+{
+  type: 'custom',
+  credentials: { /* auth fields */ },
+  toolAccessConfig: {
+    toolsAvailableForExecution: ['TOOL_SLUG_1', 'TOOL_SLUG_2']
+  }
+}
+```
+
+**For default type:**
+```typescript
+{
+  type: 'default',
+  scopes: 'scope1,scope2',
+  toolAccessConfig: {
+    toolsAvailableForExecution: ['TOOL_SLUG_1', 'TOOL_SLUG_2']
+  }
+}
+```
+
+## Best Practices
+
+1. **Use the dashboard for manual setup**
+   - Easier to configure
+   - Visual interface for OAuth setup
+   - Less error-prone
+
+2. **Use SDK for automation only**
+   - Multi-tenant app provisioning
+   - CI/CD integration
+   - Dynamic configuration
+
+3. **Prefer Composio-managed auth**
+   - No OAuth app setup required
+   - Maintained by Composio
+   - Works out of the box
+
+4. **Restrict tools for security**
+   - Limit `toolsAvailableForExecution`
+   - Implements least privilege
+   - Reduces risk
+
+5. **Name configs clearly**
+   - Include environment: "Production GitHub", "Staging Slack"
+   - Makes debugging easier
+
+---
+
+### 2.6. Toolkit Management
+
+<a name="toolkit-management"></a>
+
+**Impact:** 🟡 MEDIUM
+
+> Discover and query toolkits, categories, and authentication requirements for application integration
+
+# Toolkit Management
+
+Toolkits are collections of related tools (GitHub, Gmail, Slack). Use the `toolkits` API to discover and query toolkit metadata.
+
+**Important:** `toolkits.get()` returns an **array**, not an object with `.items`. Access directly: `toolkits[0]`, `toolkits.length`, etc.
+
+## Get Toolkit Metadata
+
+```typescript
+// Get specific toolkit
+const github = await composio.toolkits.get('github');
+console.log(github.name); // GitHub
+console.log(github.authConfigDetails); // Auth details
+console.log(github.meta.toolsCount); // Number of tools
+console.log(github.meta.triggersCount); // Number of triggers
+
+// Get all toolkits
+const all = await composio.toolkits.get();
+console.log(all.length); // Number of toolkits
+```
+
+**Toolkit properties:**
+- `name`, `slug` - Display name and identifier
+- `meta` - toolsCount, triggersCount, createdAt, updatedAt
+- `authConfigDetails` - Available auth schemes and required fields
+- `composioManagedAuthSchemes` - Composio-managed auth
+- `baseUrl` - API base URL
+- `getCurrentUserEndpoint` - User info endpoint
+
+## Query Parameters
+
+All available filters for `toolkits.get()`:
+
+```typescript
+const toolkits = await composio.toolkits.get({
+  category: 'developer-tools',           // Filter by category ID
+  managedBy: 'composio',                // 'all' | 'composio' | 'project'
+  sortBy: 'usage',                      // 'usage' | 'alphabetically'
+  limit: 10,                            // Results per page
+  cursor: 'next_page_cursor',           // Pagination
+});
+```
+
+### Examples
+
+```typescript
+// Composio-managed only
+const composio = await composio.toolkits.get({ managedBy: 'composio' });
+
+// By category
+const devTools = await composio.toolkits.get({ category: 'developer-tools' });
+
+// Popular toolkits
+const popular = await composio.toolkits.get({ sortBy: 'usage', limit: 10 });
+
+// Paginated
+const page1 = await composio.toolkits.get({ limit: 10 });
+const page2 = await composio.toolkits.get({ limit: 10, cursor: page1Cursor });
+```
+
+## List Categories
+
+```typescript
+const categories = await composio.toolkits.listCategories();
+console.log(categories.items);
+// [
+//   { id: 'developer-tools', name: 'Developer Tools' },
+//   { id: 'communication', name: 'Communication' },
+//   { id: 'productivity', name: 'Productivity' },
+// ]
+```
+
+## Auth Requirements
+
+### Get Auth Config Creation Fields
+
+Find fields needed to create custom auth config:
+
+```typescript
+// All fields for GitHub OAuth2
+const fields = await composio.toolkits.getAuthConfigCreationFields(
+  'github',
+  'OAUTH2'
+);
+
+// Only required fields
+const required = await composio.toolkits.getAuthConfigCreationFields(
+  'github',
+  'OAUTH2',
+  { requiredOnly: true }
+);
+
+console.log(fields);
+// [
+//   { name: 'client_id', displayName: 'Client ID', type: 'string', required: true },
+//   { name: 'client_secret', displayName: 'Client Secret', type: 'string', required: true },
+//   { name: 'scopes', displayName: 'Scopes', type: 'string', default: 'repo,user', required: false }
+// ]
+```
+
+### Get Connected Account Initiation Fields
+
+Find fields needed when calling `initiate()` with custom auth:
+
+```typescript
+const fields = await composio.toolkits.getConnectedAccountInitiationFields(
+  'zendesk',
+  'OAUTH2'
+);
+
+// Only required fields
+const required = await composio.toolkits.getConnectedAccountInitiationFields(
+  'zendesk',
+  'OAUTH2',
+  { requiredOnly: true }
+);
+
+console.log(fields);
+// [
+//   { name: 'subdomain', displayName: 'Subdomain', type: 'string', required: true }
+// ]
+```
+
+**Use case:** Some services (Zendesk, PostHog) require extra parameters during OAuth. These fields tell you what's needed.
+
+## Common Patterns
+
+### Build Toolkit Selection UI
+
+```typescript
+const toolkits = await composio.toolkits.get({
+  sortBy: 'alphabetically'
+});
+
+const toolkitOptions = toolkits.map(tk => ({
+  value: tk.slug,
+  label: tk.name,
+  toolCount: tk.meta.toolsCount,
+  authSchemes: tk.composioManagedAuthSchemes,
+}));
+```
+
+### Check If OAuth Requires Extra Fields
+
+```typescript
+async function needsExtraParams(toolkit: string, authScheme: string) {
+  const fields = await composio.toolkits.getConnectedAccountInitiationFields(
+    toolkit,
+    authScheme
+  );
+  return fields.length > 0;
+}
+
+// Usage
+if (await needsExtraParams('zendesk', 'OAUTH2')) {
+  // Show form to collect subdomain
+}
+```
+
+### Filter Toolkits by Category
+
+```typescript
+async function getToolkitsByCategory(categoryId: string) {
+  return await composio.toolkits.get({
+    category: categoryId,
+    sortBy: 'usage',
+  });
+}
+```
+
+## Key Points
+
+- **Returns array** - Not `.items`, access directly
+- **managedBy filter** - 'all', 'composio', or 'project'
+- **sortBy options** - 'usage' or 'alphabetically'
+- **Auth field queries** - Know what's required before creating configs
+- **Extra OAuth params** - Some services need subdomain, region, etc.
+
+---
+
+### 2.7. Creating Custom Tools
+
+<a name="creating-custom-tools"></a>
+
+**Impact:** 🟡 MEDIUM
+
+> Build standalone and toolkit-based custom tools with proper authentication and validation
+
+# Creating Custom Tools
+
+Create your own tools that integrate with Composio:
+- **Standalone tools** - No external authentication required
+- **Toolkit-based tools** - Use toolkit credentials for API requests
+
+## Standalone Tools
+
+For tools that don't need external authentication:
+
+```typescript
+import { z } from 'zod';
+
+const tool = await composio.tools.createCustomTool({
+  slug: 'CALCULATE_SQUARE',
+  name: 'Calculate Square',
+  description: 'Calculates the square of a number',
+  inputParams: z.object({
+    number: z.number().describe('The number to calculate the square of'),
+  }),
+  execute: async (input) => {
+    return {
+      data: { result: input.number * input.number },
+      error: null,
+      successful: true,
+    };
+  },
+});
+```
+
+**Use for:** Math, string operations, data transformations, internal logic.
+
+## Toolkit-Based Tools
+
+For tools that call authenticated APIs.
+
+### Using executeToolRequest (Recommended)
+
+Automatically handles authentication and baseURL:
+
+```typescript
+const tool = await composio.tools.createCustomTool({
+  slug: 'GITHUB_STAR_REPOSITORY',
+  name: 'Star GitHub Repository',
+  toolkitSlug: 'github',
+  description: 'Star a repository under composiohq',
+  inputParams: z.object({
+    repository: z.string().describe('Repository name'),
+    page: z.number().optional().describe('Page number'),
+  }),
+  execute: async (input, connectionConfig, executeToolRequest) => {
+    return await executeToolRequest({
+      endpoint: `/user/starred/composiohq/${input.repository}`,
+      method: 'PUT',
+      parameters: [
+        {
+          name: 'page',
+          value: input.page?.toString() || '1',
+          in: 'query', // Adds ?page=1
+        },
+      ],
+    });
+  },
+});
+```
+
+### Using connectionConfig (Direct API Calls)
+
+For custom HTTP requests:
+
+```typescript
+const tool = await composio.tools.createCustomTool({
+  slug: 'GITHUB_DIRECT_API',
+  name: 'Direct GitHub API',
+  toolkitSlug: 'github',
+  inputParams: z.object({
+    repo: z.string().describe('Repository name'),
+  }),
+  execute: async (input, connectionConfig) => {
+    const response = await fetch(`https://api.github.com/repos/${input.repo}`, {
+      headers: {
+        Authorization: `Bearer ${connectionConfig.val?.access_token}`,
+      },
+    });
+
+    const data = await response.json();
+
+    return {
+      data: data,
+      error: response.ok ? null : 'API request failed',
+      successful: response.ok,
+    };
+  },
+});
+```
+
+## Input Validation with Zod
+
+Define and validate parameters using Zod:
+
+```typescript
+inputParams: z.object({
+  // Required string
+  name: z.string().describe('User name'),
+
+  // Optional with default
+  count: z.number().optional().default(10).describe('Number of items'),
+
+  // With validation
+  email: z.string().email().describe('Email address'),
+
+  // Enum
+  status: z.enum(['active', 'inactive']).describe('Status'),
+
+  // Array
+  tags: z.array(z.string()).describe('Tags'),
+
+  // Nested object
+  metadata: z.object({
+    key: z.string(),
+    value: z.string(),
+  }).optional().describe('Metadata'),
+})
+```
+
+**Always use `.describe()`** - helps AI understand parameter purpose.
+
+## Headers and Query Parameters
+
+Add headers and query params via `parameters` array:
+
+```typescript
+execute: async (input, connectionConfig, executeToolRequest) => {
+  return await executeToolRequest({
+    endpoint: '/search/repositories',
+    method: 'GET',
+    parameters: [
+      // Query parameters
+      {
+        name: 'q',
+        value: input.query,
+        in: 'query', // ?q=value
+      },
+      // Headers
+      {
+        name: 'Accept',
+        value: 'application/vnd.github.v3+json',
+        in: 'header',
+      },
+    ],
+  });
+}
+```
+
+## Executing Custom Tools
+
+```typescript
+// Standalone tool
+await composio.tools.execute('CALCULATE_SQUARE', {
+  userId: 'default',
+  arguments: { number: 5 },
+});
+
+// Toolkit-based tool (uses userId to find account)
+await composio.tools.execute('GITHUB_STAR_REPOSITORY', {
+  userId: 'user_123',
+  arguments: { repository: 'composio' },
+});
+
+// With explicit connected account
+await composio.tools.execute('GITHUB_STAR_REPOSITORY', {
+  userId: 'user_123',
+  connectedAccountId: 'conn_abc123',
+  arguments: { repository: 'composio' },
+});
+```
+
+## Error Handling
+
+Always return structured responses:
+
+```typescript
+execute: async (input) => {
+  try {
+    const result = performOperation(input);
+    return {
+      data: result,
+      error: null,
+      successful: true,
+    };
+  } catch (error) {
+    return {
+      data: null,
+      error: error.message,
+      successful: false,
+    };
+  }
+}
+```
+
+## Key Points
+
+- **Naming:** Use `TOOLKIT_ACTION_DESCRIPTION` format for slugs
+- **Prefer executeToolRequest:** Handles auth and baseURL automatically
+- **Describe parameters:** AI agents need clear descriptions
+- **Not persisted:** Custom tools exist in memory only, recreate on restart
+- **Single toolkit scope:** executeToolRequest only works within same toolkit
+
+---
+
+### 2.8. Tool Modifiers
+
+<a name="tool-modifiers"></a>
+
+**Impact:** 🟡 MEDIUM
+
+> Advanced patterns for customizing tool behavior with schema modifications and execution hooks
+
+# Tool Modifiers
+
+Modifiers customize tool behavior through schema transformations, pre-execution hooks, and post-execution hooks.
+
+## Schema Modification
+
+Customize tool descriptions or parameters at fetch time:
+
+```typescript
+const tools = await composio.tools.get(
+  'default',
+  { toolkits: ['github'] },
+  {
+    modifySchema: ({ toolSlug, toolkitSlug, schema }) => {
+      // Enhance descriptions for AI
+      schema.description = `[Enhanced] ${schema.description}`;
+
+      // Customize specific parameters
+      if (toolSlug === 'GITHUB_GET_REPO') {
+        schema.inputParameters.properties.owner.description =
+          'GitHub organization or user name (e.g., "composio")';
+      }
+
+      return schema;
+    },
+  }
+);
+```
+
+## Pre-Execution Hooks (beforeExecute)
+
+Modify parameters before execution:
+
+```typescript
+const result = await composio.tools.execute(
+  'GITHUB_GET_REPO',
+  {
+    userId: 'default',
+    arguments: { owner: 'Composio', repo: 'sdk' },
+  },
+  {
+    beforeExecute: ({ toolSlug, params }) => {
+      // Normalize inputs
+      params.arguments.owner = params.arguments.owner.toLowerCase();
+
+      // Add defaults
+      params.arguments.branch = params.arguments.branch || 'main';
+
+      return params;
+    },
+  }
+);
+```
+
+**Common uses:**
+- Parameter validation and normalization
+- Adding default values
+- Logging and tracing
+
+## Post-Execution Hooks (afterExecute)
+
+Transform outputs after execution:
+
+```typescript
+const result = await composio.tools.execute(
+  'GITHUB_GET_REPO',
+  {
+    userId: 'default',
+    arguments: { owner: 'composio', repo: 'sdk' },
+  },
+  {
+    afterExecute: ({ result }) => {
+      if (result.successful) {
+        // Remove sensitive data
+        delete result.data.token;
+
+        // Add metadata
+        result.data.fetchedAt = new Date().toISOString();
+      }
+
+      return result;
+    },
+  }
+);
+```
+
+**Common uses:**
+- Filtering sensitive data
+- Data transformation and formatting
+- Adding metadata
+
+## Common Patterns
+
+### Sensitive Data Filtering
+
+```typescript
+const filterSensitive = ({ result }) => {
+  if (result.successful) {
+    ['token', 'secret', 'password', 'api_key'].forEach(field => {
+      delete result.data[field];
+    });
+  }
+  return result;
+};
+```
+
+### Logging & Monitoring
+
+```typescript
+const monitor = {
+  beforeExecute: ({ toolSlug, params }) => {
+    console.log(`[START] ${toolSlug}`, params.arguments);
+    return params;
+  },
+  afterExecute: ({ toolSlug, result }) => {
+    console.log(`[END] ${toolSlug} - Success: ${result.successful}`);
+    return result;
+  },
+};
+```
+
+### Reusable Modifiers
+
+```typescript
+const addTimestamps = ({ result }) => {
+  if (result.successful) result.data.executedAt = new Date().toISOString();
+  return result;
+};
+
+// Use in multiple executions
+await composio.tools.execute('GITHUB_GET_REPO', { ... }, {
+  afterExecute: addTimestamps
+});
+```
+
+## Key Points
+
+- Schema modifiers apply at fetch time, execution modifiers at runtime
+- Always return modified object (don't just mutate)
+- Modifiers are synchronous - keep operations lightweight
+- Must pass modifiers to each execute() call (not persisted)
+
+---
+
+### 2.9. Creating Triggers
+
+<a name="creating-triggers"></a>
+
+**Impact:** 🟠 HIGH
+
+> Set up trigger instances to receive real-time events from connected accounts
+
+# Create Triggers for Real-Time Events
+
+Triggers receive real-time events from connected accounts (Gmail, GitHub, Slack, etc.). Create trigger instances to subscribe to specific events.
+
+## Basic Usage
+
+```typescript
+import { Composio } from '@composio/core';
+
+const composio = new Composio({ apiKey: process.env.COMPOSIO_API_KEY });
+
+// Create trigger for specific connected account
+const trigger = await composio.triggers.create(
+  'user_123',
+  'GMAIL_NEW_GMAIL_MESSAGE',
+  {
+    connectedAccountId: 'conn_abc123',
+    triggerConfig: {
+      labelIds: 'INBOX',
+      userId: 'me',
+      interval: 60
+    }
+  }
+);
+
+console.log('Trigger ID:', trigger.triggerId);
+```
+
+## SDK Auto-Discovery
+
+Omit `connectedAccountId` to let SDK find the account automatically:
+
+```typescript
+// SDK finds user's Gmail connection
+const trigger = await composio.triggers.create(
+  'user_123',
+  'GMAIL_NEW_GMAIL_MESSAGE',
+  {
+    triggerConfig: { labelIds: 'INBOX', interval: 60 }
+  }
+);
+```
+
+## Automatic Reuse
+
+Triggers with identical configuration are automatically reused:
+
+```typescript
+// First call creates trigger
+const trigger1 = await composio.triggers.create(
+  'user_123',
+  'GMAIL_NEW_GMAIL_MESSAGE',
+  { triggerConfig: { labelIds: 'INBOX' } }
+);
+
+// Second call returns same trigger (no duplicate)
+const trigger2 = await composio.triggers.create(
+  'user_123',
+  'GMAIL_NEW_GMAIL_MESSAGE',
+  { triggerConfig: { labelIds: 'INBOX' } }
+);
+
+console.log(trigger1.triggerId === trigger2.triggerId); // true
+```
+
+## Version Pinning
+
+Pin trigger versions in production to prevent breaking changes:
+
+```typescript
+const composio = new Composio({
+  apiKey: process.env.COMPOSIO_API_KEY,
+  triggerVersions: {
+    'GMAIL_NEW_GMAIL_MESSAGE': '12082025_00',
+    'GITHUB_COMMIT_EVENT': '12082025_00'
+  }
+});
+
+// Uses pinned version
+const trigger = await composio.triggers.create(
+  'user_123',
+  'GMAIL_NEW_GMAIL_MESSAGE',
+  { triggerConfig: { labelIds: 'INBOX' } }
+);
+```
+
+**Why pin versions:**
+- Prevents config schema changes
+- Ensures production stability
+- Updates on your schedule
+
+## Trigger Configuration Examples
+
+```typescript
+// Gmail - New messages in specific label
+await composio.triggers.create('user_123', 'GMAIL_NEW_GMAIL_MESSAGE', {
+  triggerConfig: {
+    labelIds: 'INBOX',
+    userId: 'me',
+    interval: 60
+  }
+});
+
+// GitHub - New commits
+await composio.triggers.create('user_123', 'GITHUB_COMMIT_EVENT', {
+  triggerConfig: {
+    owner: 'composio',
+    repo: 'sdk',
+    branch: 'main'
+  }
+});
+
+// Slack - New messages in channel
+await composio.triggers.create('user_123', 'SLACK_NEW_MESSAGE', {
+  triggerConfig: {
+    channelId: 'C123456',
+    botUserId: 'U123456'
+  }
+});
+```
+
+## Error Handling
+
+```typescript
+try {
+  const trigger = await composio.triggers.create(
+    'user_123',
+    'GMAIL_NEW_GMAIL_MESSAGE',
+    { triggerConfig: { labelIds: 'INBOX' } }
+  );
+} catch (error) {
+  if (error.name === 'ComposioConnectedAccountNotFoundError') {
+    // User hasn't connected Gmail yet
+    console.log('Please connect your Gmail account');
+  } else if (error.name === 'ValidationError') {
+    // Invalid trigger config
+    console.error('Invalid configuration:', error.message);
+  } else {
+    throw error;
+  }
+}
+```
+
+## Discover Available Triggers
+
+```typescript
+// Get all triggers
+const triggers = await composio.triggers.list();
+
+// Search by keyword
+const emailTriggers = await composio.triggers.list({ search: 'email' });
+
+// Filter by toolkit
+const slackTriggers = await composio.triggers.list({ toolkit: 'slack' });
+
+// Get trigger details
+const trigger = await composio.triggers.getTrigger('GMAIL_NEW_GMAIL_MESSAGE');
+console.log(trigger.config); // Shows required config fields
+```
+
+## List Active Triggers
+
+```typescript
+// All active triggers
+const active = await composio.triggers.getActiveTriggers();
+
+// By trigger slug
+const gmailTriggers = await composio.triggers.getActiveTriggers({
+  triggerSlugs: ['GMAIL_NEW_GMAIL_MESSAGE']
+});
+
+// By connected account
+const accountTriggers = await composio.triggers.getActiveTriggers({
+  connectedAccountIds: ['conn_abc123']
+});
+
+// Combine filters
+const userSlackTriggers = await composio.triggers.getActiveTriggers({
+  triggerSlugs: ['SLACK_NEW_MESSAGE'],
+  connectedAccountIds: ['conn_def456']
+});
+```
+
+## Common Patterns
+
+### Check Before Creating
+
+```typescript
+async function ensureTrigger(userId: string, triggerSlug: string, config: any) {
+  // Check if trigger exists
+  const existing = await composio.triggers.getActiveTriggers({
+    triggerSlugs: [triggerSlug]
+  });
+
+  if (existing.items.length > 0) {
+    return existing.items[0];
+  }
+
+  // Create if doesn't exist
+  return await composio.triggers.create(userId, triggerSlug, {
+    triggerConfig: config
+  });
+}
+```
+
+### Onboarding Flow
+
+```typescript
+async function setupUserTriggers(userId: string) {
+  // Check connected accounts
+  const accounts = await composio.connectedAccounts.list({
+    userIds: [userId]
+  });
+
+  // Create triggers for each service
+  for (const account of accounts.items) {
+    if (account.toolkit.slug === 'gmail') {
+      await composio.triggers.create(userId, 'GMAIL_NEW_GMAIL_MESSAGE', {
+        connectedAccountId: account.id,
+        triggerConfig: { labelIds: 'INBOX' }
+      });
+    }
+  }
+}
+```
+
+## Key Points
+
+- **Use proper user IDs** - Never use 'default' in production
+- **Requires connected account** - User must authenticate first
+- **Automatic reuse** - Identical configs share same trigger instance
+- **Pin versions** - Prevents breaking changes in production
+- **Error handling** - Handle missing connections gracefully
+
+---
+
+### 2.10. Subscribing to Events
+
+<a name="subscribing-to-events"></a>
+
+**Impact:** 🟡 MEDIUM
+
+> Listen to real-time trigger events during development using subscribe()
+
+# Subscribe to Trigger Events
+
+Use `subscribe()` to listen to trigger events in **development only**. For production, use webhooks via `listenToTriggers()`.
+
+## Development vs Production
+
+**Development (subscribe):**
+- Real-time event listening in CLI/local development
+- Simple callback function
+- No webhook URLs needed
+- **Do NOT use in production**
+
+**Production (webhooks):**
+- Scalable webhook delivery
+- Reliable event processing
+- Use `listenToTriggers()` with Express/HTTP server
+- See triggers-webhook.md
+
+## Basic Subscribe
+
+```typescript
+import { Composio } from '@composio/core';
+
+const composio = new Composio({ apiKey: process.env.COMPOSIO_API_KEY });
+
+// Subscribe to trigger events
+const unsubscribe = await composio.triggers.subscribe((event) => {
+  console.log('Trigger received:', event.triggerSlug);
+  console.log('Payload:', event.payload);
+  console.log('User:', event.userId);
+  console.log('Account:', event.connectedAccountId);
+});
+
+// Keep process alive
+console.log('Listening for events... Press Ctrl+C to stop');
+```
+
+## Subscribe with Filters
+
+```typescript
+// Filter by trigger slug
+await composio.triggers.subscribe(
+  (event) => {
+    console.log('Gmail message:', event.payload);
+  },
+  { triggerSlugs: ['GMAIL_NEW_GMAIL_MESSAGE'] }
+);
+
+// Filter by user ID
+await composio.triggers.subscribe(
+  (event) => {
+    console.log('Event for user_123:', event.payload);
+  },
+  { userIds: ['user_123'] }
+);
+
+// Filter by connected account
+await composio.triggers.subscribe(
+  (event) => {
+    console.log('Event from specific account:', event.payload);
+  },
+  { connectedAccountIds: ['conn_abc123'] }
+);
+
+// Combine filters
+await composio.triggers.subscribe(
+  (event) => {
+    console.log('Filtered event:', event.payload);
+  },
+  {
+    triggerSlugs: ['SLACK_NEW_MESSAGE'],
+    userIds: ['user_123'],
+    connectedAccountIds: ['conn_def456']
+  }
+);
+```
+
+## Event Payload Structure
+
+```typescript
+interface TriggerEvent {
+  triggerSlug: string;           // 'GMAIL_NEW_GMAIL_MESSAGE'
+  userId: string;                // 'user_123'
+  connectedAccountId: string;    // 'conn_abc123'
+  payload: {
+    // Trigger-specific data
+    // Example for Gmail:
+    // { id: 'msg_123', subject: 'Hello', from: 'user@example.com' }
+  };
+  metadata: {
+    triggerId: string;
+    timestamp: string;
+  };
+}
+```
+
+## Unsubscribe
+
+```typescript
+const unsubscribe = await composio.triggers.subscribe((event) => {
+  console.log('Event:', event);
+});
+
+// Stop listening
+await unsubscribe();
+console.log('Unsubscribed from all triggers');
+```
+
+## Development Pattern
+
+```typescript
+async function devMode() {
+  console.log('Starting development mode...');
+
+  // Subscribe to events
+  const unsubscribe = await composio.triggers.subscribe((event) => {
+    console.log(`\n[${event.triggerSlug}]`);
+    console.log('User:', event.userId);
+    console.log('Payload:', JSON.stringify(event.payload, null, 2));
+  });
+
+  // Handle shutdown
+  process.on('SIGINT', async () => {
+    console.log('\nShutting down...');
+    await unsubscribe();
+    process.exit(0);
+  });
+
+  console.log('Listening for events. Press Ctrl+C to stop.');
+}
+
+devMode();
+```
+
+## Migration to Production
+
+Development (subscribe):
+```typescript
+// Development only
+await composio.triggers.subscribe((event) => {
+  console.log(event);
+});
+```
+
+Production (webhooks):
+```typescript
+// Production ready
+import express from 'express';
+
+const app = express();
+const composio = new Composio({ apiKey: process.env.COMPOSIO_API_KEY });
+
+await composio.triggers.listenToTriggers(app, (event) => {
+  console.log('Webhook received:', event);
+});
+
+app.listen(3000);
+```
+
+## Key Points
+
+- **Development only** - Never use subscribe() in production
+- **Use webhooks for production** - More reliable and scalable
+- **Filter events** - Reduce noise with triggerSlugs, userIds, connectedAccountIds
+- **Cleanup** - Always call unsubscribe() when done
+- **Long-running process** - Keep Node.js process alive to receive events
+
+---
+
+### 2.11. Webhook Verification
+
+<a name="webhook-verification"></a>
+
+**Impact:** 🔴 CRITICAL
+
+> Use webhook verification for reliable, scalable event delivery in production
+
+# Webhook Verification for Production
+
+Webhooks are the **production-ready** way to receive trigger events. Provides reliable delivery, automatic retries, and works with serverless.
+
+## Setup with listenToTriggers()
+
+```typescript
+import express from 'express';
+import { Composio } from '@composio/core';
+
+const app = express();
+const composio = new Composio({ apiKey: process.env.COMPOSIO_API_KEY });
+
+// Automatic webhook verification and handling
+await composio.triggers.listenToTriggers(app, async (event) => {
+  console.log('Webhook:', event.triggerSlug);
+  console.log('User:', event.userId);
+  console.log('Payload:', event.payload);
+
+  await handleEvent(event);
+});
+
+app.listen(3000);
+```
+
+**What it does:**
+- Creates `/composio/triggers` endpoint
+- Verifies webhook signatures automatically
+- Parses and validates payloads
+- Calls callback with verified events
+
+## Manual Verification
+
+For custom endpoints:
+
+```typescript
+import { verifyWebhookSignature } from '@composio/core';
+
+app.post('/custom/webhook', express.raw({ type: 'application/json' }), (req, res) => {
+  const signature = req.headers['x-composio-signature'];
+  const payload = req.body;
+
+  const isValid = verifyWebhookSignature(
+    payload,
+    signature,
+    process.env.COMPOSIO_WEBHOOK_SECRET
+  );
+
+  if (!isValid) {
+    return res.status(401).json({ error: 'Invalid signature' });
+  }
+
+  const event = JSON.parse(payload);
+  handleEvent(event);
+  res.json({ success: true });
+});
+```
+
+## Event Structure
+
+```typescript
+interface WebhookEvent {
+  triggerSlug: string;
+  userId: string;
+  connectedAccountId: string;
+  payload: object;
+  metadata: {
+    triggerId: string;
+    timestamp: string;
+    webhookId: string;
+  };
+}
+```
+
+## Processing Patterns
+
+### Route by Trigger Type
+
+```typescript
+async function handleEvent(event: WebhookEvent) {
+  switch (event.triggerSlug) {
+    case 'GMAIL_NEW_GMAIL_MESSAGE':
+      await handleGmail(event.userId, event.payload);
+      break;
+    case 'GITHUB_COMMIT_EVENT':
+      await handleGithub(event.userId, event.payload);
+      break;
+    case 'SLACK_NEW_MESSAGE':
+      await handleSlack(event.userId, event.payload);
+      break;
+  }
+}
+```
+
+### With Error Handling
+
+```typescript
+await composio.triggers.listenToTriggers(app, async (event) => {
+  try {
+    await processEvent(event);
+  } catch (error) {
+    console.error('Error:', error);
+    // Don't throw - acknowledge webhook received
+  }
+});
+```
+
+### With Idempotency
+
+```typescript
+await composio.triggers.listenToTriggers(app, async (event) => {
+  const webhookId = event.metadata.webhookId;
+
+  // Check if already processed
+  if (await isProcessed(webhookId)) {
+    console.log('Duplicate webhook, skipping');
+    return;
+  }
+
+  // Mark as processed
+  await markProcessed(webhookId);
+
+  // Process event
+  await handleEvent(event);
+});
+```
+
+## Configuration
+
+Set webhook URL in Composio dashboard:
+
+1. Go to [platform.composio.dev](https://platform.composio.dev)
+2. **Settings** > **Webhooks**
+3. Set URL: `https://your-app.com/composio/triggers`
+
+**Requirements:**
+- HTTPS URL (publicly accessible)
+- Respond with 200 OK within 30 seconds
+- Handle concurrent requests
+
+## Testing Locally
+
+Use ngrok:
+
+```bash
+ngrok http 3000
+# Use https://abc123.ngrok.io/composio/triggers in dashboard
+```
+
+## Security
+
+- **Always verify signatures** - Use `listenToTriggers()` or manual verification
+- **HTTPS only** - Never HTTP in production
+- **Keep secrets secure** - Environment variables only
+- **Validate payloads** - Check required fields
+- **Handle errors gracefully** - Log, don't throw
+- **Implement idempotency** - Use webhookId to deduplicate
+
+## Common Issues
+
+**401 Unauthorized:**
+- Invalid signature - check webhook secret
+- Wrong secret - verify environment variable
+
+**Timeout:**
+- Processing > 30 seconds - move to background queue
+- Return 200 OK immediately
+
+**Duplicates:**
+- Webhooks may deliver multiple times
+- Use webhookId for idempotency
+
+## Complete Example
+
+```typescript
+import express from 'express';
+import { Composio } from '@composio/core';
+
+const app = express();
+const composio = new Composio({ apiKey: process.env.COMPOSIO_API_KEY });
+
+await composio.triggers.listenToTriggers(app, async (event) => {
+  try {
+    // Idempotency check
+    if (await isProcessed(event.metadata.webhookId)) {
+      return;
+    }
+
+    // Process
+    switch (event.triggerSlug) {
+      case 'GMAIL_NEW_GMAIL_MESSAGE':
+        await sendNotification(event.userId, {
+          title: 'New Email',
+          body: event.payload.subject
+        });
+        break;
+    }
+
+    // Mark processed
+    await markProcessed(event.metadata.webhookId);
+  } catch (error) {
+    console.error('Error:', error);
+  }
+});
+
+app.get('/health', (req, res) => res.json({ status: 'ok' }));
+
+app.listen(3000, () => {
+  console.log('Webhook server running on port 3000');
+});
+```
+
+## Key Points
+
+- **Production standard** - Use webhooks, not subscribe()
+- **listenToTriggers()** - Handles verification automatically
+- **HTTPS required** - Security requirement
+- **Quick response** - Return 200 OK within 30s
+- **Idempotency** - Handle duplicates with webhookId
+- **Error handling** - Log but don't throw
+
+---
+
+### 2.12. Managing Triggers
+
+<a name="managing-triggers"></a>
+
+**Impact:** 🟠 HIGH
+
+> Control trigger states, update configurations, and manage trigger instances
+
+# Manage Trigger Lifecycle
+
+Control trigger states and configurations without recreating triggers.
+
+## Enable/Disable Triggers
+
+```typescript
+// Disable trigger (stop receiving events)
+await composio.triggers.disable('trigger_id_123');
+
+// Enable trigger (resume receiving events)
+await composio.triggers.enable('trigger_id_123');
+```
+
+**Use cases:**
+- **Disable:** Pause events temporarily, user disconnects account, billing issues
+- **Enable:** Resume after resolving issues, user reconnects account
+
+## Update Trigger Configuration
+
+```typescript
+// Update trigger config
+await composio.triggers.update('trigger_id_123', {
+  triggerConfig: {
+    labelIds: 'SENT', // Changed from 'INBOX'
+    interval: 120     // Changed from 60
+  }
+});
+```
+
+**Updateable fields:**
+- `triggerConfig` - Trigger-specific configuration
+- Cannot change trigger slug or connected account
+
+## Delete Triggers
+
+```typescript
+await composio.triggers.delete('trigger_id_123');
+```
+
+**Warning:** Permanent deletion. Creates new trigger if needed later.
+
+## List Active Triggers
+
+```typescript
+// All active triggers
+const triggers = await composio.triggers.getActiveTriggers();
+
+// By trigger slug
+const gmailTriggers = await composio.triggers.getActiveTriggers({
+  triggerSlugs: ['GMAIL_NEW_GMAIL_MESSAGE']
+});
+
+// By user
+const userTriggers = await composio.triggers.getActiveTriggers({
+  userIds: ['user_123']
+});
+
+// By connected account
+const accountTriggers = await composio.triggers.getActiveTriggers({
+  connectedAccountIds: ['conn_abc123']
+});
+
+// By status
+const enabled = await composio.triggers.getActiveTriggers({
+  status: 'enabled'
+});
+const disabled = await composio.triggers.getActiveTriggers({
+  status: 'disabled'
+});
+
+// Combine filters
+const filtered = await composio.triggers.getActiveTriggers({
+  triggerSlugs: ['SLACK_NEW_MESSAGE'],
+  userIds: ['user_123'],
+  status: 'enabled'
+});
+```
+
+**Response includes:**
+- `triggerId` - Unique ID
+- `triggerSlug` - Trigger type
+- `userId` - User ID
+- `connectedAccountId` - Account ID
+- `status` - 'enabled' or 'disabled'
+- `config` - Current configuration
+- `createdAt`, `updatedAt` - Timestamps
+
+## Get Trigger Details
+
+```typescript
+// Get specific trigger
+const trigger = await composio.triggers.getTriggerById('trigger_id_123');
+
+console.log(trigger.status);                // 'enabled'
+console.log(trigger.triggerSlug);           // 'GMAIL_NEW_GMAIL_MESSAGE'
+console.log(trigger.config.triggerConfig);  // { labelIds: 'INBOX', ... }
+```
+
+## Common Patterns
+
+### Pause User's Triggers
+
+```typescript
+async function pauseUserTriggers(userId: string) {
+  const triggers = await composio.triggers.getActiveTriggers({
+    userIds: [userId],
+    status: 'enabled'
+  });
+
+  for (const trigger of triggers.items) {
+    await composio.triggers.disable(trigger.triggerId);
+  }
+}
+```
+
+### Resume User's Triggers
+
+```typescript
+async function resumeUserTriggers(userId: string) {
+  const triggers = await composio.triggers.getActiveTriggers({
+    userIds: [userId],
+    status: 'disabled'
+  });
+
+  for (const trigger of triggers.items) {
+    await composio.triggers.enable(trigger.triggerId);
+  }
+}
+```
+
+### Clean Up Disconnected Account Triggers
+
+```typescript
+async function cleanupTriggers(connectedAccountId: string) {
+  const triggers = await composio.triggers.getActiveTriggers({
+    connectedAccountIds: [connectedAccountId]
+  });
+
+  for (const trigger of triggers.items) {
+    await composio.triggers.delete(trigger.triggerId);
+  }
+}
+```
+
+### Update All User Gmail Triggers
+
+```typescript
+async function updateGmailInterval(userId: string, newInterval: number) {
+  const triggers = await composio.triggers.getActiveTriggers({
+    userIds: [userId],
+    triggerSlugs: ['GMAIL_NEW_GMAIL_MESSAGE']
+  });
+
+  for (const trigger of triggers.items) {
+    await composio.triggers.update(trigger.triggerId, {
+      triggerConfig: {
+        ...trigger.config.triggerConfig,
+        interval: newInterval
+      }
+    });
+  }
+}
+```
+
+### Check Trigger Status
+
+```typescript
+async function isTriggerActive(triggerId: string): Promise<boolean> {
+  try {
+    const trigger = await composio.triggers.getTriggerById(triggerId);
+    return trigger.status === 'enabled';
+  } catch (error) {
+    return false; // Trigger doesn't exist
+  }
+}
+```
+
+### Get Trigger Count by User
+
+```typescript
+async function getUserTriggerCount(userId: string) {
+  const triggers = await composio.triggers.getActiveTriggers({
+    userIds: [userId]
+  });
+
+  return {
+    total: triggers.items.length,
+    enabled: triggers.items.filter(t => t.status === 'enabled').length,
+    disabled: triggers.items.filter(t => t.status === 'disabled').length
+  };
+}
+```
+
+## Lifecycle Management
+
+### Account Disconnection
+
+```typescript
+// When user disconnects an account
+async function handleAccountDisconnect(accountId: string) {
+  // Option 1: Disable triggers (can resume later)
+  const triggers = await composio.triggers.getActiveTriggers({
+    connectedAccountIds: [accountId]
+  });
+  for (const trigger of triggers.items) {
+    await composio.triggers.disable(trigger.triggerId);
+  }
+
+  // Option 2: Delete triggers (permanent)
+  for (const trigger of triggers.items) {
+    await composio.triggers.delete(trigger.triggerId);
+  }
+}
+```
+
+### Account Reconnection
+
+```typescript
+// When user reconnects
+async function handleAccountReconnect(accountId: string) {
+  const triggers = await composio.triggers.getActiveTriggers({
+    connectedAccountIds: [accountId],
+    status: 'disabled'
+  });
+
+  for (const trigger of triggers.items) {
+    await composio.triggers.enable(trigger.triggerId);
+  }
+}
+```
+
+### Subscription Management
+
+```typescript
+// Downgrade: disable non-essential triggers
+async function handleDowngrade(userId: string) {
+  const triggers = await composio.triggers.getActiveTriggers({
+    userIds: [userId],
+    triggerSlugs: ['NON_ESSENTIAL_TRIGGER']
+  });
+
+  for (const trigger of triggers.items) {
+    await composio.triggers.disable(trigger.triggerId);
+  }
+}
+
+// Upgrade: enable all triggers
+async function handleUpgrade(userId: string) {
+  const triggers = await composio.triggers.getActiveTriggers({
+    userIds: [userId],
+    status: 'disabled'
+  });
+
+  for (const trigger of triggers.items) {
+    await composio.triggers.enable(trigger.triggerId);
+  }
+}
+```
+
+## Key Points
+
+- **Disable vs Delete** - Disable pauses events, delete is permanent
+- **Update config** - Change trigger settings without recreating
+- **Filter getActiveTriggers** - Use multiple filters to narrow results
+- **Batch operations** - Loop through triggers for bulk enable/disable
+- **Handle disconnects** - Disable or delete triggers when accounts disconnect
+- **Status check** - Always verify trigger status before operations
+
+---
+
+### 2.13. User ID Patterns
+
+<a name="user-id-patterns"></a>
+
+**Impact:** 🟠 HIGH
+
+> Critical patterns for user identification, multi-tenancy, and data isolation in production applications
+
+# User Context and ID Patterns
+
+Every Composio operation requires a `userId` parameter for security and data isolation. Users can only access their own connected accounts.
+
+## The 'default' User ID
+
+`default` refers to your project's default account.
+
+**Only use 'default' for:**
+- Testing and development
+- Single-user applications
+- Internal tools with no external users
+
+**Never use in production multi-user apps** - it bypasses user isolation.
+
+## Production User ID Patterns
+
+### Database UUID (Recommended)
+
+Use your database's primary key:
+
+```typescript
+const userId = user.id; // "550e8400-e29b-41d4-a716-446655440000"
+
+await composio.tools.execute('GITHUB_GET_REPO', {
+  userId: userId,
+  arguments: { owner: 'example', repo: 'repo' },
+});
+```
+
+**Pros:** Stable, immutable, already exists, no mapping needed
+
+### External Auth ID (Acceptable)
+
+Use IDs from Auth0, Firebase, etc:
+
+```typescript
+const userId = user.externalId; // "auth0|507f1f77bcf86cd799439011"
+// Or with prefix
+const userId = `user_${user.id}`; // "user_12345"
+```
+
+**Pros:** Works with external auth, human-readable, allows namespacing
+**Cons:** May require mapping, usernames can change
+
+### Email (Not Recommended)
+
+```typescript
+const userId = user.email; // "user@example.com"
+```
+
+**Only use when:**
+- Email is guaranteed immutable
+- No other unique identifier available
+- SSO requires email-based identification
+
+**Cons:** Emails can change, privacy concerns
+
+## Organization-Based Applications
+
+For team/org-wide tool access, use organization ID as `userId`:
+
+```typescript
+// All users in org share same connected accounts
+const userId = organization.id; // "org_550e8400..."
+
+await composio.tools.execute('SLACK_SEND_MESSAGE', {
+  userId: userId, // organization ID, not individual user
+  arguments: { channel: '#general', text: 'Team message' },
+});
+```
+
+**Use organization IDs when:**
+- Team/org tools (Slack, MS Teams, Jira)
+- Enterprise apps with IT admin connections
+- Shared resources across users
+- Role-based access at org level
+
+**Example:**
+
+```typescript
+// Admin connects Slack for entire org
+async function connectOrgToSlack(orgId: string) {
+  const request = await composio.connectedAccounts.link(orgId, 'slack');
+  return request.redirectUrl;
+}
+
+// Any user in org can use connected tools
+async function sendMessage(orgId: string, message: string) {
+  return await composio.tools.execute('SLACK_SEND_MESSAGE', {
+    userId: orgId,
+    arguments: { channel: '#general', text: message },
+  });
+}
+
+// Check org connections
+async function listOrgConnections(orgId: string) {
+  return await composio.connectedAccounts.list({
+    userIds: [orgId],
+  });
+}
+```
+
+## Shared vs. Isolated Connections
+
+### Isolated (User-Level)
+
+Each user has their own connections:
+
+```typescript
+await composio.connectedAccounts.link('user_123', 'github_config');
+await composio.connectedAccounts.link('user_456', 'github_config');
+
+// Each execution uses that user's account
+await composio.tools.execute('GITHUB_GET_REPO', {
+  userId: 'user_123', // Uses user_123's GitHub
+  arguments: { ... },
+});
+```
+
+**Use for:** Personal integrations, individual credentials, privacy-critical
+
+### Shared (Organization-Level)
+
+All users share organization connections:
+
+```typescript
+await composio.connectedAccounts.link('org_acme', 'github_config');
+
+// All org users use same connection
+await composio.tools.execute('GITHUB_GET_REPO', {
+  userId: 'org_acme', // All users share
+  arguments: { ... },
+});
+```
+
+**Use for:** Org-wide access, centralized credentials, simplified administration
+
+## Security Best Practices
+
+### Never Expose User IDs to Frontend
+
+```typescript
+// ❌ DON'T: Allow frontend to specify userId
+app.post('/execute-tool', async (req, res) => {
+  await composio.tools.execute(req.body.tool, {
+    userId: req.body.userId, // SECURITY RISK
+    arguments: req.body.arguments,
+  });
+});
+
+// ✅ DO: Derive userId from authenticated session
+app.post('/execute-tool', async (req, res) => {
+  const userId = req.user.id; // From auth session
+  await composio.tools.execute(req.body.tool, {
+    userId: userId,
+    arguments: req.body.arguments,
+  });
+});
+```
+
+### Validate User Ownership
+
+```typescript
+async function executeForUser(authenticatedUserId, targetUserId, tool, args) {
+  if (authenticatedUserId !== targetUserId) {
+    throw new Error('Unauthorized');
+  }
+  return await composio.tools.execute(tool, {
+    userId: targetUserId,
+    arguments: args,
+  });
+}
+```
+
+## Common Patterns
+
+### Express Middleware
+
+```typescript
+app.use((req, res, next) => {
+  req.userId = req.user.id; // From authenticated session
+  next();
+});
+
+app.post('/execute-tool', async (req, res) => {
+  const result = await composio.tools.execute(req.body.tool, {
+    userId: req.userId,
+    arguments: req.body.arguments,
+  });
+  res.json(result);
+});
+```
+
+### Debug User Context
+
+```typescript
+const accounts = await composio.connectedAccounts.list({
+  userIds: [userId],
+});
+
+console.log(`User ${userId} has ${accounts.items.length} accounts`);
+accounts.items.forEach(account => {
+  console.log(`- ${account.toolkit.slug}: ${account.status}`);
+});
+```
+
+## Key Points
+
+- **Use database UUIDs** - Most stable and reliable
+- **Never expose userId** - Always derive from authenticated session
+- **Validate ownership** - Ensure users only access their data
+- **Use consistent format** - Pick one pattern and stick to it
+- **Organization IDs** - For team-wide tool access
+- **Handle changes gracefully** - Maintain mapping if IDs can change
 
 ---
 
 ## Quick Start
 
-```typescript
-import { Composio } from '@composio/core';
-
-// Create a session with Gmail tools
-const composio = new Composio();
-const session = await composio.create('user_123', {
-  toolkits: ['gmail'],
-  manageConnections: true
-});
-
-// Use with any MCP-compatible framework
-console.log('MCP URL:', session.mcp.url);
-```
+Examples
 
 ## References
 
+**Tool Router (Agents):**
 - [Tool Router Docs](https://docs.composio.dev/sdk/typescript/api/tool-router)
+- [MCP Protocol](https://modelcontextprotocol.io)
+- [Framework Integration Examples](https://github.com/composiohq/composio/tree/main/ts/examples/tool-router)
+
+**Direct Execution (Apps):**
+- [Tools API](https://docs.composio.dev/sdk/typescript/api/tools)
+- [Connected Accounts API](https://docs.composio.dev/sdk/typescript/api/connected-accounts)
+- [Auth Configs API](https://docs.composio.dev/sdk/typescript/api/auth-configs)
+- [Toolkits API](https://docs.composio.dev/sdk/typescript/api/toolkits)
+- [Custom Tools Guide](https://docs.composio.dev/sdk/typescript/api/custom-tools)
+- [Modifiers](https://docs.composio.dev/sdk/typescript/advanced/modifiers)
+- [Core Concepts](https://docs.composio.dev/sdk/typescript/core-concepts)
+
+**Shared:**
 - [Triggers API](https://docs.composio.dev/sdk/typescript/api/triggers)
 - [Webhook Verification](https://docs.composio.dev/sdk/typescript/advanced/webhook-verification)
-- [MCP Protocol](https://modelcontextprotocol.io)
-- [TypeScript Examples](https://github.com/composiohq/composio/tree/main/ts/examples/tool-router)
 
 
 ---
 
-_This file was automatically generated from individual rule files on 2026-01-23T20:17:27.953Z_
+_This file was automatically generated from individual rule files on 2026-02-05T10:09:56.340Z_
 _To update, run: `npm run build:agents`_
