@@ -7,6 +7,8 @@ tags: [tools, versions, stability, production, pinning]
 
 # Tool Version Management
 
+> **⚠️ CRITICAL:** Never assume or make up version numbers. Always use `composio.toolkits.get('toolkit_name')` to fetch available versions, or check the [dashboard](https://platform.composio.dev) to view versions and changes. Using non-existent versions will cause runtime errors.
+
 Tool versions are critical for workflow stability. When manually executing tools, a specific version is **required** to prevent argument mismatches when tool schemas change.
 
 ## Why Version Pinning Matters
@@ -119,14 +121,127 @@ Examples:
 
 ## Finding Available Versions
 
-Get toolkit metadata to find available versions:
+**⚠️ CRITICAL: Never assume or guess version numbers. Always verify that a version exists before using it.**
+
+### Method 1: Use SDK to List Available Versions
+
+Fetch toolkit metadata to see all available versions:
 
 ```typescript
+// Get available versions for a specific toolkit
 const toolkit = await composio.toolkits.get('github');
 console.log('Available versions:', toolkit.versions);
+console.log('Latest version:', toolkit.latestVersion);
+
+// For Gmail
+const gmailToolkit = await composio.toolkits.get('gmail');
+console.log('Gmail versions:', gmailToolkit.versions);
+
+// For Slack
+const slackToolkit = await composio.toolkits.get('slack');
+console.log('Slack versions:', slackToolkit.versions);
 ```
 
-Or check the Composio dashboard for version information.
+### Method 2: Check Dashboard
+
+View versions and changelog on the [Composio dashboard](https://platform.composio.dev):
+- Navigate to Toolkits section
+- Select the specific toolkit (e.g., GitHub, Gmail, Slack)
+- View available versions and their changes
+
+### How to Use Versions Correctly
+
+Once you've found available versions, choose a specific version to test, then pin it in your configuration:
+
+**Step 1: List available versions**
+```typescript
+const githubToolkit = await composio.toolkits.get('github');
+console.log('Available versions:', githubToolkit.versions);
+// Example output: ['12082025_00', '10082025_01', '08082025_00']
+```
+
+**Step 2: Choose and test a specific version**
+```typescript
+// Test with a specific version from the list
+const composio = new Composio({
+  toolkitVersions: {
+    github: '12082025_00', // Choose a specific version to test
+  }
+});
+```
+
+**Step 3: Pin the tested version in production**
+```typescript
+// After testing, pin the version in your production config
+const composio = new Composio({
+  toolkitVersions: {
+    github: '12082025_00',  // Pinned version that you've tested
+    slack: '10082025_01',   // Pinned version that you've tested
+  }
+});
+```
+
+### Using Environment Variables
+
+You can also set toolkit versions using environment variables:
+
+```bash
+# Set specific versions for individual toolkits
+export COMPOSIO_TOOLKIT_VERSION_GITHUB=12082025_00
+export COMPOSIO_TOOLKIT_VERSION_SLACK=10082025_01
+export COMPOSIO_TOOLKIT_VERSION_GMAIL=15082025_00
+```
+
+Then initialize Composio without specifying `toolkitVersions`:
+
+```typescript
+const composio = new Composio({
+  apiKey: 'your-api-key'
+  // Will automatically use environment variables
+});
+```
+
+### IMPORTANT: Don't Auto-Use Latest Version
+
+❌ **DON'T DO THIS:**
+```typescript
+// This defeats the purpose of version pinning!
+const githubToolkit = await composio.toolkits.get('github');
+const composio = new Composio({
+  toolkitVersions: {
+    github: githubToolkit.latestVersion, // Always uses latest - no pinning!
+  }
+});
+
+// Never use made-up version numbers either!
+const composio = new Composio({
+  toolkitVersions: {
+    github: '01012025_00', // Random version - might not exist!
+    slack: '25122024_99',  // Made up version - will fail!
+  }
+});
+```
+
+✅ **DO THIS:**
+```typescript
+// 1. List available versions to find valid options
+const githubToolkit = await composio.toolkits.get('github');
+console.log('Available versions:', githubToolkit.versions);
+
+// 2. Choose and test a specific version from the list
+// 3. Pin that tested version in your code or environment variables
+const composio = new Composio({
+  toolkitVersions: {
+    github: '12082025_00',  // Specific tested version
+    slack: '10082025_01',   // Specific tested version
+  }
+});
+```
+
+**Why this matters:**
+- Automatically using `latestVersion` means your app always uses the newest version, defeating the purpose of pinning
+- Version pinning is about locking to a specific, tested version for stability
+- When you're ready to upgrade, you explicitly choose and test a new version before deploying
 
 ## Version Migration Strategy
 

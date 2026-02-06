@@ -65,6 +65,7 @@ Authentication patterns for seamless user experiences:
 
 Build connection UIs and check toolkit states:
 
+- [Building Chat UIs](rules/tr-building-chat-ui.md) - Build chat applications with toolkit selection, connection management, and session handling
 - [Query Toolkit States](rules/tr-toolkit-query.md) - Use session.toolkits() to check connections, filter toolkits, and build connection UIs
 
 #### 1.4 Event-Driven Agents (Triggers)
