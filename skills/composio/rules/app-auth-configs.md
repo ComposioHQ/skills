@@ -9,6 +9,8 @@ tags: [auth-config, authentication, oauth, api-key, advanced]
 
 > **Note:** This is an **advanced use case**. Most users should create and manage auth configs through the Composio dashboard at [platform.composio.dev](https://platform.composio.dev). Use the SDK methods below only when you need programmatic auth config management.
 
+> **Using Tool Router?** If you're using Tool Router, you can use `session.toolkits()` to view the auth configs and connected accounts being used by the Tool Router. You only need to use the methods below if you're creating custom auth configs to be used with Tool Router.
+
 Auth configs define how authentication works for a toolkit. They specify the authentication scheme (OAuth2, API Key, etc.) and control which tools can be accessed.
 
 ## When to Use the SDK
