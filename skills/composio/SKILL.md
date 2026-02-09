@@ -10,6 +10,10 @@ Comprehensive guide to building AI agents and applications with Composio. Choose
 - **Tool Router** - Create isolated, secure MCP sessions for AI agents with automatic authentication
 - **Direct Execution** - Build traditional apps with manual tool execution and CRUD operations
 
+## Getting Started
+
+> 📖 **Prerequisites:** Before using Composio, set up your API keys. See [Setting Up API Keys](rules/setup-api-keys.md) for instructions on configuring Composio, OpenAI, and Anthropic API keys.
+
 ## When to use
 
 Use this skill when:
