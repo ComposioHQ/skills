@@ -20,15 +20,75 @@ const result = await composio.tools.execute('GITHUB_GET_ISSUES', {
 });
 ```
 
+## Discovering Available Tools
+
+**IMPORTANT**: Do NOT make up or guess tool names. Always discover available tools using `composio.tools.get()`.
+
+```typescript
+// Get all available tools in a toolkit
+const githubTools = await composio.tools.get('default', {
+  toolkits: ['github'],
+  limit: 100 // Set appropriate limit
+});
+
+console.log('Available GitHub tools:', githubTools.map(t => t.name));
+```
+
+```python
+# Get all available tools in a toolkit
+github_tools = composio.tools.get(
+    user_id="default",
+    toolkits=["github"],
+    limit=100  # Set appropriate limit
+)
+
+print("Available GitHub tools:", [t.name for t in github_tools])
+```
+
 ## Version Management
 
 **CRITICAL**: When manually executing tools (especially in workflows), a **specific version is required**. Using `'latest'` will throw an error.
+
+**How to discover available versions:**
+Use `composio.toolkits.get()` to see available versions for a toolkit:
+
+```typescript
+// Get toolkit information to see available versions
+const githubToolkit = await composio.toolkits.get('github');
+console.log('Available versions:', githubToolkit.versions);
+// e.g., ["12082025_00", "10082025_01", "08082025_00"]
+console.log('Current version:', githubToolkit.version); // e.g., "12082025_00"
+
+// ✅ DO: Pin to a specific version string for stability
+const result = await composio.tools.execute('GITHUB_GET_ISSUES', {
+  userId: 'user_123',
+  arguments: { owner: 'composio', repo: 'sdk' },
+  version: '12082025_00', // Pinned version string
+});
+```
+
+```python
+# Get toolkit information to see available versions
+github_toolkit = composio.toolkits.get("github")
+print(f"Available versions: {github_toolkit.versions}")
+# e.g., ["12082025_00", "10082025_01", "08082025_00"]
+print(f"Current version: {github_toolkit.version}")  # e.g., "12082025_00"
+
+# ✅ DO: Pin to a specific version string for stability
+result = composio.tools.execute(
+    tool="GITHUB_GET_ISSUES",
+    user_id="user_123",
+    arguments={"owner": "composio", "repo": "sdk"},
+    version="12082025_00"  # Pinned version string
+)
+```
 
 **Why version pinning is required:**
 - Tool argument schemas can change between versions
 - Using `'latest'` in workflows can cause runtime errors when tools are updated
 - Pinned versions ensure workflow stability and predictability
 - Version validation prevents production issues from schema mismatches
+- **Don't use `githubToolkit.version` dynamically** - this always returns the latest version, defeating the purpose of pinning
 
 See [Tool Version Management](app-tool-versions.md) for detailed version strategies.
 

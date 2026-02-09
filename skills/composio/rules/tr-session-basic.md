@@ -9,6 +9,8 @@ tags: [tool-router, session, initialization, agents]
 
 Always create isolated Tool Router sessions per user to ensure proper data isolation and scoped tool access.
 
+> 📖 **Before you begin:** Make sure you have set up your API keys. See [Setting Up API Keys](./setup-api-keys.md) for instructions.
+
 ## ❌ Incorrect
 
 ```typescript

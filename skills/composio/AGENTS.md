@@ -540,6 +540,8 @@ const teamSession = await composio.create(req.user.organizationId, {
 
 Always create isolated Tool Router sessions per user to ensure proper data isolation and scoped tool access.
 
+> 📖 **Before you begin:** Make sure you have set up your API keys. See [Setting Up API Keys](./setup-api-keys.md) for instructions.
+
 ## ❌ Incorrect
 
 ```typescript
@@ -1468,6 +1470,8 @@ When configuring MCP clients (like Claude Desktop), you need to provide the Comp
 - Select your project
 - Navigate to Settings to find your API keys
 - Or set it via environment variable: `COMPOSIO_API_KEY`
+
+> 📖 **See [Setting Up API Keys](./setup-api-keys.md)** for detailed instructions on configuring Composio, OpenAI, and Anthropic API keys for your project.
 
 When using Tool Router sessions programmatically, the headers are automatically included in `session.mcp.headers`.
 
@@ -2697,6 +2701,8 @@ With `manageConnections: true`, **you never need to check connections before age
 # Building Chat UIs with Tool Router
 
 Build chat applications with Tool Router using **Vercel AI SDK**, create **sessions per message** with dynamic configuration, and provide **toolkit selection** and **connection management** UI.
+
+> 📖 **Before you begin:** Make sure you have set up your API keys. See [Setting Up API Keys](./setup-api-keys.md) for instructions on configuring Composio and LLM provider API keys.
 
 ## Recommended: Vercel AI SDK
 
@@ -4123,6 +4129,8 @@ async function handleUpgrade(userId: string) {
 
 When building traditional applications (non-agent workflows), use direct tool fetching methods to discover and retrieve tools from Composio.
 
+**IMPORTANT**: Do NOT make up or guess tool names. Always use `composio.tools.get()` to discover available tools in a toolkit before using them.
+
 ## Methods Overview
 
 - **`tools.get()`** - Use when working with a provider (OpenAI, Vercel, etc.). Returns tools wrapped in provider-specific format.
@@ -4248,6 +4256,157 @@ const customizedTools = await composio.tools.get('default', {
 
 5. **Don't mix tools and toolkits filters**: Cannot use both filters together
 
+## Complete Discovery Workflow
+
+Here's the recommended workflow for discovering and using tools:
+
+```typescript
+// Step 1: Get toolkit information (to discover available versions)
+const githubToolkit = await composio.toolkits.get('github');
+console.log('Toolkit:', githubToolkit.name);
+console.log('Available versions:', githubToolkit.versions);
+console.log('Current version:', githubToolkit.version);
+console.log('Description:', githubToolkit.description);
+
+// Step 2: Discover all available tools in the toolkit
+const allGithubTools = await composio.tools.get('default', {
+  toolkits: ['github'],
+  limit: 100 // Adjust based on your needs
+});
+
+console.log('\nAvailable tools:');
+allGithubTools.forEach(tool => {
+  console.log(`- ${tool.name}: ${tool.description}`);
+});
+
+// Step 3: Find the tool you need
+const repoTool = allGithubTools.find(t => t.name === 'GITHUB_GET_REPO');
+if (!repoTool) {
+  throw new Error('Tool not found');
+}
+
+// Step 4: Execute the tool with a pinned version string
+const result = await composio.tools.execute('GITHUB_GET_REPO', {
+  userId: 'user_123',
+  arguments: { owner: 'composio', repo: 'sdk' },
+  version: '12082025_00' // ✅ Pinned version string for stability
+});
+```
+
+```python
+# Step 1: Get toolkit information (to discover available versions)
+github_toolkit = composio.toolkits.get("github")
+print(f"Toolkit: {github_toolkit.name}")
+print(f"Available versions: {github_toolkit.versions}")
+print(f"Current version: {github_toolkit.version}")
+print(f"Description: {github_toolkit.description}")
+
+# Step 2: Discover all available tools in the toolkit
+all_github_tools = composio.tools.get(
+    user_id="default",
+    toolkits=["github"],
+    limit=100  # Adjust based on your needs
+)
+
+print("\nAvailable tools:")
+for tool in all_github_tools:
+    print(f"- {tool.name}: {tool.description}")
+
+# Step 3: Find the tool you need
+repo_tool = next((t for t in all_github_tools if t.name == "GITHUB_GET_REPO"), None)
+if not repo_tool:
+    raise Exception("Tool not found")
+
+# Step 4: Execute the tool with a pinned version string
+result = composio.tools.execute(
+    tool="GITHUB_GET_REPO",
+    user_id="user_123",
+    arguments={"owner": "composio", "repo": "sdk"},
+    version="12082025_00"  # ✅ Pinned version string for stability
+)
+```
+
+## ❌ Common Mistakes
+
+```typescript
+// DON'T: Guess or make up tool names
+const result = await composio.tools.execute('GITHUB_GET_REPOSITORY', { // ❌ Wrong name
+  userId: 'user_123',
+  arguments: { repo: 'sdk' },
+  version: '12082025_00'
+});
+
+// DON'T: Use hardcoded versions without checking
+const result = await composio.tools.execute('GITHUB_GET_REPO', {
+  userId: 'user_123',
+  arguments: { owner: 'composio', repo: 'sdk' },
+  version: '12082025_00' // ❌ This might be outdated
+});
+```
+
+```python
+# DON'T: Guess or make up tool names
+result = composio.tools.execute(
+    tool="GITHUB_GET_REPOSITORY",  # ❌ Wrong name
+    user_id="user_123",
+    arguments={"repo": "sdk"},
+    version="12082025_00"
+)
+
+# DON'T: Use hardcoded versions without checking
+result = composio.tools.execute(
+    tool="GITHUB_GET_REPO",
+    user_id="user_123",
+    arguments={"owner": "composio", "repo": "sdk"},
+    version="12082025_00"  # ❌ This might be outdated
+)
+```
+
+## ✅ Best Practices
+
+```typescript
+// DO: Discover available versions and tools first
+const toolkit = await composio.toolkits.get('github');
+console.log('Available versions:', toolkit.versions);
+
+const tools = await composio.tools.get('default', {
+  toolkits: ['github'],
+  limit: 100
+});
+
+// DO: Use discovered tool names and pin to a specific version string
+const toolName = tools.find(t => t.description.includes('repository'))?.name;
+if (toolName) {
+  const result = await composio.tools.execute(toolName, {
+    userId: 'user_123',
+    arguments: { owner: 'composio', repo: 'sdk' },
+    version: '12082025_00' // ✅ Pinned version string for stability
+  });
+}
+```
+
+```python
+# DO: Discover available versions and tools first
+toolkit = composio.toolkits.get("github")
+print(f"Available versions: {toolkit.versions}")
+
+tools = composio.tools.get(
+    user_id="default",
+    toolkits=["github"],
+    limit=100
+)
+
+# DO: Use discovered tool names and pin to a specific version string
+tool_name = next((t.name for t in tools if "repository" in t.description), None)
+if tool_name:
+    result = composio.tools.execute(
+        tool=tool_name,
+        user_id="user_123",
+        arguments={"owner": "composio", "repo": "sdk"},
+        version="12082025_00"  # ✅ Pinned version string for stability
+    )
+```
+
 ---
 
 ### 2.2. Direct Tool Execution
@@ -4273,15 +4432,75 @@ const result = await composio.tools.execute('GITHUB_GET_ISSUES', {
 });
 ```
 
+## Discovering Available Tools
+
+**IMPORTANT**: Do NOT make up or guess tool names. Always discover available tools using `composio.tools.get()`.
+
+```typescript
+// Get all available tools in a toolkit
+const githubTools = await composio.tools.get('default', {
+  toolkits: ['github'],
+  limit: 100 // Set appropriate limit
+});
+
+console.log('Available GitHub tools:', githubTools.map(t => t.name));
+```
+
+```python
+# Get all available tools in a toolkit
+github_tools = composio.tools.get(
+    user_id="default",
+    toolkits=["github"],
+    limit=100  # Set appropriate limit
+)
+
+print("Available GitHub tools:", [t.name for t in github_tools])
+```
+
 ## Version Management
 
 **CRITICAL**: When manually executing tools (especially in workflows), a **specific version is required**. Using `'latest'` will throw an error.
+
+**How to discover available versions:**
+Use `composio.toolkits.get()` to see available versions for a toolkit:
+
+```typescript
+// Get toolkit information to see available versions
+const githubToolkit = await composio.toolkits.get('github');
+console.log('Available versions:', githubToolkit.versions);
+// e.g., ["12082025_00", "10082025_01", "08082025_00"]
+console.log('Current version:', githubToolkit.version); // e.g., "12082025_00"
+
+// ✅ DO: Pin to a specific version string for stability
+const result = await composio.tools.execute('GITHUB_GET_ISSUES', {
+  userId: 'user_123',
+  arguments: { owner: 'composio', repo: 'sdk' },
+  version: '12082025_00', // Pinned version string
+});
+```
+
+```python
+# Get toolkit information to see available versions
+github_toolkit = composio.toolkits.get("github")
+print(f"Available versions: {github_toolkit.versions}")
+# e.g., ["12082025_00", "10082025_01", "08082025_00"]
+print(f"Current version: {github_toolkit.version}")  # e.g., "12082025_00"
+
+# ✅ DO: Pin to a specific version string for stability
+result = composio.tools.execute(
+    tool="GITHUB_GET_ISSUES",
+    user_id="user_123",
+    arguments={"owner": "composio", "repo": "sdk"},
+    version="12082025_00"  # Pinned version string
+)
+```
 
 **Why version pinning is required:**
 - Tool argument schemas can change between versions
 - Using `'latest'` in workflows can cause runtime errors when tools are updated
 - Pinned versions ensure workflow stability and predictability
 - Version validation prevents production issues from schema mismatches
+- **Don't use `githubToolkit.version` dynamically** - this always returns the latest version, defeating the purpose of pinning
 
 See [Tool Version Management](app-tool-versions.md) for detailed version strategies.
 
@@ -7015,5 +7234,5 @@ Examples
 
 ---
 
-_This file was automatically generated from individual rule files on 2026-02-06T05:10:09.820Z_
+_This file was automatically generated from individual rule files on 2026-02-09T10:30:51.178Z_
 _To update, run: `npm run build:agents`_

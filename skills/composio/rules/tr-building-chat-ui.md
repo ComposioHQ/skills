@@ -9,6 +9,8 @@ tags: [tool-router, chat-ui, vercel-ai-sdk, toolkit-selection, authentication, s
 
 Build chat applications with Tool Router using **Vercel AI SDK**, create **sessions per message** with dynamic configuration, and provide **toolkit selection** and **connection management** UI.
 
+> 📖 **Before you begin:** Make sure you have set up your API keys. See [Setting Up API Keys](./setup-api-keys.md) for instructions on configuring Composio and LLM provider API keys.
+
 ## Recommended: Vercel AI SDK
 
 - Native streaming support

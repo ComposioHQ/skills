@@ -50,6 +50,8 @@ When configuring MCP clients (like Claude Desktop), you need to provide the Comp
 - Navigate to Settings to find your API keys
 - Or set it via environment variable: `COMPOSIO_API_KEY`
 
+> 📖 **See [Setting Up API Keys](./setup-api-keys.md)** for detailed instructions on configuring Composio, OpenAI, and Anthropic API keys for your project.
+
 When using Tool Router sessions programmatically, the headers are automatically included in `session.mcp.headers`.
 
 ## ❌ Incorrect - Using Tools Without Tool Router
