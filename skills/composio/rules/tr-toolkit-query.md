@@ -69,7 +69,7 @@ console.log('Connection Status:', connectionUI);
 from composio import Composio
 
 composio = Composio()
-session = composio.tool_router.create(
+session = composio.create(
     user_id="user_123",
     toolkits=["gmail", "slack", "github"],
     manage_connections=True  # Agent handles auth automatically

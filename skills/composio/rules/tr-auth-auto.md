@@ -24,7 +24,7 @@ const session = await composio.create('user_123', {
 
 ```python
 # DON'T: Disable connection management for interactive apps
-session = composio.tool_router.create(
+session = composio.create(
     user_id="user_123",
     toolkits=["gmail"],
     manage_connections=False  # User can't authenticate!
@@ -58,7 +58,7 @@ const session = await composio.create('user_123', {
 from composio import Composio
 
 composio = Composio()
-session = composio.tool_router.create(
+session = composio.create(
     user_id="user_123",
     toolkits=["gmail", "slack"],
     manage_connections=True  # Users can authenticate in chat
@@ -86,7 +86,7 @@ const session = await composio.create('user_123', {
 
 ```python
 # Configure custom callback for OAuth flow
-session = composio.tool_router.create(
+session = composio.create(
     user_id="user_123",
     toolkits=["gmail"],
     manage_connections={

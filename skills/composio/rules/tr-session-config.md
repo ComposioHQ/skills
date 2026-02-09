@@ -26,7 +26,7 @@ const session = await composio.create('user_123', {
 
 ```python
 # DON'T: Enable all toolkits without restrictions
-session = composio.tool_router.create(
+session = composio.create(
     user_id="user_123"
     # No toolkit restrictions - exposes everything!
 )
@@ -63,13 +63,13 @@ from composio import Composio
 composio = Composio()
 
 # Simple toolkit list
-session = composio.tool_router.create(
+session = composio.create(
     user_id="user_123",
     toolkits=["gmail", "slack", "github"]
 )
 
 # Explicit enable
-session2 = composio.tool_router.create(
+session2 = composio.create(
     user_id="user_123",
     toolkits={"enable": ["gmail", "slack"]}
 )
@@ -95,7 +95,7 @@ const session = await composio.create('user_123', {
 
 ```python
 # DO: Control specific tools per toolkit
-session = composio.tool_router.create(
+session = composio.create(
     user_id="user_123",
     toolkits=["gmail", "slack"],
     tools={
@@ -130,7 +130,7 @@ const session = await composio.create('user_123', {
 
 ```python
 # DO: Use tags to filter by behavior
-session = composio.tool_router.create(
+session = composio.create(
     user_id="user_123",
     toolkits=["gmail", "github"],
     # Global tags: only read-only tools

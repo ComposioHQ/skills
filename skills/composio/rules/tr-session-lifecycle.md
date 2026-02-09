@@ -44,7 +44,7 @@ class AgentService:
     async def handle_message(self, user_id: str, message: str):
         # BAD: Reusing cached session
         if user_id not in self.session_cache:
-            session = composio.tool_router.create(
+            session = composio.create(
                 user_id=user_id,
                 toolkits=["gmail", "slack"]
             )
@@ -109,7 +109,7 @@ async def handle_user_message(
     config: dict
 ):
     # Create new session for this message
-    session = composio.tool_router.create(
+    session = composio.create(
         user_id=user_id,
         toolkits=config["toolkits"],
         manage_connections=True
@@ -168,7 +168,7 @@ async def handle_conversation(
     config: dict
 ):
     # Create ONE session for this conversation/thread
-    session = composio.tool_router.create(
+    session = composio.create(
         user_id=user_id,
         toolkits=config["toolkits"],
         manage_connections=True

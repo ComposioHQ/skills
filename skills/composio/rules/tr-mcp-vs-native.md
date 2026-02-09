@@ -32,7 +32,7 @@ const tools = await client.tools();
 ```python
 # DON'T: Use MCP when you need logging, modifiers, or performance
 composio = Composio()  # No provider
-session = composio.tool_router.create(user_id="user_123")
+session = composio.create(user_id="user_123")
 
 # ❌ No control over tool execution
 # ❌ No modifier support
@@ -71,7 +71,7 @@ from composio_openai import OpenAIProvider
 # Add provider for native tools
 composio = Composio(provider=OpenAIProvider())
 
-session = composio.tool_router.create(
+session = composio.create(
     user_id="user_123",
     toolkits=["gmail", "slack"]
 )
@@ -174,7 +174,7 @@ from composio_openai import OpenAIProvider
 
 composio = Composio(provider=OpenAIProvider())
 
-session = composio.tool_router.create(
+session = composio.create(
     user_id="user_123",
     toolkits=["gmail"]
 )
