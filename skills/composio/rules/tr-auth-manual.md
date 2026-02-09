@@ -25,7 +25,7 @@ await session.authorize('gmail');
 
 ```python
 # DON'T: Mix auto and manual auth without clear purpose
-session = composio.tool_router.create(
+session = composio.create(
     user_id="user_123",
     toolkits=["gmail"],
     manage_connections=True  # Agent handles auth
@@ -76,7 +76,7 @@ from composio import Composio
 composio = Composio()
 
 # Step 1: Create session for onboarding
-session = composio.tool_router.create(
+session = composio.create(
     user_id="user_123",
     toolkits=["gmail", "slack"]
 )
@@ -122,7 +122,7 @@ async function settingsPageHandler(userId: string, toolkit: string) {
 ```python
 # DO: Manual auth for connection management in settings
 async def settings_page_handler(user_id: str, toolkit: str):
-    session = composio.tool_router.create(
+    session = composio.create(
         user_id=user_id,
         toolkits=[toolkit]
     )

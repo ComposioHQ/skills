@@ -25,7 +25,7 @@ const session = await composio.create('user_123', {
 
 ```python
 # DON'T: Disable connections in interactive applications
-session = composio.tool_router.create(
+session = composio.create(
     user_id="user_123",
     toolkits=["gmail"],
     manage_connections=False  # Tools will FAIL if user not connected!
@@ -72,14 +72,14 @@ from composio import Composio
 composio = Composio()
 
 # Option 1: Use default (manage_connections: True)
-session1 = composio.tool_router.create(
+session1 = composio.create(
     user_id="user_123",
     toolkits=["gmail", "slack"]
     # manage_connections defaults to True
 )
 
 # Option 2: Explicitly enable with boolean
-session2 = composio.tool_router.create(
+session2 = composio.create(
     user_id="user_123",
     toolkits=["gmail"],
     manage_connections=True  # Agent can prompt for auth
@@ -114,7 +114,7 @@ const session = await composio.create('user_123', {
 
 ```python
 # DO: Configure with object for fine-grained control
-session = composio.tool_router.create(
+session = composio.create(
     user_id="user_123",
     toolkits=["gmail", "slack"],
     manage_connections={

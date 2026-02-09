@@ -79,7 +79,7 @@ async function handleUserRequest(req: Request) {
 ```python
 # DON'T: Use 'default' in production multi-user apps
 async def handle_user_request(req):
-    session = composio.tool_router.create(
+    session = composio.create(
         user_id="default",
         toolkits=["gmail", "slack"]
     )
@@ -145,7 +145,7 @@ async def handle_user_request(req):
     user_id = req.user.id  # e.g., "550e8400-e29b-41d4-a716-446655440000"
 
     # Create isolated session for this user
-    session = composio.tool_router.create(
+    session = composio.create(
         user_id=user_id,
         toolkits=["gmail", "slack"]
     )
@@ -211,7 +211,7 @@ composio = Composio(provider=OpenAIProvider())
 async def handle_clerk_user(user_id: str):
     # Using Clerk user ID
     # e.g., "user_2abc123def456"
-    session = composio.tool_router.create(
+    session = composio.create(
         user_id=user_id,
         toolkits=["github"]
     )
@@ -220,7 +220,7 @@ async def handle_clerk_user(user_id: str):
 async def handle_auth0_user(user_id: str):
     # Using Auth0 user ID
     # e.g., "auth0|507f1f77bcf86cd799439011"
-    session = composio.tool_router.create(
+    session = composio.create(
         user_id=user_id,
         toolkits=["gmail"]
     )
@@ -229,7 +229,7 @@ async def handle_auth0_user(user_id: str):
 async def handle_supabase_user(user_id: str):
     # Using Supabase user UUID
     # e.g., "d7f8b0c1-1234-5678-9abc-def012345678"
-    session = composio.tool_router.create(
+    session = composio.create(
         user_id=user_id,
         toolkits=["slack"]
     )
@@ -286,7 +286,7 @@ async def handle_org_level_app(req):
     # Use organization ID, NOT individual user ID
     organization_id = req.user.organization_id
 
-    session = composio.tool_router.create(
+    session = composio.create(
         user_id=organization_id,
         toolkits=["slack", "github"],  # Org-wide tools
         manage_connections=True
@@ -300,7 +300,7 @@ async def handle_org_level_app(req):
 # Example: Slack workspace integration
 async def create_workspace_session(workspace_id: str):
     # Workspace ID as user ID
-    session = composio.tool_router.create(
+    session = composio.create(
         user_id=f"workspace_{workspace_id}",
         toolkits=["slack", "notion", "linear"]
     )
@@ -402,7 +402,7 @@ export async function POST(req: NextRequest) {
 @app.post("/api/agent")
 async def agent_endpoint(user: User = Depends(get_current_user)):
     user_id = user.id  # From Auth0
-    session = composio.tool_router.create(user_id=user_id, **config)
+    session = composio.create(user_id=user_id, **config)
 ```
 
 ### 4. **Namespace for Multi-Tenancy**
@@ -554,7 +554,7 @@ const sharedSession = await composio.create('default', {
 
 ```python
 # DON'T: Using shared session for multiple users
-shared_session = composio.tool_router.create(
+shared_session = composio.create(
     user_id="default",
     toolkits=["gmail"]
 )
@@ -585,7 +585,7 @@ from composio import Composio
 composio = Composio()
 
 # Each user gets their own isolated session
-session = composio.tool_router.create(
+session = composio.create(
     user_id="user_123",
     toolkits=["gmail", "slack"]
 )
@@ -655,7 +655,7 @@ class AgentService:
     async def handle_message(self, user_id: str, message: str):
         # BAD: Reusing cached session
         if user_id not in self.session_cache:
-            session = composio.tool_router.create(
+            session = composio.create(
                 user_id=user_id,
                 toolkits=["gmail", "slack"]
             )
@@ -720,7 +720,7 @@ async def handle_user_message(
     config: dict
 ):
     # Create new session for this message
-    session = composio.tool_router.create(
+    session = composio.create(
         user_id=user_id,
         toolkits=config["toolkits"],
         manage_connections=True
@@ -779,7 +779,7 @@ async def handle_conversation(
     config: dict
 ):
     # Create ONE session for this conversation/thread
-    session = composio.tool_router.create(
+    session = composio.create(
         user_id=user_id,
         toolkits=config["toolkits"],
         manage_connections=True
@@ -1026,7 +1026,7 @@ const session = await composio.create('user_123', {
 
 ```python
 # DON'T: Enable all toolkits without restrictions
-session = composio.tool_router.create(
+session = composio.create(
     user_id="user_123"
     # No toolkit restrictions - exposes everything!
 )
@@ -1063,13 +1063,13 @@ from composio import Composio
 composio = Composio()
 
 # Simple toolkit list
-session = composio.tool_router.create(
+session = composio.create(
     user_id="user_123",
     toolkits=["gmail", "slack", "github"]
 )
 
 # Explicit enable
-session2 = composio.tool_router.create(
+session2 = composio.create(
     user_id="user_123",
     toolkits={"enable": ["gmail", "slack"]}
 )
@@ -1095,7 +1095,7 @@ const session = await composio.create('user_123', {
 
 ```python
 # DO: Control specific tools per toolkit
-session = composio.tool_router.create(
+session = composio.create(
     user_id="user_123",
     toolkits=["gmail", "slack"],
     tools={
@@ -1130,7 +1130,7 @@ const session = await composio.create('user_123', {
 
 ```python
 # DO: Use tags to filter by behavior
-session = composio.tool_router.create(
+session = composio.create(
     user_id="user_123",
     toolkits=["gmail", "github"],
     # Global tags: only read-only tools
@@ -1201,7 +1201,7 @@ const tools = await client.tools();
 ```python
 # DON'T: Use MCP when you need logging, modifiers, or performance
 composio = Composio()  # No provider
-session = composio.tool_router.create(user_id="user_123")
+session = composio.create(user_id="user_123")
 
 # ❌ No control over tool execution
 # ❌ No modifier support
@@ -1240,7 +1240,7 @@ from composio_openai import OpenAIProvider
 # Add provider for native tools
 composio = Composio(provider=OpenAIProvider())
 
-session = composio.tool_router.create(
+session = composio.create(
     user_id="user_123",
     toolkits=["gmail", "slack"]
 )
@@ -1343,7 +1343,7 @@ from composio_openai import OpenAIProvider
 
 composio = Composio(provider=OpenAIProvider())
 
-session = composio.tool_router.create(
+session = composio.create(
     user_id="user_123",
     toolkits=["gmail"]
 )
@@ -2267,7 +2267,7 @@ const session = await composio.create('user_123', {
 
 ```python
 # DON'T: Disable connection management for interactive apps
-session = composio.tool_router.create(
+session = composio.create(
     user_id="user_123",
     toolkits=["gmail"],
     manage_connections=False  # User can't authenticate!
@@ -2301,7 +2301,7 @@ const session = await composio.create('user_123', {
 from composio import Composio
 
 composio = Composio()
-session = composio.tool_router.create(
+session = composio.create(
     user_id="user_123",
     toolkits=["gmail", "slack"],
     manage_connections=True  # Users can authenticate in chat
@@ -2329,7 +2329,7 @@ const session = await composio.create('user_123', {
 
 ```python
 # Configure custom callback for OAuth flow
-session = composio.tool_router.create(
+session = composio.create(
     user_id="user_123",
     toolkits=["gmail"],
     manage_connections={
@@ -2382,7 +2382,7 @@ await session.authorize('gmail');
 
 ```python
 # DON'T: Mix auto and manual auth without clear purpose
-session = composio.tool_router.create(
+session = composio.create(
     user_id="user_123",
     toolkits=["gmail"],
     manage_connections=True  # Agent handles auth
@@ -2433,7 +2433,7 @@ from composio import Composio
 composio = Composio()
 
 # Step 1: Create session for onboarding
-session = composio.tool_router.create(
+session = composio.create(
     user_id="user_123",
     toolkits=["gmail", "slack"]
 )
@@ -2479,7 +2479,7 @@ async function settingsPageHandler(userId: string, toolkit: string) {
 ```python
 # DO: Manual auth for connection management in settings
 async def settings_page_handler(user_id: str, toolkit: str):
-    session = composio.tool_router.create(
+    session = composio.create(
         user_id=user_id,
         toolkits=[toolkit]
     )
@@ -2547,7 +2547,7 @@ const session = await composio.create('user_123', {
 
 ```python
 # DON'T: Disable connections in interactive applications
-session = composio.tool_router.create(
+session = composio.create(
     user_id="user_123",
     toolkits=["gmail"],
     manage_connections=False  # Tools will FAIL if user not connected!
@@ -2594,14 +2594,14 @@ from composio import Composio
 composio = Composio()
 
 # Option 1: Use default (manage_connections: True)
-session1 = composio.tool_router.create(
+session1 = composio.create(
     user_id="user_123",
     toolkits=["gmail", "slack"]
     # manage_connections defaults to True
 )
 
 # Option 2: Explicitly enable with boolean
-session2 = composio.tool_router.create(
+session2 = composio.create(
     user_id="user_123",
     toolkits=["gmail"],
     manage_connections=True  # Agent can prompt for auth
@@ -2636,7 +2636,7 @@ const session = await composio.create('user_123', {
 
 ```python
 # DO: Configure with object for fine-grained control
-session = composio.tool_router.create(
+session = composio.create(
     user_id="user_123",
     toolkits=["gmail", "slack"],
     manage_connections={
@@ -3115,7 +3115,7 @@ console.log('Connection Status:', connectionUI);
 from composio import Composio
 
 composio = Composio()
-session = composio.tool_router.create(
+session = composio.create(
     user_id="user_123",
     toolkits=["gmail", "slack", "github"],
     manage_connections=True  # Agent handles auth automatically
@@ -7234,5 +7234,5 @@ Examples
 
 ---
 
-_This file was automatically generated from individual rule files on 2026-02-09T10:30:51.178Z_
+_This file was automatically generated from individual rule files on 2026-02-09T11:15:56.846Z_
 _To update, run: `npm run build:agents`_
