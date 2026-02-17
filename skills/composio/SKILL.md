@@ -72,7 +72,18 @@ Build connection UIs and check toolkit states:
 - [Building Chat UIs](rules/tr-building-chat-ui.md) - Build chat applications with toolkit selection, connection management, and session handling
 - [Query Toolkit States](rules/tr-toolkit-query.md) - Use session.toolkits() to check connections, filter toolkits, and build connection UIs
 
-#### 1.4 Event-Driven Agents (Triggers)
+#### 1.4 Framework-Specific Guides
+
+**When to use:** Use these guides when you're certain about the framework the user is working with, or when the user explicitly mentions the framework name.
+
+Detailed integration guides for specific AI frameworks:
+
+- [Vercel AI SDK Integration](rules/tr-framework-ai-sdk.md) - Complete guide for Vercel AI SDK with native tools, MCP, and React
+- [Mastra Integration](rules/tr-framework-mastra.md) - Complete guide for Mastra agents with native tools and MCP
+
+> **Note:** For general framework integration patterns (LangChain, OpenAI Agents), see [Framework Integration](rules/tr-framework-integration.md). Use framework-specific guides only when the framework is explicitly mentioned or clearly identified.
+
+#### 1.5 Event-Driven Agents (Triggers)
 
 Real-time event handling and webhook integration patterns:
 
