@@ -82,7 +82,7 @@ app.post('/api/toolkits', async (req, res) => {
   const session = await composio.create(userId);
   const toolkits = await session.toolkits();
 
-  res.json(toolkits.map(tk => ({
+  res.json(toolkits.items.map(tk => ({
     slug: tk.slug,
     name: tk.name,
     description: tk.description,
@@ -108,7 +108,7 @@ export function ToolkitSelector({ userId, onSelect }: Props) {
 
   return (
     <div className="toolkit-grid">
-      {toolkits.map(tk => (
+      {toolkits.items.map(tk => (
         <div
           key={tk.slug}
           className={selected.includes(tk.slug) ? 'selected' : ''}
@@ -166,7 +166,7 @@ export function ConnectedAccounts({ userId }: Props) {
 
   return (
     <div>
-      {toolkits.map(tk => (
+      {toolkits.items.map(tk => (
         <div key={tk.slug}>
           <h3>{tk.name}</h3>
           {tk.isConnected ? (
