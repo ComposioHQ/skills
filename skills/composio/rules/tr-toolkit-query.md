@@ -17,7 +17,7 @@ async function showToolkits(session) {
   // Just show toolkit names with no status
   const toolkits = ['Gmail', 'Slack', 'GitHub'];
 
-  return toolkits.map(name => ({
+  return toolkits.items.map(name => ({
     name,
     // Missing: connection status, auth button, etc.
   }));

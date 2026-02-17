@@ -139,7 +139,7 @@ const toolkits = await composio.toolkits.get({
   sortBy: 'alphabetically'
 });
 
-const toolkitOptions = toolkits.map(tk => ({
+const toolkitOptions = toolkits.items.map(tk => ({
   value: tk.slug,
   label: tk.name,
   toolCount: tk.meta.toolsCount,

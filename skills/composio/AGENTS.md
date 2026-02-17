@@ -2775,7 +2775,7 @@ app.post('/api/toolkits', async (req, res) => {
   const session = await composio.create(userId);
   const toolkits = await session.toolkits();
 
-  res.json(toolkits.map(tk => ({
+  res.json(toolkits.items.map(tk => ({
     slug: tk.slug,
     name: tk.name,
     description: tk.description,
@@ -2801,7 +2801,7 @@ export function ToolkitSelector({ userId, onSelect }: Props) {
 
   return (
     <div className="toolkit-grid">
-      {toolkits.map(tk => (
+      {toolkits.items.map(tk => (
         <div
           key={tk.slug}
           className={selected.includes(tk.slug) ? 'selected' : ''}
@@ -2859,7 +2859,7 @@ export function ConnectedAccounts({ userId }: Props) {
 
   return (
     <div>
-      {toolkits.map(tk => (
+      {toolkits.items.map(tk => (
         <div key={tk.slug}>
           <h3>{tk.name}</h3>
           {tk.isConnected ? (
@@ -3063,7 +3063,7 @@ async function showToolkits(session) {
   // Just show toolkit names with no status
   const toolkits = ['Gmail', 'Slack', 'GitHub'];
 
-  return toolkits.map(name => ({
+  return toolkits.items.map(name => ({
     name,
     // Missing: connection status, auth button, etc.
   }));
@@ -5634,7 +5634,7 @@ const toolkits = await composio.toolkits.get({
   sortBy: 'alphabetically'
 });
 
-const toolkitOptions = toolkits.map(tk => ({
+const toolkitOptions = toolkits.items.map(tk => ({
   value: tk.slug,
   label: tk.name,
   toolCount: tk.meta.toolsCount,
@@ -7234,5 +7234,5 @@ Examples
 
 ---
 
-_This file was automatically generated from individual rule files on 2026-02-09T11:15:56.846Z_
+_This file was automatically generated from individual rule files on 2026-02-17T01:21:35.463Z_
 _To update, run: `npm run build:agents`_
