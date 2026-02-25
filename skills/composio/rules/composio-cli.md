@@ -174,7 +174,38 @@ composio py generate --toolkits gmail
 
 ## Tips
 
-- **JSON Output**: Most commands output JSON to stdout for programmatic use
+### JSON Output & jq Integration
+
+**All commands output JSON to stdout** for agent-friendly, machine-readable responses. Pipe output to `jq` for processing:
+
+```bash
+# Get API key programmatically
+composio whoami | jq -r '.apiKey'
+
+# Extract toolkit slugs
+composio toolkits list | jq -r '.[].slug'
+
+# Get tool names from a toolkit
+composio tools list --toolkits "gmail" | jq -r '.[].name'
+
+# Filter active connections
+composio connected-accounts list --status ACTIVE | jq -r '.[].id'
+
+# Get connection details for specific toolkit
+composio connected-accounts list --toolkits "gmail" | jq '.[] | {id, status, toolkit: .toolkit.slug}'
+
+# Extract trigger configuration
+composio triggers info "GMAIL_NEW_GMAIL_MESSAGE" | jq '.config'
+```
+
+**Why use jq:**
+- Extract specific fields for automation scripts
+- Transform JSON for different tools/workflows
+- Build agent-friendly responses
+- Chain with other CLI tools
+
+### Other Tips
+
 - **Filtering**: Use `--toolkits`, `--user-id`, `--status`, `--tags`, `--query` to filter results
 - **User IDs**: Use `"default"` for testing, actual user IDs for production
 - **Help is Your Friend**: Every command supports `--help` for detailed options
