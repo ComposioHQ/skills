@@ -13,10 +13,11 @@ Quick reference for Composio CLI commands. Use `composio <command> --help` to se
 
 - **Discovery & Exploration** - Quickly find available toolkits, tools, and triggers before writing code
 - **Development & Testing** - Test connections, verify auth configs, and validate tool execution locally
-- **Debugging** - Inspect connected accounts, check connection status, and troubleshoot auth issues
+- **Debugging & Monitoring** - View tool execution logs, inspect trigger events, and troubleshoot failures
 - **Quick Operations** - Link accounts, manage auth configs, and perform one-off tasks without writing code
+- **Code Generation** - Generate TypeScript/Python type stubs for better IDE support and type safety
 - **CI/CD & Automation** - Script toolkit setup, connection verification, and project initialization
-- **OpenClawd or CLI based Agents** - Use composio tools to extend agent capabilities to connect to applications
+- **Agent Integration** - Use CLI tools to extend agent capabilities and connect to external applications
 
 ## Installation
 
@@ -115,6 +116,16 @@ Common options: `--output-dir`, `--toolkits`, `--type-tools`
 
 Use `composio generate --help` for all available options.
 
+### Debugging & Logs
+
+Monitor and debug tool and trigger executions with detailed logs.
+
+- **`composio logs tools`** - List recent tool execution logs with status and timestamps
+- **`composio logs tools <log_id>`** - View detailed logs for a specific tool execution (parameters, response, errors)
+- **`composio logs triggers`** - List recent trigger event logs with payload and delivery status
+
+Use `composio logs --help` for all available commands and filtering options.
+
 ### Utility
 
 - **`composio version`** - Show CLI version
@@ -170,6 +181,19 @@ composio generate --toolkits gmail --toolkits slack
 # Or explicitly specify
 composio ts generate --toolkits gmail
 composio py generate --toolkits gmail
+```
+
+### Debug Tool Execution
+
+```bash
+# View recent tool executions
+composio logs tools
+
+# Get detailed logs for specific execution
+composio logs tools "log_abc123"
+
+# Monitor trigger events
+composio logs triggers
 ```
 
 ## Tips
