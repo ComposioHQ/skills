@@ -224,7 +224,7 @@ const result = await composio.tools.execute('GITHUB_GET_REPOSITORY', { // ❌ Wr
 const result = await composio.tools.execute('GITHUB_GET_REPO', {
   userId: 'user_123',
   arguments: { owner: 'composio', repo: 'sdk' },
-  version: '12082025_00' // ❌ This might be outdated
+  version: '12082025_00' // ❌ This might be outdated, use `composio toolkits info "github"` to get the latest version
 });
 ```
 
