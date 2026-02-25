@@ -1,15 +1,19 @@
 ---
 title: Fetching Tools for Applications
 impact: HIGH
-description: Essential patterns for discovering and retrieving tools from Composio for direct execution in traditional applications
+description: Essential patterns for discovering and retrieving tools from Composio for direct execution in applications
 tags: [tools, fetch, discovery, apps, providers]
 ---
 
 # Fetching Tools for Applications
 
-When building traditional applications (non-agent workflows), use direct tool fetching methods to discover and retrieve tools from Composio.
+When building applications (non-agent workflows), use direct tool fetching methods to discover and retrieve tools from Composio.
 
-**IMPORTANT**: Do NOT make up or guess tool names. Always use `composio.tools.get()` to discover available tools in a toolkit before using them.
+> **⚠️ IMPORTANT:** Do NOT make up or guess tool or toolkit names. Always verify slugs before using them:
+> - Use `composio toolkits list` / `composio toolkits info "..."` and `composio tools list --toolkits "..."` / `composio tools info "..."` (CLI)
+> - Use `composio.tools.get()` to discover available tools programmatically (SDK)
+>
+> See [Composio CLI Reference](./composio-cli.md) for discovery commands.
 
 ## Methods Overview
 

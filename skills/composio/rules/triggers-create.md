@@ -9,6 +9,12 @@ tags: [triggers, events, webhooks, real-time, notifications]
 
 Triggers receive real-time events from connected accounts (Gmail, GitHub, Slack, etc.). Create trigger instances to subscribe to specific events.
 
+> **⚠️ IMPORTANT:** Do NOT make up or guess trigger names. Always verify trigger slugs before using them:
+> - Use `composio triggers list` to discover and `composio triggers info "TRIGGER_NAME"` to see configuration schema (CLI)
+> - Use `composio.triggers.list()` to discover available triggers programmatically (SDK)
+>
+> See [Composio CLI Reference](./composio-cli.md) for discovery commands.
+
 ## Basic Usage
 
 ```typescript

@@ -1537,7 +1537,7 @@ async function runAgent(userId: string, prompt: string) {
 
   // Stream response with tools
   const stream = await streamText({
-    model: openai('gpt-4o'),
+    model: openai('gpt-5.2'),
     prompt,
     tools,
     maxSteps: 10
@@ -1577,7 +1577,7 @@ async def run_agent(user_id: str, prompt: str):
 
     # Stream response with tools
     stream = streamText(
-        model=openai("gpt-4o"),
+        model=openai("gpt-5.2"),
         prompt=prompt,
         tools=tools,
         max_steps=10
@@ -1625,7 +1625,7 @@ async function runAgentMCP(userId: string, prompt: string) {
 
   // Stream response
   const stream = await streamText({
-    model: openai('gpt-4o'),
+    model: openai('gpt-5.2'),
     prompt,
     tools,
     maxSteps: 10
@@ -1667,7 +1667,7 @@ async function createAssistant(userId: string) {
   // Create agent with tools
   const agent = new Agent({
     name: 'Personal Assistant',
-    model: 'gpt-4o',
+    model: 'gpt-5.2',
     instructions: 'You are a helpful assistant. Use tools to help users.',
     tools
   });
@@ -1705,7 +1705,7 @@ async def create_assistant(user_id: str):
     # Create agent with tools
     agent = Agent(
         name="Personal Assistant",
-        model="gpt-4o",
+        model="gpt-5.2",
         instructions="You are a helpful assistant. Use tools to help users.",
         tools=tools
     )
@@ -1742,7 +1742,7 @@ async function createAssistantMCP(userId: string) {
   // Create agent with MCP tool
   const agent = new Agent({
     name: 'Gmail Assistant',
-    model: 'gpt-4o',
+    model: 'gpt-5.2',
     instructions: 'Help users manage their Gmail.',
     tools: [
       hostedMcpTool({
@@ -1831,7 +1831,7 @@ async function createLangChainAgent(userId: string) {
   const tools = await client.getTools();
 
   // Create agent
-  const llm = new ChatOpenAI({ model: 'gpt-4o' });
+  const llm = new ChatOpenAI({ model: 'gpt-5.2' });
 
   const agent = createAgent({
     name: 'Gmail Assistant',
@@ -1878,7 +1878,7 @@ async def create_langchain_agent(user_id: str):
     # Create agent
     agent = create_agent(
         tools=tools,
-        model=ChatOpenAI(model="gpt-4o")
+        model=ChatOpenAI(model="gpt-5.2")
     )
 
     return agent
@@ -2753,7 +2753,7 @@ app.post('/api/chat', async (req, res) => {
   const tools = await session.tools();
 
   const stream = await streamText({
-    model: openai('gpt-4o'),
+    model: openai('gpt-5.2'),
     messages: [{ role: 'user', content: message }],
     tools,
     maxSteps: 10
@@ -2936,7 +2936,7 @@ export async function POST(req: Request) {
   const tools = await session.tools();
 
   const result = await streamText({
-    model: openai('gpt-4o'),
+    model: openai('gpt-5.2'),
     messages,
     tools,
     maxSteps: 10
@@ -3243,7 +3243,7 @@ async function runAgent(userId: string, prompt: string) {
 **For streaming:**
 ```typescript
 const stream = await streamText({
-  model: openai('gpt-4o'),
+  model: openai('gpt-5.2'),
   tools: await session.tools(),
   maxSteps: 5,
   prompt: prompt
@@ -3378,7 +3378,7 @@ const client = await createMCPClient({
 
 // ❌ Don't forget maxSteps
 await generateText({
-  model: openai('gpt-4o'),
+  model: openai('gpt-5.2'),
   tools: tools
   // Missing maxSteps - stops after first tool call
 });
@@ -3734,7 +3734,7 @@ async function runAgent(userId: string, prompt: string) {
 
   // Stream response with tools
   const stream = await streamText({
-    model: openai('gpt-4o'),
+    model: openai('gpt-5.2'),
     prompt,
     tools,
     maxSteps: 10
@@ -3774,7 +3774,7 @@ async def run_agent(user_id: str, prompt: str):
 
     # Stream response with tools
     stream = streamText(
-        model=openai("gpt-4o"),
+        model=openai("gpt-5.2"),
         prompt=prompt,
         tools=tools,
         max_steps=10
@@ -3822,7 +3822,7 @@ async function runAgentMCP(userId: string, prompt: string) {
 
   // Stream response
   const stream = await streamText({
-    model: openai('gpt-4o'),
+    model: openai('gpt-5.2'),
     prompt,
     tools,
     maxSteps: 10
@@ -3864,7 +3864,7 @@ async function createAssistant(userId: string) {
   // Create agent with tools
   const agent = new Agent({
     name: 'Personal Assistant',
-    model: 'gpt-4o',
+    model: 'gpt-5.2',
     instructions: 'You are a helpful assistant. Use tools to help users.',
     tools
   });
@@ -3902,7 +3902,7 @@ async def create_assistant(user_id: str):
     # Create agent with tools
     agent = Agent(
         name="Personal Assistant",
-        model="gpt-4o",
+        model="gpt-5.2",
         instructions="You are a helpful assistant. Use tools to help users.",
         tools=tools
     )
@@ -3939,7 +3939,7 @@ async function createAssistantMCP(userId: string) {
   // Create agent with MCP tool
   const agent = new Agent({
     name: 'Gmail Assistant',
-    model: 'gpt-4o',
+    model: 'gpt-5.2',
     instructions: 'Help users manage their Gmail.',
     tools: [
       hostedMcpTool({
@@ -4028,7 +4028,7 @@ async function createLangChainAgent(userId: string) {
   const tools = await client.getTools();
 
   // Create agent
-  const llm = new ChatOpenAI({ model: 'gpt-4o' });
+  const llm = new ChatOpenAI({ model: 'gpt-5.2' });
 
   const agent = createAgent({
     name: 'Gmail Assistant',
@@ -4075,7 +4075,7 @@ async def create_langchain_agent(user_id: str):
     # Create agent
     agent = create_agent(
         tools=tools,
-        model=ChatOpenAI(model="gpt-4o")
+        model=ChatOpenAI(model="gpt-5.2")
     )
 
     return agent

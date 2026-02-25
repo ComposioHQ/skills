@@ -4,39 +4,157 @@ description: Build AI agents and apps with Composio - access 200+ external tools
 tags: [composio, tool-router, agents, mcp, tools, api, automation]
 ---
 
-# Composio
-
-Comprehensive guide to building AI agents and applications with Composio. Choose between:
-- **Tool Router** - Create isolated, secure MCP sessions for AI agents with automatic authentication
-- **Direct Execution** - Build traditional apps with manual tool execution and CRUD operations
-
-## Getting Started
-
-> 📖 **Prerequisites:** Before using Composio, set up your API keys. See [Setting Up API Keys](rules/setup-api-keys.md) for instructions on configuring Composio, OpenAI, and Anthropic API keys.
 
 ## When to use
-
 Use this skill when:
-
-**Building AI Agents:**
-- Building chat-based or autonomous agents that need access to external tools (Gmail, Slack, GitHub, etc.)
-- Creating multi-user applications with isolated tool access per session
-- Implementing automatic authentication flows for external services
+- Building chat-based or autonomous agents that need access to external apps (Gmail, Slack, GitHub, etc.)
+- Creating multi-user applications which integrates to external apps
+- Building personal automations that connect with user's account in differnt apps
 - Integrating with AI frameworks (Vercel AI SDK, LangChain, OpenAI Agents, Claude)
 - Using MCP (Model Context Protocol) for dynamic tool discovery
 - Building event-driven agents with triggers
 
-**Building Traditional Applications:**
-- Creating CRUD applications that execute tools directly
-- Building automation workflows without agent frameworks
-- Managing connected accounts and authentication configurations
-- Creating custom tools with specific authentication requirements
-- Implementing multi-tenant applications with session isolation
-- Building tools with pre/post-execution hooks and modifiers
+## ⚠️ Critical: Always Verify Slugs Before Use
+
+**NEVER make up or guess toolkit, tool, or trigger names.** Always verify slugs using the CLI or SDK before writing code:
+
+### Discovery Methods
+
+**Using CLI (Recommended for quick discovery):**
+```bash
+# Discover and view toolkit details
+composio toolkits list
+composio toolkits info "gmail"
+
+# Discover and view tool schemas
+composio tools list --toolkits "gmail"
+composio tools info "GMAIL_SEND_EMAIL"
+
+# Discover and view trigger schemas
+composio triggers list
+composio triggers info "GMAIL_NEW_GMAIL_MESSAGE"
+```
+
+**Using SDK (For programmatic discovery):**
+```typescript
+// Discover toolkits
+const toolkits = await composio.toolkits.get();
+
+// Discover tools
+const tools = await composio.tools.get('default', { toolkits: ['gmail'] });
+
+// Discover triggers
+const triggers = await composio.triggers.list({ toolkit: 'gmail' });
+```
+
+**Why this matters:**
+- Using incorrect slugs causes runtime errors
+- Tool/trigger schemas and names change between versions
+- SDK/CLI provide accurate, up-to-date information
+
+📖 **See [Composio CLI Reference](rules/composio-cli.md) for all discovery commands.**
+
+## Getting Started
+
+1. Check if `composio` cli exists, if not install it using the below command
+```bash
+curl -fsSL https://composio.dev/install | bash
+```
+Once installed make sure the command is available, srouce the new config or restart the terminal to start using the command.
+
+2. If the user is using the composio cli for the first time, ask the user to login to their account via
+```bash
+composio login
+```
+
+3. If the current project you are working on does not have composio API key in the env as `COMPOSIO_API_KEY`. Execute the below command to initalize the current project. 
+```bash
+# -y uses the default project, to change the project ask the user to execute `composio init` to pick or create project
+composio init -y
+```
+Or, users can manually login to the composio dashboard at `https://platform.composio.dev` to obtain the API keys. [Read more about API Keys](rules/setup-api-keys.md).
+
+> 📖 **CLI Reference:** For a comprehensive guide to all Composio CLI commands including toolkit management, connected accounts, auth configs, and code generation, see [Composio CLI Reference](rules/composio-cli.md).
+
+## Installing required dependencies
+
+Always install the latest version of composio SDKs to get started with using composio.
+
+For Typescript projects
+```bash
+pnpm install @composio/core@latest
+```
+If the project requires using Agentic features and libraries, install the additional provider packages.
+**Agentic frameworks**
+- `@composio/vercel` for working with Vercel AI SDK (recommended)
+- `@composio/openai-agents` for working with OpenAI Agents
+- `@composio/langchain` for working with LangChain
+- `@composio/mastra` for working with Mastra
+- `@composio/claude-agent-sdk` for working with Claude Agent SDK
+**Non agentic frameworks**
+- `@composio/openai` for working with OpenAI (chat completion and responses APIs)
+- `@composio/anthropic` for working with Anthropic
+- `@composio/llamaindex` for working with LlamaIndex
+- `@composio/google` for working with Google AI / Gemini APIs
+- `@composio/cloudflare` for working with Cloudflare Workers AI
+
+For Python projects
+```bash
+pip install composio
+```
+**Agentic frameworks**
+- `composio-openai-agents` for working with OpenAI Agents
+- `composio-langchain` for working with LangChain
+- `composio-langgraph` for working with LangGraph
+- `composio-crewai` for working with CrewAI
+- `composio-claude-agent-sdk` for working with Claude Agent SDK
+- `composio-google-adk` for working with Google ADK
+**Non agentic frameworks**
+- `composio-openai` for working with OpenAI
+- `composio-anthropic` for working with Anthropic
+- `composio-llamaindex` for working with LlamaIndex
+- `composio-autogen` for working with AutoGen
+- `composio-gemini` for working with Google Gemini
+- `composio-google` for working with Google AI
+
+To use the provider packages, pass them into the constructor when initialization of Composio.
+```typescript
+import { Composio } from '@composio/core'
+import { VercelProvider } from '@composio/vercel'
+
+const composio = new Composio({
+  provider: new VercelProvider();
+})
+```
+```python
+from composio import Composio
+from composio_langchain import LangchainProvider
+
+composio = Composio(provider=LangchainProvider())
+```
+
+### 1. Using the CLI
+The Composio CLI will help you discover and execute availble toolkits(apps)/tools(actions) composio offers to build apps/agents with. To get the raw response from the CLI, pipe the results to `jq`
+
+```bash
+# explore all the commands available to list and view details of tools
+composio tools --help
+
+**Important** Before writing code to use any tools or toolkits using composio, verify it exists using the following commands
+```bash
+# find all the toolkits composio offers
+composio toolkits list --limit 20 | jq
+# find versions of a toolkit
+composio toolkits info "gmail" | jq
+# find all the tools within gmail toolkit
+composio tools list --toolkits "gmail" --limit 100 | jq
+# get details of a tool, it's input and it's output
+composio tools info "GMAIL_SEND_EMAIL" | jq
+```
 
 ### 1. Building Agents
 
-Use **Tool Router** to build interactive chat-based agents or autonomous long-running task agents. Tool Router creates isolated MCP sessions for users with scoped access to toolkits and tools.
+Use Composio to build interactive chat-based agents or autonomous long-running task agents. Tool Router creates isolated MCP sessions for users with scoped access to toolkits and tools.
 
 **Key Features:**
 - Session-based isolation per user
@@ -94,7 +212,7 @@ Real-time event handling and webhook integration patterns:
 
 ### 2. Building Apps with Composio Tools
 
-Use Composio for traditional applications where tools are executed manually without agent frameworks. This approach gives you full control over tool execution, authentication, and resource management.
+Use Composio to build applications where tools are executed manually without agent frameworks. This approach gives you full control over tool execution, authentication, and resource management.
 
 **Key Capabilities:**
 - Direct tool execution with manual control
@@ -142,65 +260,7 @@ Manage user context and multi-tenant isolation:
 
 - [User ID Patterns](rules/app-user-context.md) - User vs organization IDs, shared vs isolated connections
 
-## Quick Start Examples
-
-### Building an Agent with Tool Router
-
-```typescript
-import { Composio } from '@composio/core';
-
-const composio = new Composio();
-
-// Create a session with Gmail tools
-const session = await composio.create('user_123', {
-  toolkits: ['gmail'],
-  manageConnections: true
-});
-
-// Use MCP URL with any AI framework
-console.log('MCP URL:', session.mcp.url);
-```
-
-### Building an App with Direct Execution
-
-```typescript
-import { Composio } from '@composio/core';
-
-const composio = new Composio({
-  apiKey: 'your-api-key',
-  toolkitVersions: { github: '12082025_00' }
-});
-
-// Fetch tools
-const tools = await composio.tools.get('user_123', {
-  toolkits: ['github']
-});
-
-// Execute a tool
-const result = await composio.tools.execute('GITHUB_GET_REPO', {
-  userId: 'user_123',
-  arguments: { owner: 'composio', repo: 'sdk' },
-});
-
-console.log(result.data);
-```
-
 ## References
-
-**Tool Router (Agents):**
-- [Tool Router Docs](https://docs.composio.dev/sdk/typescript/api/tool-router)
-- [MCP Protocol](https://modelcontextprotocol.io)
-- [Framework Integration Examples](https://github.com/composiohq/composio/tree/main/ts/examples/tool-router)
-
-**Direct Execution (Apps):**
-- [Tools API](https://docs.composio.dev/sdk/typescript/api/tools)
-- [Connected Accounts API](https://docs.composio.dev/sdk/typescript/api/connected-accounts)
-- [Auth Configs API](https://docs.composio.dev/sdk/typescript/api/auth-configs)
-- [Toolkits API](https://docs.composio.dev/sdk/typescript/api/toolkits)
-- [Custom Tools Guide](https://docs.composio.dev/sdk/typescript/api/custom-tools)
-- [Modifiers](https://docs.composio.dev/sdk/typescript/advanced/modifiers)
-- [Core Concepts](https://docs.composio.dev/sdk/typescript/core-concepts)
-
 **Shared:**
 - [Triggers API](https://docs.composio.dev/sdk/typescript/api/triggers)
 - [Webhook Verification](https://docs.composio.dev/sdk/typescript/advanced/webhook-verification)

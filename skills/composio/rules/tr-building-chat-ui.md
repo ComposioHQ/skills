@@ -57,7 +57,7 @@ app.post('/api/chat', async (req, res) => {
   const tools = await session.tools();
 
   const stream = await streamText({
-    model: openai('gpt-4o'),
+    model: openai('gpt-5.2'),
     messages: [{ role: 'user', content: message }],
     tools,
     maxSteps: 10
@@ -240,7 +240,7 @@ export async function POST(req: Request) {
   const tools = await session.tools();
 
   const result = await streamText({
-    model: openai('gpt-4o'),
+    model: openai('gpt-5.2'),
     messages,
     tools,
     maxSteps: 10

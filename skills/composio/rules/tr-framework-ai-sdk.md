@@ -55,7 +55,7 @@ async function runAgent(userId: string, prompt: string) {
 **For streaming:**
 ```typescript
 const stream = await streamText({
-  model: openai('gpt-4o'),
+  model: openai('gpt-5.2'),
   tools: await session.tools(),
   maxSteps: 5,
   prompt: prompt
@@ -190,7 +190,7 @@ const client = await createMCPClient({
 
 // ❌ Don't forget maxSteps
 await generateText({
-  model: openai('gpt-4o'),
+  model: openai('gpt-5.2'),
   tools: tools
   // Missing maxSteps - stops after first tool call
 });
