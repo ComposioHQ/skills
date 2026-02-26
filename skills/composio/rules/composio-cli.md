@@ -31,6 +31,17 @@ composio version
 
 After installation, restart your terminal or source your shell config.
 
+## Usage within a project
+To use composio CLI within an existing project initialize the project for the CLI.
+This command will store the API keys in .env.local
+```bash
+# interactive mode
+composio init
+
+# Pick the default project and settings
+composio init -y
+```
+
 ## Command Discovery
 
 Use `--help` flag to discover commands and options:
@@ -41,8 +52,11 @@ composio --help
 
 # Get help for specific command group
 composio login --help
+composio init --help
 composio toolkits --help
 composio tools --help
+composio triggers --help
+composio logs --help
 composio connected-accounts --help
 composio auth-configs --help
 composio generate --help
@@ -50,7 +64,9 @@ composio generate --help
 # Get help for subcommands
 composio toolkits list --help
 composio tools search --help
+composio tools execute --help
 composio connected-accounts link --help
+composio triggers listen --help
 ```
 
 ## Quick Command Reference
@@ -60,6 +76,10 @@ composio connected-accounts link --help
 - **`composio login`** - Authenticate with Composio account (opens browser or use `--no-browser`)
 - **`composio logout`** - Log out from your account
 - **`composio whoami`** - Display your account information and API key
+
+### Project Setup
+
+- **`composio init`** - Initialize a Composio project in the current directory
 
 ### Toolkits
 
@@ -77,7 +97,8 @@ List available tools across all toolkits, filter by toolkit or tags, search by k
 
 - **`composio tools list`** - List all available tools with optional filters (toolkit, tags, search)
 - **`composio tools info <slug>`** - Get detailed information and schema for a specific tool
-- **`composio tools search <query>`** - Search tools by keyword
+- **`composio tools search <query>`** - Search tools by use case.
+- **`composio tools execute <slug>`** - Execute a tool by slug with JSON arguments
 
 Use `composio tools --help` for all available commands and options.
 
@@ -86,7 +107,7 @@ Use `composio tools --help` for all available commands and options.
 Manage authentication connections for external services (Gmail, Slack, GitHub, etc.).
 
 - **`composio connected-accounts list`** - List connected accounts with optional filters (toolkit, user-id, status)
-- **`composio connected-accounts link`** - Create new connection via OAuth (requires auth-config ID)
+- **`composio connected-accounts link [toolkit]`** - Create new connection for a user for an app
 - **`composio connected-accounts info <id>`** - Get details about a specific connected account
 - **`composio connected-accounts delete <id>`** - Delete a connected account
 - **`composio connected-accounts whoami`** - Show current connection information
@@ -126,6 +147,21 @@ Monitor and debug tool and trigger executions with detailed logs.
 
 Use `composio logs --help` for all available commands and filtering options.
 
+### Triggers
+
+Inspect, create, and manage trigger subscriptions for real-time events.
+
+- **`composio triggers list`** - List available trigger types
+- **`composio triggers info <slug>`** - View details for a specific trigger type
+- **`composio triggers listen`** - Listen to realtime trigger events
+- **`composio triggers status`** - Show active trigger instances with filters
+- **`composio triggers create <trigger-name>`** - Create a trigger instance
+- **`composio triggers enable <id>`** - Enable a trigger instance
+- **`composio triggers disable <id>`** - Disable a trigger instance
+- **`composio triggers delete <id>`** - Delete a trigger instance
+
+Use `composio triggers --help` for all available commands and options.
+
 ### Utility
 
 - **`composio version`** - Show CLI version
@@ -138,6 +174,7 @@ Use `composio logs --help` for all available commands and filtering options.
 ```bash
 composio login
 composio whoami  # Verify authentication
+composio init # inside the project directory
 ```
 
 ### Discover Tools
@@ -149,7 +186,9 @@ composio toolkits list
 # Get toolkit details
 composio toolkits info "gmail"
 
-# search for specific toolkits
+# search for specific toolkit
+composio toolkits list --query "email"
+# or
 composio toolkits search "email"
 
 # List tools in toolkit
@@ -157,6 +196,10 @@ composio tools list --toolkits "gmail"
 
 # Get tool schema
 composio tools info "GMAIL_SEND_EMAIL"
+
+# Execute a tool directly
+composio tools execute "GMAIL_SEND_EMAIL" --help # to see tool schema 
+composio tools execute "GMAIL_SEND_EMAIL" --data '{"to":"you@example.com","subject":"Test"}'
 ```
 
 ### Connect Account
@@ -194,6 +237,12 @@ composio logs tools "log_abc123"
 
 # Monitor trigger events
 composio logs triggers
+
+# List trigger types
+composio triggers list
+
+# Show active trigger instances
+composio triggers status
 ```
 
 ## Tips
