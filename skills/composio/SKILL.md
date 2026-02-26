@@ -14,46 +14,6 @@ Use this skill when:
 - Using MCP (Model Context Protocol) for dynamic tool discovery
 - Building event-driven agents with triggers
 
-## ⚠️ Critical: Always Verify Slugs Before Use
-
-**NEVER make up or guess toolkit, tool, or trigger names.** Always verify slugs using the CLI or SDK before writing code:
-
-### Discovery Methods
-
-**Using CLI (Recommended for quick discovery):**
-```bash
-# Discover and view toolkit details
-composio toolkits list
-composio toolkits info "gmail"
-
-# Discover and view tool schemas
-composio tools list --toolkits "gmail"
-composio tools info "GMAIL_SEND_EMAIL"
-
-# Discover and view trigger schemas
-composio triggers list
-composio triggers info "GMAIL_NEW_GMAIL_MESSAGE"
-```
-
-**Using SDK (For programmatic discovery):**
-```typescript
-// Discover toolkits
-const toolkits = await composio.toolkits.get();
-
-// Discover tools
-const tools = await composio.tools.get('default', { toolkits: ['gmail'] });
-
-// Discover triggers
-const triggers = await composio.triggers.list({ toolkit: 'gmail' });
-```
-
-**Why this matters:**
-- Using incorrect slugs causes runtime errors
-- Tool/trigger schemas and names change between versions
-- SDK/CLI provide accurate, up-to-date information
-
-📖 **See [Composio CLI Reference](rules/composio-cli.md) for all discovery commands.**
-
 ## Getting Started
 
 1. Check if `composio` cli exists, if not install it using the below command
@@ -132,6 +92,47 @@ from composio_langchain import LangchainProvider
 
 composio = Composio(provider=LangchainProvider())
 ```
+
+
+## ⚠️ Critical: Always Verify Slugs Before Use
+
+**NEVER make up or guess toolkit, tool, or trigger names.** Always verify slugs using the CLI or SDK before writing code:
+
+### Discovery Methods
+
+**Using CLI (Recommended for quick discovery):**
+```bash
+# Discover and view toolkit details make sure the CLI installed
+composio toolkits list
+composio toolkits info "gmail"
+
+# Discover and view tool schemas
+composio tools list --toolkits "gmail"
+composio tools info "GMAIL_SEND_EMAIL"
+
+# Discover and view trigger schemas
+composio triggers list
+composio triggers info "GMAIL_NEW_GMAIL_MESSAGE"
+```
+
+**Using SDK (For programmatic discovery):**
+```typescript
+// Discover toolkits
+const toolkits = await composio.toolkits.get();
+
+// Discover tools
+const tools = await composio.tools.get('default', { toolkits: ['gmail'] });
+
+// Discover triggers
+const triggers = await composio.triggers.list({ toolkit: 'gmail' });
+```
+
+**Why this matters:**
+- Using incorrect slugs causes runtime errors
+- Tool/trigger schemas and names change between versions
+- SDK/CLI provide accurate, up-to-date information
+
+📖 **See [Composio CLI Reference](rules/composio-cli.md) for all discovery commands.**
 
 ### 1. Using the CLI
 The Composio CLI will help you discover and execute availble toolkits(apps)/tools(actions) composio offers to build apps/agents with. To get the raw response from the CLI, pipe the results to `jq`

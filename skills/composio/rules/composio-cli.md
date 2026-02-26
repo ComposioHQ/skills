@@ -247,6 +247,20 @@ composio triggers status
 
 ## Tips
 
+### User Context for Action Commands
+
+For action-oriented commands (for example `tools execute`, `connected-accounts link`, and `triggers create`), the CLI uses your project's `test_user_id` by default if `--user-id` is not provided.
+
+Use this default for local testing only. If you want to take action on behalf of a specific user in your system, always pass that user's ID explicitly with `--user-id`.
+
+```bash
+# Uses project test_user_id implicitly
+composio tools execute "GMAIL_SEND_EMAIL" --data '{"to":"you@example.com","subject":"Test"}'
+
+# Uses an explicit application user ID
+composio tools execute "GMAIL_SEND_EMAIL" --user-id "user_123" --data '{"to":"you@example.com","subject":"Test"}'
+```
+
 ### JSON Output & jq Integration
 
 **All commands output JSON to stdout** for agent-friendly, machine-readable responses. Pipe output to `jq` for processing:

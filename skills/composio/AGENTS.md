@@ -8451,5 +8451,5 @@ accounts.items.forEach(account => {
 
 ---
 
-_This file was automatically generated from individual rule files on 2026-02-25T03:09:48.637Z_
+_This file was automatically generated from individual rule files on 2026-02-26T23:32:09.495Z_
 _To update, run: `npm run build:agents`_
