@@ -10,42 +10,48 @@ Build AI agents and apps with Composio - access 200+ external tools with Tool Ro
 
 ## Table of Contents
 
-1. [Building Agents](#building-agents)
-   1.1. [User ID Best Practices](#user-id-best-practices)
-   1.2. [Creating Basic Sessions](#creating-basic-sessions)
-   1.3. [Session Lifecycle Best Practices](#session-lifecycle-best-practices)
-   1.4. [Session Configuration](#session-configuration)
-   1.5. [Using Native Tools](#using-native-tools)
-   1.6. [Framework Integration](#framework-integration)
-   1.7. [Auto Authentication in Chat](#auto-authentication-in-chat)
-   1.8. [Manual Authorization](#manual-authorization)
-   1.9. [Connection Management](#connection-management)
-   1.10. [Building Chat UIs](#building-chat-uis)
-   1.11. [Query Toolkit States](#query-toolkit-states)
-   1.12. [Vercel AI SDK Integration](#vercel-ai-sdk-integration)
-   1.13. [Mastra Integration](#mastra-integration)
-   1.14. [Framework Integration](#framework-integration)
-   1.15. [Creating Triggers](#creating-triggers)
-   1.16. [Subscribing to Events](#subscribing-to-events)
-   1.17. [Webhook Verification](#webhook-verification)
-   1.18. [Managing Triggers](#managing-triggers)
+1. [Using the CLI](#using-the-cli)
 
-2. [Building Apps with Composio Tools](#building-apps-with-composio-tools)
-   2.1. [Fetching Tools](#fetching-tools)
-   2.2. [Direct Tool Execution](#direct-tool-execution)
-   2.3. [Tool Version Management](#tool-version-management)
-   2.4. [Connected Accounts CRUD](#connected-accounts-crud)
-   2.5. [Auth Config Management](#auth-config-management)
-   2.6. [Toolkit Management](#toolkit-management)
-   2.7. [Creating Custom Tools](#creating-custom-tools)
-   2.8. [Tool Modifiers](#tool-modifiers)
-   2.9. [Creating Triggers](#creating-triggers)
-   2.10. [Subscribing to Events](#subscribing-to-events)
-   2.11. [Webhook Verification](#webhook-verification)
-   2.12. [Managing Triggers](#managing-triggers)
-   2.13. [User ID Patterns](#user-id-patterns)
+2. [Building Agents](#building-agents)
+   2.1. [User ID Best Practices](#user-id-best-practices)
+   2.2. [Creating Basic Sessions](#creating-basic-sessions)
+   2.3. [Session Lifecycle Best Practices](#session-lifecycle-best-practices)
+   2.4. [Session Configuration](#session-configuration)
+   2.5. [Using Native Tools](#using-native-tools)
+   2.6. [Framework Integration](#framework-integration)
+   2.7. [Auto Authentication in Chat](#auto-authentication-in-chat)
+   2.8. [Manual Authorization](#manual-authorization)
+   2.9. [Connection Management](#connection-management)
+   2.10. [Building Chat UIs](#building-chat-uis)
+   2.11. [Query Toolkit States](#query-toolkit-states)
+   2.12. [Vercel AI SDK Integration](#vercel-ai-sdk-integration)
+   2.13. [Mastra Integration](#mastra-integration)
+   2.14. [Framework Integration](#framework-integration)
+   2.15. [Creating Triggers](#creating-triggers)
+   2.16. [Subscribing to Events](#subscribing-to-events)
+   2.17. [Webhook Verification](#webhook-verification)
+   2.18. [Managing Triggers](#managing-triggers)
+
+3. [Building Apps with Composio Tools](#building-apps-with-composio-tools)
+   3.1. [Fetching Tools](#fetching-tools)
+   3.2. [Direct Tool Execution](#direct-tool-execution)
+   3.3. [Tool Version Management](#tool-version-management)
+   3.4. [Connected Accounts CRUD](#connected-accounts-crud)
+   3.5. [Auth Config Management](#auth-config-management)
+   3.6. [Toolkit Management](#toolkit-management)
+   3.7. [Creating Custom Tools](#creating-custom-tools)
+   3.8. [Tool Modifiers](#tool-modifiers)
+   3.9. [Creating Triggers](#creating-triggers)
+   3.10. [Subscribing to Events](#subscribing-to-events)
+   3.11. [Webhook Verification](#webhook-verification)
+   3.12. [Managing Triggers](#managing-triggers)
+   3.13. [User ID Patterns](#user-id-patterns)
 
 ---
+
+## 1. Using the CLI
+
+<a name="using-the-cli"></a>
 
 ## 1. Building Agents
 
@@ -61,7 +67,7 @@ Build AI agents and apps with Composio - access 200+ external tools with Tool Ro
 
 # Choose User IDs Carefully for Security and Isolation
 
-User IDs are the **foundation of Tool Router isolation**. They determine which user's connections, data, and permissions are used for tool execution. Choose them carefully to ensure security and proper data isolation.
+User IDs are the **foundation of Composio's data isolation**. They determine which user's connections, data, and permissions are used for tool execution. Choose them carefully to ensure security and proper data isolation.
 
 ## ❌ Incorrect
 
@@ -429,7 +435,7 @@ const session = await composio.create(userId, {
 async function handleRequest(req: Request) {
   const userId = req.user.id;
 
-  // Use same ID for Tool Router
+  // Use same ID for sessions
   const session = await composio.create(userId, config);
 
   // Use same ID for direct tool execution
@@ -519,13 +525,13 @@ const teamSession = await composio.create(req.user.organizationId, {
 2. **Use stable, immutable identifiers** (UUIDs, not emails)
 3. **Match your authentication system's user IDs**
 4. **Validate user IDs server-side** for security
-5. **Be consistent** across Tool Router and direct tool usage
+5. **Be consistent** across sessions and direct tool usage
 6. **Use org IDs** for organization-level applications
 7. **Namespace when needed** for multi-tenancy
 
 ## Reference
 
-- [Tool Router Sessions](https://docs.composio.dev/sdk/typescript/api/tool-router#creating-sessions)
+- [Composio Sessions](https://docs.composio.dev/sdk/typescript/api/tool-router#creating-sessions)
 - [User ID Security](https://docs.composio.dev/sdk/typescript/core-concepts#user-ids)
 - [Connected Accounts](https://docs.composio.dev/sdk/typescript/api/connected-accounts)
 
@@ -544,6 +550,12 @@ const teamSession = await composio.create(req.user.organizationId, {
 Always create isolated Tool Router sessions per user to ensure proper data isolation and scoped tool access.
 
 > 📖 **Before you begin:** Make sure you have set up your API keys. See [Setting Up API Keys](./setup-api-keys.md) for instructions.
+
+> **⚠️ IMPORTANT:** Do NOT make up or guess toolkit names. Always verify toolkit slugs before using them:
+> - Use `composio toolkits list` to discover and `composio toolkits info "..."` to view toolkit details (CLI)
+> - Use `composio.toolkits.get()` to discover toolkits programmatically (SDK)
+>
+> See [Composio CLI Reference](./composio-cli.md) for discovery commands.
 
 ## ❌ Incorrect
 
@@ -1011,6 +1023,13 @@ export class ConversationSession {
 # Configure Tool Router Sessions Properly
 
 Tool Router sessions support rich configuration for fine-grained control over toolkit and tool access.
+
+> **⚠️ IMPORTANT:** Do NOT make up or guess toolkit or tool names. Always verify slugs before using them:
+> - Use `composio toolkits list` / `composio toolkits info "..."` to discover and view toolkit details (CLI)
+> - Use `composio tools list --toolkits "..."` / `composio tools info "..."` to discover and view tool schemas (CLI)
+> - Use `composio.tools.get()` to discover tools programmatically (SDK)
+>
+> See [Composio CLI Reference](./composio-cli.md) for discovery commands.
 
 ## ❌ Incorrect
 
@@ -1537,7 +1556,7 @@ async function runAgent(userId: string, prompt: string) {
 
   // Stream response with tools
   const stream = await streamText({
-    model: openai('gpt-4o'),
+    model: openai('gpt-5.2'),
     prompt,
     tools,
     maxSteps: 10
@@ -1577,7 +1596,7 @@ async def run_agent(user_id: str, prompt: str):
 
     # Stream response with tools
     stream = streamText(
-        model=openai("gpt-4o"),
+        model=openai("gpt-5.2"),
         prompt=prompt,
         tools=tools,
         max_steps=10
@@ -1625,7 +1644,7 @@ async function runAgentMCP(userId: string, prompt: string) {
 
   // Stream response
   const stream = await streamText({
-    model: openai('gpt-4o'),
+    model: openai('gpt-5.2'),
     prompt,
     tools,
     maxSteps: 10
@@ -1667,7 +1686,7 @@ async function createAssistant(userId: string) {
   // Create agent with tools
   const agent = new Agent({
     name: 'Personal Assistant',
-    model: 'gpt-4o',
+    model: 'gpt-5.2',
     instructions: 'You are a helpful assistant. Use tools to help users.',
     tools
   });
@@ -1705,7 +1724,7 @@ async def create_assistant(user_id: str):
     # Create agent with tools
     agent = Agent(
         name="Personal Assistant",
-        model="gpt-4o",
+        model="gpt-5.2",
         instructions="You are a helpful assistant. Use tools to help users.",
         tools=tools
     )
@@ -1742,7 +1761,7 @@ async function createAssistantMCP(userId: string) {
   // Create agent with MCP tool
   const agent = new Agent({
     name: 'Gmail Assistant',
-    model: 'gpt-4o',
+    model: 'gpt-5.2',
     instructions: 'Help users manage their Gmail.',
     tools: [
       hostedMcpTool({
@@ -1831,7 +1850,7 @@ async function createLangChainAgent(userId: string) {
   const tools = await client.getTools();
 
   // Create agent
-  const llm = new ChatOpenAI({ model: 'gpt-4o' });
+  const llm = new ChatOpenAI({ model: 'gpt-5.2' });
 
   const agent = createAgent({
     name: 'Gmail Assistant',
@@ -1878,7 +1897,7 @@ async def create_langchain_agent(user_id: str):
     # Create agent
     agent = create_agent(
         tools=tools,
-        model=ChatOpenAI(model="gpt-4o")
+        model=ChatOpenAI(model="gpt-5.2")
     )
 
     return agent
@@ -2753,7 +2772,7 @@ app.post('/api/chat', async (req, res) => {
   const tools = await session.tools();
 
   const stream = await streamText({
-    model: openai('gpt-4o'),
+    model: openai('gpt-5.2'),
     messages: [{ role: 'user', content: message }],
     tools,
     maxSteps: 10
@@ -2936,7 +2955,7 @@ export async function POST(req: Request) {
   const tools = await session.tools();
 
   const result = await streamText({
-    model: openai('gpt-4o'),
+    model: openai('gpt-5.2'),
     messages,
     tools,
     maxSteps: 10
@@ -3243,7 +3262,7 @@ async function runAgent(userId: string, prompt: string) {
 **For streaming:**
 ```typescript
 const stream = await streamText({
-  model: openai('gpt-4o'),
+  model: openai('gpt-5.2'),
   tools: await session.tools(),
   maxSteps: 5,
   prompt: prompt
@@ -3378,7 +3397,7 @@ const client = await createMCPClient({
 
 // ❌ Don't forget maxSteps
 await generateText({
-  model: openai('gpt-4o'),
+  model: openai('gpt-5.2'),
   tools: tools
   // Missing maxSteps - stops after first tool call
 });
@@ -3734,7 +3753,7 @@ async function runAgent(userId: string, prompt: string) {
 
   // Stream response with tools
   const stream = await streamText({
-    model: openai('gpt-4o'),
+    model: openai('gpt-5.2'),
     prompt,
     tools,
     maxSteps: 10
@@ -3774,7 +3793,7 @@ async def run_agent(user_id: str, prompt: str):
 
     # Stream response with tools
     stream = streamText(
-        model=openai("gpt-4o"),
+        model=openai("gpt-5.2"),
         prompt=prompt,
         tools=tools,
         max_steps=10
@@ -3822,7 +3841,7 @@ async function runAgentMCP(userId: string, prompt: string) {
 
   // Stream response
   const stream = await streamText({
-    model: openai('gpt-4o'),
+    model: openai('gpt-5.2'),
     prompt,
     tools,
     maxSteps: 10
@@ -3864,7 +3883,7 @@ async function createAssistant(userId: string) {
   // Create agent with tools
   const agent = new Agent({
     name: 'Personal Assistant',
-    model: 'gpt-4o',
+    model: 'gpt-5.2',
     instructions: 'You are a helpful assistant. Use tools to help users.',
     tools
   });
@@ -3902,7 +3921,7 @@ async def create_assistant(user_id: str):
     # Create agent with tools
     agent = Agent(
         name="Personal Assistant",
-        model="gpt-4o",
+        model="gpt-5.2",
         instructions="You are a helpful assistant. Use tools to help users.",
         tools=tools
     )
@@ -3939,7 +3958,7 @@ async function createAssistantMCP(userId: string) {
   // Create agent with MCP tool
   const agent = new Agent({
     name: 'Gmail Assistant',
-    model: 'gpt-4o',
+    model: 'gpt-5.2',
     instructions: 'Help users manage their Gmail.',
     tools: [
       hostedMcpTool({
@@ -4028,7 +4047,7 @@ async function createLangChainAgent(userId: string) {
   const tools = await client.getTools();
 
   // Create agent
-  const llm = new ChatOpenAI({ model: 'gpt-4o' });
+  const llm = new ChatOpenAI({ model: 'gpt-5.2' });
 
   const agent = createAgent({
     name: 'Gmail Assistant',
@@ -4075,7 +4094,7 @@ async def create_langchain_agent(user_id: str):
     # Create agent
     agent = create_agent(
         tools=tools,
-        model=ChatOpenAI(model="gpt-4o")
+        model=ChatOpenAI(model="gpt-5.2")
     )
 
     return agent
@@ -4451,6 +4470,12 @@ const client3 = hostedMcpTool({
 # Create Triggers for Real-Time Events
 
 Triggers receive real-time events from connected accounts (Gmail, GitHub, Slack, etc.). Create trigger instances to subscribe to specific events.
+
+> **⚠️ IMPORTANT:** Do NOT make up or guess trigger names. Always verify trigger slugs before using them:
+> - Use `composio triggers list` to discover and `composio triggers info "TRIGGER_NAME"` to see configuration schema (CLI)
+> - Use `composio.triggers.list()` to discover available triggers programmatically (SDK)
+>
+> See [Composio CLI Reference](./composio-cli.md) for discovery commands.
 
 ## Basic Usage
 
@@ -5381,13 +5406,17 @@ async function handleUpgrade(userId: string) {
 
 **Impact:** 🟠 HIGH
 
-> Essential patterns for discovering and retrieving tools from Composio for direct execution in traditional applications
+> Essential patterns for discovering and retrieving tools from Composio for direct execution in applications
 
 # Fetching Tools for Applications
 
-When building traditional applications (non-agent workflows), use direct tool fetching methods to discover and retrieve tools from Composio.
+When building applications (non-agent workflows), use direct tool fetching methods to discover and retrieve tools from Composio.
 
-**IMPORTANT**: Do NOT make up or guess tool names. Always use `composio.tools.get()` to discover available tools in a toolkit before using them.
+> **⚠️ IMPORTANT:** Do NOT make up or guess tool or toolkit names. Always verify slugs before using them:
+> - Use `composio toolkits list` / `composio toolkits info "..."` and `composio tools list --toolkits "..."` / `composio tools info "..."` (CLI)
+> - Use `composio.tools.get()` to discover available tools programmatically (SDK)
+>
+> See [Composio CLI Reference](./composio-cli.md) for discovery commands.
 
 ## Methods Overview
 
@@ -5598,7 +5627,7 @@ const result = await composio.tools.execute('GITHUB_GET_REPOSITORY', { // ❌ Wr
 const result = await composio.tools.execute('GITHUB_GET_REPO', {
   userId: 'user_123',
   arguments: { owner: 'composio', repo: 'sdk' },
-  version: '12082025_00' // ❌ This might be outdated
+  version: '12082025_00' // ❌ This might be outdated, use `composio toolkits info "github"` to get the latest version
 });
 ```
 
@@ -5673,11 +5702,11 @@ if tool_name:
 
 **Impact:** 🟠 HIGH
 
-> Core patterns for manually executing Composio tools in traditional applications without agent frameworks
+> Core patterns for manually executing Composio tools in applications without agent frameworks
 
 # Direct Tool Execution for Applications
 
-When building traditional applications without agent frameworks, use `composio.tools.execute()` to manually execute tools.
+When building applications without agent frameworks, use `composio.tools.execute()` to manually execute tools.
 
 ## Basic Execution
 
@@ -5692,7 +5721,11 @@ const result = await composio.tools.execute('GITHUB_GET_ISSUES', {
 
 ## Discovering Available Tools
 
-**IMPORTANT**: Do NOT make up or guess tool names. Always discover available tools using `composio.tools.get()`.
+> **⚠️ IMPORTANT:** Do NOT make up or guess tool or toolkit names/versions. Always verify slugs before using them:
+> - Use `composio tools list --toolkits "..."` to discover and `composio tools info "..."` to view tool schema (CLI)
+> - Use `composio.tools.get()` to discover available tools programmatically (SDK)
+>
+> See [Composio CLI Reference](./composio-cli.md) for discovery commands.
 
 ```typescript
 // Get all available tools in a toolkit
@@ -5867,79 +5900,6 @@ try {
 6. **Test with real data**: Validate execution with actual connected accounts
 7. **Handle authentication errors**: User may not have connected account for toolkit
 
-## Common Patterns
-
-### Execute with retry logic
-
-```typescript
-async function executeWithRetry(slug, params, maxRetries = 3) {
-  for (let i = 0; i < maxRetries; i++) {
-    try {
-      const result = await composio.tools.execute(slug, params);
-      if (result.successful) return result;
-
-      console.log(`Retry ${i + 1}/${maxRetries}`);
-      await new Promise(resolve => setTimeout(resolve, 1000 * (i + 1)));
-    } catch (error) {
-      if (i === maxRetries - 1) throw error;
-    }
-  }
-}
-```
-
-### Execute multiple tools in sequence
-
-```typescript
-async function executeWorkflow(userId) {
-  // Step 1: Get repository
-  const repo = await composio.tools.execute('GITHUB_GET_REPO', {
-    userId,
-    arguments: { owner: 'composio', repo: 'sdk' },
-    version: '12082025_00',
-  });
-
-  if (!repo.successful) {
-    throw new Error(`Failed to get repo: ${repo.error}`);
-  }
-
-  // Step 2: Create issue using data from step 1
-  const issue = await composio.tools.execute('GITHUB_CREATE_ISSUE', {
-    userId,
-    arguments: {
-      owner: 'composio',
-      repo: 'sdk',
-      title: `Update for ${repo.data.name}`,
-      body: 'Automated issue creation'
-    },
-    version: '12082025_00',
-  });
-
-  return { repo: repo.data, issue: issue.data };
-}
-```
-
-### Execute with parameter validation
-
-```typescript
-async function sendSlackMessage(userId, channel, text) {
-  // Validate inputs
-  if (!channel.startsWith('#')) {
-    throw new Error('Channel must start with #');
-  }
-  if (text.length > 4000) {
-    throw new Error('Message too long');
-  }
-
-  const result = await composio.tools.execute('SLACK_SEND_MESSAGE', {
-    userId,
-    arguments: { channel, text },
-    version: '10082025_01',
-  });
-
-  return result;
-}
-```
-
 ---
 
 ### 2.3. Tool Version Management
@@ -5952,7 +5912,12 @@ async function sendSlackMessage(userId, channel, text) {
 
 # Tool Version Management
 
-> **⚠️ CRITICAL:** Never assume or make up version numbers. Always use `composio.toolkits.get('toolkit_name')` to fetch available versions, or check the [dashboard](https://platform.composio.dev) to view versions and changes. Using non-existent versions will cause runtime errors.
+> **⚠️ CRITICAL:** Never assume or make up toolkit names or version numbers. Always verify before using:
+> - Use `composio toolkits list` / `composio toolkits info "..."` to discover toolkits (CLI) or `composio.toolkits.get()` (SDK)
+> - Use `composio toolkits info "..."` to view available versions (CLI) or `composio.toolkits.get('toolkit_name')` (SDK) or check the [dashboard](https://platform.composio.dev)
+> - Using non-existent toolkit slugs or versions will cause runtime errors
+>
+> See [Composio CLI Reference](./composio-cli.md) for discovery commands.
 
 Tool versions are critical for workflow stability. When manually executing tools, a specific version is **required** to prevent argument mismatches when tool schemas change.
 
@@ -6952,6 +6917,12 @@ Create your own tools that integrate with Composio:
 - **Standalone tools** - No external authentication required
 - **Toolkit-based tools** - Use toolkit credentials for API requests
 
+> **⚠️ IMPORTANT:** When creating toolkit-based tools, do NOT make up or guess toolkit slugs. Always verify:
+> - Use `composio toolkits list` to discover and `composio toolkits info "..."` to view toolkit details and auth schemes (CLI)
+> - Use `composio.toolkits.get()` to discover toolkits programmatically (SDK)
+>
+> See [Composio CLI Reference](./composio-cli.md) for discovery commands.
+
 ## Standalone Tools
 
 For tools that don't need external authentication:
@@ -7319,6 +7290,12 @@ await composio.tools.execute('GITHUB_GET_REPO', { ... }, {
 # Create Triggers for Real-Time Events
 
 Triggers receive real-time events from connected accounts (Gmail, GitHub, Slack, etc.). Create trigger instances to subscribe to specific events.
+
+> **⚠️ IMPORTANT:** Do NOT make up or guess trigger names. Always verify trigger slugs before using them:
+> - Use `composio triggers list` to discover and `composio triggers info "TRIGGER_NAME"` to see configuration schema (CLI)
+> - Use `composio.triggers.list()` to discover available triggers programmatically (SDK)
+>
+> See [Composio CLI Reference](./composio-cli.md) for discovery commands.
 
 ## Basic Usage
 
@@ -8465,25 +8442,7 @@ accounts.items.forEach(account => {
 
 ---
 
-## Quick Start
-
-Examples
-
 ## References
-
-**Tool Router (Agents):**
-- [Tool Router Docs](https://docs.composio.dev/sdk/typescript/api/tool-router)
-- [MCP Protocol](https://modelcontextprotocol.io)
-- [Framework Integration Examples](https://github.com/composiohq/composio/tree/main/ts/examples/tool-router)
-
-**Direct Execution (Apps):**
-- [Tools API](https://docs.composio.dev/sdk/typescript/api/tools)
-- [Connected Accounts API](https://docs.composio.dev/sdk/typescript/api/connected-accounts)
-- [Auth Configs API](https://docs.composio.dev/sdk/typescript/api/auth-configs)
-- [Toolkits API](https://docs.composio.dev/sdk/typescript/api/toolkits)
-- [Custom Tools Guide](https://docs.composio.dev/sdk/typescript/api/custom-tools)
-- [Modifiers](https://docs.composio.dev/sdk/typescript/advanced/modifiers)
-- [Core Concepts](https://docs.composio.dev/sdk/typescript/core-concepts)
 
 **Shared:**
 - [Triggers API](https://docs.composio.dev/sdk/typescript/api/triggers)
@@ -8492,5 +8451,5 @@ Examples
 
 ---
 
-_This file was automatically generated from individual rule files on 2026-02-17T02:44:59.419Z_
+_This file was automatically generated from individual rule files on 2026-02-26T23:32:09.495Z_
 _To update, run: `npm run build:agents`_

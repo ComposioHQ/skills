@@ -11,6 +11,12 @@ Create your own tools that integrate with Composio:
 - **Standalone tools** - No external authentication required
 - **Toolkit-based tools** - Use toolkit credentials for API requests
 
+> **⚠️ IMPORTANT:** When creating toolkit-based tools, do NOT make up or guess toolkit slugs. Always verify:
+> - Use `composio toolkits list` to discover and `composio toolkits info "..."` to view toolkit details and auth schemes (CLI)
+> - Use `composio.toolkits.get()` to discover toolkits programmatically (SDK)
+>
+> See [Composio CLI Reference](./composio-cli.md) for discovery commands.
+
 ## Standalone Tools
 
 For tools that don't need external authentication:

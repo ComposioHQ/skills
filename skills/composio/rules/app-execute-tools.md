@@ -1,13 +1,13 @@
 ---
 title: Direct Tool Execution for Applications
 impact: HIGH
-description: Core patterns for manually executing Composio tools in traditional applications without agent frameworks
+description: Core patterns for manually executing Composio tools in applications without agent frameworks
 tags: [tools, execute, execution, apps, manual]
 ---
 
 # Direct Tool Execution for Applications
 
-When building traditional applications without agent frameworks, use `composio.tools.execute()` to manually execute tools.
+When building applications without agent frameworks, use `composio.tools.execute()` to manually execute tools.
 
 ## Basic Execution
 
@@ -22,7 +22,11 @@ const result = await composio.tools.execute('GITHUB_GET_ISSUES', {
 
 ## Discovering Available Tools
 
-**IMPORTANT**: Do NOT make up or guess tool names. Always discover available tools using `composio.tools.get()`.
+> **⚠️ IMPORTANT:** Do NOT make up or guess tool or toolkit names/versions. Always verify slugs before using them:
+> - Use `composio tools list --toolkits "..."` to discover and `composio tools info "..."` to view tool schema (CLI)
+> - Use `composio.tools.get()` to discover available tools programmatically (SDK)
+>
+> See [Composio CLI Reference](./composio-cli.md) for discovery commands.
 
 ```typescript
 // Get all available tools in a toolkit
@@ -196,76 +200,3 @@ try {
 5. **Log execution details**: Track which tools are executed for debugging
 6. **Test with real data**: Validate execution with actual connected accounts
 7. **Handle authentication errors**: User may not have connected account for toolkit
-
-## Common Patterns
-
-### Execute with retry logic
-
-```typescript
-async function executeWithRetry(slug, params, maxRetries = 3) {
-  for (let i = 0; i < maxRetries; i++) {
-    try {
-      const result = await composio.tools.execute(slug, params);
-      if (result.successful) return result;
-
-      console.log(`Retry ${i + 1}/${maxRetries}`);
-      await new Promise(resolve => setTimeout(resolve, 1000 * (i + 1)));
-    } catch (error) {
-      if (i === maxRetries - 1) throw error;
-    }
-  }
-}
-```
-
-### Execute multiple tools in sequence
-
-```typescript
-async function executeWorkflow(userId) {
-  // Step 1: Get repository
-  const repo = await composio.tools.execute('GITHUB_GET_REPO', {
-    userId,
-    arguments: { owner: 'composio', repo: 'sdk' },
-    version: '12082025_00',
-  });
-
-  if (!repo.successful) {
-    throw new Error(`Failed to get repo: ${repo.error}`);
-  }
-
-  // Step 2: Create issue using data from step 1
-  const issue = await composio.tools.execute('GITHUB_CREATE_ISSUE', {
-    userId,
-    arguments: {
-      owner: 'composio',
-      repo: 'sdk',
-      title: `Update for ${repo.data.name}`,
-      body: 'Automated issue creation'
-    },
-    version: '12082025_00',
-  });
-
-  return { repo: repo.data, issue: issue.data };
-}
-```
-
-### Execute with parameter validation
-
-```typescript
-async function sendSlackMessage(userId, channel, text) {
-  // Validate inputs
-  if (!channel.startsWith('#')) {
-    throw new Error('Channel must start with #');
-  }
-  if (text.length > 4000) {
-    throw new Error('Message too long');
-  }
-
-  const result = await composio.tools.execute('SLACK_SEND_MESSAGE', {
-    userId,
-    arguments: { channel, text },
-    version: '10082025_01',
-  });
-
-  return result;
-}
-```

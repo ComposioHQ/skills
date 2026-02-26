@@ -7,7 +7,7 @@ tags: [tool-router, user-id, security, authentication, multi-tenant]
 
 # Choose User IDs Carefully for Security and Isolation
 
-User IDs are the **foundation of Tool Router isolation**. They determine which user's connections, data, and permissions are used for tool execution. Choose them carefully to ensure security and proper data isolation.
+User IDs are the **foundation of Composio's data isolation**. They determine which user's connections, data, and permissions are used for tool execution. Choose them carefully to ensure security and proper data isolation.
 
 ## ❌ Incorrect
 
@@ -375,7 +375,7 @@ const session = await composio.create(userId, {
 async function handleRequest(req: Request) {
   const userId = req.user.id;
 
-  // Use same ID for Tool Router
+  // Use same ID for sessions
   const session = await composio.create(userId, config);
 
   // Use same ID for direct tool execution
@@ -465,12 +465,12 @@ const teamSession = await composio.create(req.user.organizationId, {
 2. **Use stable, immutable identifiers** (UUIDs, not emails)
 3. **Match your authentication system's user IDs**
 4. **Validate user IDs server-side** for security
-5. **Be consistent** across Tool Router and direct tool usage
+5. **Be consistent** across sessions and direct tool usage
 6. **Use org IDs** for organization-level applications
 7. **Namespace when needed** for multi-tenancy
 
 ## Reference
 
-- [Tool Router Sessions](https://docs.composio.dev/sdk/typescript/api/tool-router#creating-sessions)
+- [Composio Sessions](https://docs.composio.dev/sdk/typescript/api/tool-router#creating-sessions)
 - [User ID Security](https://docs.composio.dev/sdk/typescript/core-concepts#user-ids)
 - [Connected Accounts](https://docs.composio.dev/sdk/typescript/api/connected-accounts)
