@@ -140,9 +140,8 @@ app.post('/api/connect', async (req, res) => {
     toolkits: [toolkitSlug]
   });
 
-  const auth = await session.authorize({
-    toolkit: toolkitSlug,
-    redirectUrl: `${process.env.APP_URL}/auth/callback`
+  const auth = await session.authorize(toolkitSlug, {
+    callbackUrl: `${process.env.APP_URL}/auth/callback`
   });
 
   res.json({ redirectUrl: auth.redirectUrl });
