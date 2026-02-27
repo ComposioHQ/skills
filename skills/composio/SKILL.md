@@ -14,10 +14,11 @@ Use this skill when:
 - Using MCP (Model Context Protocol) for dynamic tool discovery
 - Building event-driven agents with triggers
 
-## Identifying the usecase
-If the use case is building applications that are primarily chat-driven agents, use Composio's [Building Agents](#1-building-agents) guidelines.
-For agentic or chat-agent use cases, do **not** use app-building guidelines. Strictly follow [Building Agents](#1-building-agents).
-For building simple apps with no agentic behavior, use Composio's [Building Apps with Composio Tools](#2-building-apps-with-composio-tools) guidelines.
+## Identifying the usecase for using composio
+1. If the use case is building applications that are primarily chat-driven agents, use Composio's [Building Agents](#1-building-agents) guidelines.
+2. For agentic or chat-agent use cases, do **not** use app-building guidelines. Strictly follow [Building Agents](#1-building-agents).
+3. For building simple apps with no agentic behavior, use Composio's [Building Apps with Composio Tools](#2-building-apps-with-composio-tools) guidelines.
+4. For usecases which are simple and does not requires building apps or writing code, but just to answer user's question. Use the Composio CLI directly to search and execure the tools to answer user's queries.
 
 ## Getting Started
 
