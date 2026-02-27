@@ -7,7 +7,8 @@ tags: [connected-accounts, authentication, oauth, crud, security]
 
 # Connected Accounts Management
 
-> **Using Tool Router?** If you're using Tool Router, you can use `session.toolkits()` to view the auth configs and connected accounts being used by the Tool Router. You only need to use the methods below if you're managing connected accounts outside of Tool Router.
+> **Using Sessions/Tool Router?** If you're using Tool Router Sessions, you can use `session.toolkits()` to view the auth configs and connected accounts being used by the Tool Router. You only need to use the methods below if you're managing connected accounts outside of Tool Router.
+> When using sessions, only use authConfigs listed via session.toolkit(), or use session.authorize() for toolkits which does not have authConfigs
 
 Connected accounts store authentication tokens for external services. Use the `connectedAccounts` API for CRUD operations.
 
@@ -27,9 +28,14 @@ const connectionRequest = await composio.connectedAccounts.link(
 // Redirect user to authentication page
 window.location.href = connectionRequest.redirectUrl;
 
-// Wait for completion
+// IMPORTANT: if building web applications, look for `status=success&connectedAccountId=*******` query params in the callback url. Setup a dedicated route to handle the callback if opening via popus, to show success and failure states.
+
+// Only use the below for simpler single user application/CLIs etc.
 const account = await connectionRequest.waitForConnection();
 ```
+
+While building popup-based authentication flows using Composio links, follow [Building Popup Connection UI](./app-auth-popup-ui.md).
+
 
 **Why use link():**
 - Handles OAuth security and form UI
