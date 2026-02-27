@@ -14,6 +14,11 @@ Use this skill when:
 - Using MCP (Model Context Protocol) for dynamic tool discovery
 - Building event-driven agents with triggers
 
+## Identifying the usecase
+If the use case is building applications that are primarily chat-driven agents, use Composio's [Building Agents](#1-building-agents) guidelines.
+For agentic or chat-agent use cases, do **not** use app-building guidelines. Strictly follow [Building Agents](#1-building-agents).
+For building simple apps with no agentic behavior, use Composio's [Building Apps with Composio Tools](#2-building-apps-with-composio-tools) guidelines.
+
 ## Getting Started
 
 1. Check if `composio` cli exists, if not install it using the below command
@@ -51,12 +56,7 @@ If the project requires using Agentic features and libraries, install the additi
 - `@composio/langchain` for working with LangChain
 - `@composio/mastra` for working with Mastra
 - `@composio/claude-agent-sdk` for working with Claude Agent SDK
-**Non agentic frameworks**
-- `@composio/openai` for working with OpenAI (chat completion and responses APIs)
-- `@composio/anthropic` for working with Anthropic
-- `@composio/llamaindex` for working with LlamaIndex
-- `@composio/google` for working with Google AI / Gemini APIs
-- `@composio/cloudflare` for working with Cloudflare Workers AI
+
 
 For Python projects
 ```bash
@@ -69,13 +69,6 @@ pip install composio
 - `composio-crewai` for working with CrewAI
 - `composio-claude-agent-sdk` for working with Claude Agent SDK
 - `composio-google-adk` for working with Google ADK
-**Non agentic frameworks**
-- `composio-openai` for working with OpenAI
-- `composio-anthropic` for working with Anthropic
-- `composio-llamaindex` for working with LlamaIndex
-- `composio-autogen` for working with AutoGen
-- `composio-gemini` for working with Google Gemini
-- `composio-google` for working with Google AI
 
 To use the provider packages, pass them into the constructor when initialization of Composio.
 ```typescript

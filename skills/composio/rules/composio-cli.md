@@ -33,7 +33,7 @@ After installation, restart your terminal or source your shell config.
 
 ## Usage within a project
 To use composio CLI within an existing project initialize the project for the CLI.
-This command will store the API keys in .env.local
+This command will store the API keys in `.env.local`
 ```bash
 # interactive mode
 composio init
@@ -115,8 +115,9 @@ Manage authentication connections for external services (Gmail, Slack, GitHub, e
 Use `composio connected-accounts --help` for all available commands and options.
 
 ### Auth Configs
+> **Important** In most cases you might not need to do this unless you are building apps which are non-agentic. For agentic apps, only use `session.toolkits()` and `session.authorize()` which will automatically create auth configs for you.
 
-Manage authentication configurations that define how to authenticate with external services.
+Manage authentication configurations that define how to authenticate with external services. 
 
 - **`composio auth-configs list`** - List authentication configurations with optional filters
 - **`composio auth-configs create`** - Create new authentication configuration (interactive)
@@ -174,7 +175,7 @@ Use `composio triggers --help` for all available commands and options.
 ```bash
 composio login
 composio whoami  # Verify authentication
-composio init # inside the project directory
+composio init # inside the project directory to retrieve project level API key
 ```
 
 ### Discover Tools
@@ -266,9 +267,6 @@ composio tools execute "GMAIL_SEND_EMAIL" --user-id "user_123" --data '{"to":"yo
 **All commands output JSON to stdout** for agent-friendly, machine-readable responses. Pipe output to `jq` for processing:
 
 ```bash
-# Get API key programmatically
-composio whoami | jq -r '.apiKey'
-
 # Extract toolkit slugs
 composio toolkits list | jq -r '.[].slug'
 
