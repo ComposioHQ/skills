@@ -178,6 +178,14 @@ composio whoami  # Verify authentication
 composio init # inside the project directory to retrieve project level API key
 ```
 
+### Usage pattern for direct tool usage
+- For usecases where you need directly execute the tool from CLI and not for building apps, use the CLI directly.
+- For answering user's question. First search the tools required for the usecase using `composio tools search "use case"`. This response will also include the connection status. If not availble you can use `composio toolkits list --toolkits "..."` or `composio toolkits info` command to see if the user is connected.
+- If user is not authenticated, authenticate toolkits using `composio connected-accounts link "github"`. You need to do it only if the user does not have active connection.
+- If you need to identify a tool's input parameters, use `composio tools info "GMAIL_SEND_EMAIL"`.
+- Once you have identified and authenticated the tools, you can proceed to executing the tool using `composio tools execute` command. 
+- For complex tasks, you can execute the commands in parallel using `&` and `wait` or write quick bash scripts to execute composio commands directly.
+
 ### Discover Tools
 
 ```bash
