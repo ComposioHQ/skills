@@ -4,7 +4,7 @@ description: Use 1000+ external apps via Composio - either directly through the 
 tags: [composio, tool-router, agents, mcp, tools, api, automation, cli]
 ---
 
-## When to Use This Skill
+## When to Apply
 
 - User wants to access or interact with external apps (Gmail, Slack, GitHub, Notion, etc.)
 - User wants to automate a task using an external service (send email, create issue, post message)
@@ -26,7 +26,7 @@ composio whoami
 
 ---
 
-## 1. Use Apps via Composio CLI
+### 1. Use Apps via Composio CLI
 
 **Use this when:** The user wants to take action on an external app directly — no code writing needed. The agent uses the CLI to search, connect, and execute tools on behalf of the user.
 
@@ -42,7 +42,7 @@ Typical workflow: **search → link (if needed) → execute**
 
 ---
 
-## 2. Building Apps and Agents with Composio
+### 2. Building Apps and Agents with Composio
 
 **Use this when:** Writing code — an AI agent, app, or backend service that integrates with external tools via the Composio SDK.
 
