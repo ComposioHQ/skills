@@ -84,7 +84,7 @@ composio execute GMAIL_SEND_EMAIL --user-id "user_123" --data '{"recipient_email
 
 1. **Use `jq` for JSON** — Pipe CLI output to `jq` for filtering and extraction instead of parsing raw JSON.
 2. **Control output at source** — When fetching large amounts of data, use the tool's filters (if supported) to limit what is returned.
-3. **Offload analysis** — After understanding the schema, use inline bash or Python scripts for heavy data analysis instead of manual inspection.
+3. **Offload analysis** — After understanding the schema, use inline bash scripts for heavy data analysis instead of manual inspection. Avoid using composio SDK for personal usecases only use the SDKs when building apps.
 4. **Parallelize independent actions** — For tools/actions that don't depend on each other, run them in parallel with `&` and `wait`. Use `xargs -P` or `parallel` only when the backend can handle the load.
 5. **Avoid large terminal dumps** — Filter, search, and summarize instead of outputting full datasets:
    - Quick text filtering: `grep -E`, `rg` (ripgrep), `awk`, `sed`
