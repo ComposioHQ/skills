@@ -1,278 +1,143 @@
 ---
-title: Composio CLI Reference
+title: Composio CLI Guide
 impact: HIGH
-description: Quick reference for Composio CLI commands - use help flags for detailed options
-tags: [cli, composio, tools, toolkits, auth, connected-accounts, code-generation]
+description: Use the Composio CLI to take actions on external apps directly - no code needed
+tags: [cli, composio, tools, toolkits, auth, connected-accounts, direct-use]
 ---
 
-# Composio CLI Reference
+# Composio CLI Guide
 
-Quick reference for Composio CLI commands. Use `composio <command> --help` to see detailed options for any command.
+Use the Composio CLI to search, connect, and execute tools directly — no code writing required. Ideal for agents taking actions on behalf of the user.
 
-## When to Use CLI
+## Primary Workflow: search → link → execute
 
-- **Discovery & Exploration** - Quickly find available toolkits, tools, and triggers before writing code
-- **Development & Testing** - Test connections, verify auth configs, and validate tool execution locally
-- **Debugging & Monitoring** - View tool execution logs, inspect trigger events, and troubleshoot failures
-- **Quick Operations** - Link accounts, manage auth configs, and perform one-off tasks without writing code
-- **Code Generation** - Generate TypeScript/Python type stubs for better IDE support and type safety
-- **CI/CD & Automation** - Script toolkit setup, connection verification, and project initialization
-- **Agent Integration** - Use CLI tools to extend agent capabilities and connect to external applications
-
-## Installation
+### Step 1 — Find the right tool
 
 ```bash
-# Install Composio CLI
-curl -fsSL https://composio.dev/install | bash
-
-# Verify installation
-composio version
+composio search "send an email"
+composio search "create github issue"
+composio search "post slack message"
 ```
 
-After installation, restart your terminal or source your shell config.
+The search results include connection status, so you can see immediately if the user is already connected to the required app.
 
-## Usage within a project
-To use composio CLI within an existing project initialize the project for the CLI.
-This command will store the API keys in `.env.local`
-```bash
-# interactive mode
-composio init
+### Step 2 — Connect an account (if needed)
 
-# Pick the default project and settings
-composio init -y
-```
-
-## Command Discovery
-
-Use `--help` flag to discover commands and options:
+If the user is not connected to the app, link their account:
 
 ```bash
-# See all available commands
-composio --help
-
-# Get help for specific command group
-composio login --help
-composio init --help
-composio toolkits --help
-composio tools --help
-composio triggers --help
-composio logs --help
-composio connected-accounts --help
-composio auth-configs --help
-composio generate --help
-
-# Get help for subcommands
-composio toolkits list --help
-composio tools search --help
-composio tools execute --help
-composio connected-accounts link --help
-composio triggers listen --help
+composio link gmail
+composio link github
+composio link slack
 ```
 
-## Quick Command Reference
+This opens an OAuth flow or prompts for credentials. Only needed once per app.
 
-### Authentication
+### Step 3 — Execute the tool
 
-- **`composio login`** - Authenticate with Composio account (opens browser or use `--no-browser`)
-- **`composio logout`** - Log out from your account
-- **`composio whoami`** - Display your account information and API key
+```bash
+composio execute GMAIL_SEND_EMAIL --data '{"recipient_email":"you@example.com","subject":"Hello","body":"Test"}'
+composio execute GITHUB_CREATE_AN_ISSUE --data '{"owner":"acme","repo":"my-repo","title":"Bug report"}'
+```
 
-### Project Setup
+To see a tool's input parameters before executing:
+```bash
+composio execute GMAIL_SEND_EMAIL --help
+```
 
-- **`composio init`** - Initialize a Composio project in the current directory
+### Step 4 — Listen for events (optional)
 
-### Toolkits
+```bash
+composio listen
+```
 
-List all available toolkits within Composio, search by keywords, and view detailed information about specific toolkits.
+Streams real-time trigger events to the terminal.
 
-- **`composio toolkits list`** - List all available toolkits with optional search filters
-- **`composio toolkits info <slug>`** - Get detailed information about a specific toolkit and it's version
-- **`composio toolkits search <query>`** - Search toolkits by keyword
+---
 
-Use `composio toolkits --help` for all available commands and options.
+## Tips for Agents
 
-### Tools
+- **All commands output JSON** — pipe to `jq` for filtering and extraction
+- **Parallel execution** — use `&` and `wait` or shell scripts for complex multi-step tasks
+- The default user context is the project's `test_user_id`. Pass `--user-id <id>` to act on behalf of a specific user.
 
-List available tools across all toolkits, filter by toolkit or tags, search by keywords, and view tool schemas and parameters.
+```bash
+composio execute GMAIL_SEND_EMAIL --user-id "user_123" --data '{"recipient_email":"them@example.com","subject":"Hi"}'
+```
 
-- **`composio tools list`** - List all available tools with optional filters (toolkit, tags, search)
-- **`composio tools info <slug>`** - Get detailed information and schema for a specific tool
-- **`composio tools search <query>`** - Search tools by use case.
-- **`composio tools execute <slug>`** - Execute a tool by slug with JSON arguments
+---
 
-Use `composio tools --help` for all available commands and options.
+## Advanced Commands
+
+### Discover Tools (when search isn't enough)
+
+```bash
+# List all toolkits
+composio toolkits list
+
+# Get details about a specific toolkit
+composio toolkits info "gmail"
+
+# List tools in a toolkit
+composio tools list --toolkits "gmail"
+
+# Get a tool's full schema
+composio tools info "GMAIL_SEND_EMAIL"
+```
 
 ### Connected Accounts
 
-Manage authentication connections for external services (Gmail, Slack, GitHub, etc.).
+```bash
+# List active connections
+composio connected-accounts list --status ACTIVE
 
-- **`composio connected-accounts list`** - List connected accounts with optional filters (toolkit, user-id, status)
-- **`composio connected-accounts link [toolkit]`** - Create new connection for a user for an app
-- **`composio connected-accounts info <id>`** - Get details about a specific connected account
-- **`composio connected-accounts delete <id>`** - Delete a connected account
-- **`composio connected-accounts whoami`** - Show current connection information
+# Link an account (full form with options)
+composio connected-accounts link --auth-config "ac_..." --user-id "user_123"
 
-Use `composio connected-accounts --help` for all available commands and options.
+# Delete a connection
+composio connected-accounts delete <id>
+```
 
 ### Auth Configs
-> **Important** In most cases you might not need to do this unless you are building apps which are non-agentic. For agentic apps, only use `session.toolkits()` and `session.authorize()` which will automatically create auth configs for you.
 
-Manage authentication configurations that define how to authenticate with external services. 
+> Only needed when building apps with custom OAuth credentials. For personal use and agents, `composio link` handles this automatically.
 
-- **`composio auth-configs list`** - List authentication configurations with optional filters
-- **`composio auth-configs create`** - Create new authentication configuration (interactive)
-- **`composio auth-configs info <id>`** - Get details about a specific auth config
-- **`composio auth-configs delete <id>`** - Delete an authentication configuration
-
-Use `composio auth-configs --help` for all available commands and options.
-
-### Code Generation
-
-Generate TypeScript or Python type stubs for toolkits, tools, and triggers in your project.
-
-- **`composio generate`** - Auto-detect language and generate type stubs
-- **`composio ts generate`** - Generate TypeScript types
-- **`composio py generate`** - Generate Python types
-
-Common options: `--output-dir`, `--toolkits`, `--type-tools`
-
-Use `composio generate --help` for all available options.
-
-### Debugging & Logs
-
-Monitor and debug tool and trigger executions with detailed logs.
-
-- **`composio logs tools`** - List recent tool execution logs with status and timestamps
-- **`composio logs tools <log_id>`** - View detailed logs for a specific tool execution (parameters, response, errors)
-- **`composio logs triggers`** - List recent trigger event logs with payload and delivery status
-
-Use `composio logs --help` for all available commands and filtering options.
+```bash
+composio auth-configs list --toolkits "gmail"
+composio auth-configs create
+composio auth-configs info <id>
+composio auth-configs delete <id>
+```
 
 ### Triggers
 
-Inspect, create, and manage trigger subscriptions for real-time events.
-
-- **`composio triggers list`** - List available trigger types
-- **`composio triggers info <slug>`** - View details for a specific trigger type
-- **`composio triggers listen`** - Listen to realtime trigger events
-- **`composio triggers status`** - Show active trigger instances with filters
-- **`composio triggers create <trigger-name>`** - Create a trigger instance
-- **`composio triggers enable <id>`** - Enable a trigger instance
-- **`composio triggers disable <id>`** - Disable a trigger instance
-- **`composio triggers delete <id>`** - Delete a trigger instance
-
-Use `composio triggers --help` for all available commands and options.
-
-### Utility
-
-- **`composio version`** - Show CLI version
-- **`composio upgrade`** - Upgrade CLI to latest version
-
-## Common Usage Patterns
-
-### Initial Setup
-
 ```bash
-composio login
-composio whoami  # Verify authentication
-composio init # inside the project directory to retrieve project level API key
+# List available trigger types
+composio triggers list
+composio triggers info "GMAIL_NEW_GMAIL_MESSAGE"
+
+# Manage trigger instances
+composio triggers create <trigger-name>
+composio triggers enable <id>
+composio triggers disable <id>
+composio triggers status
 ```
 
-### Usage pattern for direct tool usage
-- For usecases where you need directly execute the tool from CLI and not for building apps, use the CLI directly.
-- For answering user's question. First search the tools required for the usecase using `composio tools search "use case"`. This response will also include the connection status. If not availble you can use `composio toolkits list --toolkits "..."` or `composio toolkits info` command to see if the user is connected.
-- If user is not authenticated, authenticate toolkits using `composio connected-accounts link "github"`. You need to do it only if the user does not have active connection.
-- If you need to identify a tool's input parameters, use `composio tools info "GMAIL_SEND_EMAIL"`.
-- Once you have identified and authenticated the tools, you can proceed to executing the tool using `composio tools execute` command. 
-- For complex tasks, you can execute the commands in parallel using `&` and `wait` or write quick bash scripts to execute composio commands directly.
-
-### Discover Tools
-
-```bash
-# List toolkits
-composio toolkits list
-
-# Get toolkit details
-composio toolkits info "gmail"
-
-# search for specific toolkit
-composio toolkits list --query "email"
-# or
-composio toolkits search "email"
-
-# List tools in toolkit
-composio tools list --toolkits "gmail"
-
-# Get tool schema
-composio tools info "GMAIL_SEND_EMAIL"
-
-# Execute a tool directly
-composio tools execute "GMAIL_SEND_EMAIL" --help # to see tool schema 
-composio tools execute "GMAIL_SEND_EMAIL" --data '{"to":"you@example.com","subject":"Test"}'
-```
-
-### Connect Account
-
-```bash
-# Find auth config
-composio auth-configs list --toolkits "gmail"
-
-# Link account
-composio connected-accounts link --auth-config "ac_..." --user-id "user_123"
-
-# Verify connection
-composio connected-accounts list --status ACTIVE
-```
-
-### Generate Types
-
-```bash
-# Auto-detect project language
-composio generate --toolkits gmail --toolkits slack
-
-# Or explicitly specify
-composio ts generate --toolkits gmail
-composio py generate --toolkits gmail
-```
-
-### Debug Tool Execution
+### Debugging & Logs
 
 ```bash
 # View recent tool executions
 composio logs tools
 
-# Get detailed logs for specific execution
+# Get detailed logs for a specific execution
 composio logs tools "log_abc123"
 
 # Monitor trigger events
 composio logs triggers
-
-# List trigger types
-composio triggers list
-
-# Show active trigger instances
-composio triggers status
 ```
+---
 
-## Tips
-
-### User Context for Action Commands
-
-For action-oriented commands (for example `tools execute`, `connected-accounts link`, and `triggers create`), the CLI uses your project's `test_user_id` by default if `--user-id` is not provided.
-
-Use this default for local testing only. If you want to take action on behalf of a specific user in your system, always pass that user's ID explicitly with `--user-id`.
-
-```bash
-# Uses project test_user_id implicitly
-composio tools execute "GMAIL_SEND_EMAIL" --data '{"to":"you@example.com","subject":"Test"}'
-
-# Uses an explicit application user ID
-composio tools execute "GMAIL_SEND_EMAIL" --user-id "user_123" --data '{"to":"you@example.com","subject":"Test"}'
-```
-
-### JSON Output & jq Integration
-
-**All commands output JSON to stdout** for agent-friendly, machine-readable responses. Pipe output to `jq` for processing:
+## jq Examples
 
 ```bash
 # Extract toolkit slugs
@@ -283,41 +148,31 @@ composio tools list --toolkits "gmail" | jq -r '.[].name'
 
 # Filter active connections
 composio connected-accounts list --status ACTIVE | jq -r '.[].id'
-
-# Get connection details for specific toolkit
-composio connected-accounts list --toolkits "gmail" | jq '.[] | {id, status, toolkit: .toolkit.slug}'
-
-# Extract trigger configuration
-composio triggers info "GMAIL_NEW_GMAIL_MESSAGE" | jq '.config'
 ```
 
-**Why use jq:**
-- Extract specific fields for automation scripts
-- Transform JSON for different tools/workflows
-- Build agent-friendly responses
-- Chain with other CLI tools
-
-### Other Tips
-
-- **Filtering**: Use `--toolkits`, `--user-id`, `--status`, `--tags`, `--query` to filter results
-- **User IDs**: Use `"default"` for testing, actual user IDs for production
-- **Help is Your Friend**: Every command supports `--help` for detailed options
+---
 
 ## Environment Variables
 
 ```bash
-# Set API key (alternative to login)
-export COMPOSIO_API_KEY="your_api_key"
-
-# Set base URL (for self-hosted)
-export COMPOSIO_BASE_URL="https://your-instance.com"
-
-# Enable debug logging
-export COMPOSIO_LOG_LEVEL="debug"
+export COMPOSIO_API_KEY="your_api_key"      # alternative to composio login
+export COMPOSIO_BASE_URL="https://..."       # for self-hosted instances
+export COMPOSIO_LOG_LEVEL="debug"            # enable debug logging
 ```
 
-## Reference
+---
 
-For detailed API documentation, visit:
-- [Composio CLI Documentation](https://docs.composio.dev/cli)
-- [Composio Platform](https://platform.composio.dev)
+## Command Help
+
+Every command supports `--help` for detailed options:
+
+```bash
+composio --help
+composio search --help
+composio execute --help
+composio link --help
+composio listen --help
+composio tools --help
+composio toolkits --help
+composio triggers --help
+```
