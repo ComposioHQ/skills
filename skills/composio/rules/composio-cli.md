@@ -9,6 +9,22 @@ tags: [cli, composio, tools, toolkits, auth, connected-accounts, direct-use]
 
 Use the Composio CLI to search, connect, and execute tools directly — no code writing required. Ideal for agents taking actions on behalf of the user.
 
+## Prerequisites (first-time setup)
+
+If the CLI is not installed or the user is not authenticated:
+
+```bash
+# Install
+curl -fsSL https://composio.dev/install | bash
+composio --version   # verify
+
+# Authenticate
+composio login       # returns URL for user to complete OAuth
+composio whoami      # verify project_id, user_id, etc.
+```
+
+> **Note**: Use `whoami` only to verify login status — do not hardcode these values in code.
+
 ## Primary Workflow: search → link → execute
 
 ### Step 1 — Find the right tool
@@ -39,7 +55,6 @@ This opens an OAuth flow or prompts for credentials. Only needed once per app.
 composio execute GMAIL_SEND_EMAIL --data '{"recipient_email":"you@example.com","subject":"Hello","body":"Test"}'
 composio execute GITHUB_CREATE_AN_ISSUE --data '{"owner":"acme","repo":"my-repo","title":"Bug report"}'
 ```
-
 To see a tool's input parameters before executing:
 ```bash
 composio execute GMAIL_SEND_EMAIL --help
@@ -64,6 +79,20 @@ Streams real-time trigger events to the terminal.
 ```bash
 composio execute GMAIL_SEND_EMAIL --user-id "user_123" --data '{"recipient_email":"them@example.com","subject":"Hi"}'
 ```
+
+## Best Practices
+
+1. **Use `jq` for JSON** — Pipe CLI output to `jq` for filtering and extraction instead of parsing raw JSON.
+2. **Control output at source** — When fetching large amounts of data, use the tool's filters (if supported) to limit what is returned.
+3. **Offload analysis** — After understanding the schema, use inline bash or Python scripts for heavy data analysis instead of manual inspection.
+4. **Parallelize independent actions** — For tools/actions that don't depend on each other, run them in parallel with `&` and `wait`. Use `xargs -P` or `parallel` only when the backend can handle the load.
+5. **Avoid large terminal dumps** — Filter, search, and summarize instead of outputting full datasets:
+   - Quick text filtering: `grep -E`, `rg` (ripgrep), `awk`, `sed`
+   - Summarize: `sort | uniq -c | sort -nr`, `wc -l`, `head`, `tail`
+   - For large output: `less`, `lnav` (logs), `tail -f` for streaming
+6. **Minimize file creation** — Use ephemeral files only when needed; create files only when the user explicitly asks.
+7. **Respect rate limits** — Be mindful of pagination and API/CLI rate limits when parallelizing.
+8. **Never invent tool slugs or app names** — Only use tools returned by `composio search`. For app names, use `composio toolkits info <slug>` or `composio tools info <tool>` to verify.
 
 ---
 
