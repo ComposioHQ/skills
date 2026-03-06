@@ -37,6 +37,8 @@ composio search "post slack message"
 
 The search results include connection status, so you can see immediately if the user is already connected to the required app.
 
+> **Important**: Do not trim the output of `composio search` (e.g. with `head`). Use the full results to pick the right tool — truncating can hide the best match.
+
 ### Step 2 — Connect an account (if needed)
 
 If the user is not connected to the app, link their account:
@@ -93,6 +95,7 @@ composio execute GMAIL_SEND_EMAIL --user-id "user_123" --data '{"recipient_email
 6. **Minimize file creation** — Use ephemeral files only when needed; create files only when the user explicitly asks.
 7. **Respect rate limits** — Be mindful of pagination and API/CLI rate limits when parallelizing.
 8. **Never invent tool slugs or app names** — Only use tools returned by `composio search`. For app names, use `composio toolkits info <slug>` or `composio tools info <tool>` to verify.
+9. **Do not trim `composio search` output** — Never pipe search results through `head`, `tail`, or similar. Use the full output to find the best tool match.
 
 ---
 
