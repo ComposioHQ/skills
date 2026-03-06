@@ -31,8 +31,8 @@ composio whoami
 **Use this when:** The user wants to take action on an external app directly — no code writing needed. The agent uses the CLI to search, connect, and execute tools on behalf of the user.
 
 Key commands (new top-level aliases):
-- `composio search <query>` — find tools by use case
-- `composio execute <TOOL_SLUG>` — execute a tool
+- `composio search "<query>"` — find tools by use case
+- `composio execute "<TOOL_SLUG>" -d '{...<input params>}'` — execute a tool
 - `composio link [toolkit]` — connect a user account to an app
 - `composio listen` — listen for real-time trigger events
 
