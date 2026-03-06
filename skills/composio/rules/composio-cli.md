@@ -179,18 +179,6 @@ composio tools list --toolkits "gmail" | jq -r '.[].name'
 composio connected-accounts list --status ACTIVE | jq -r '.[].id'
 ```
 
----
-
-## Environment Variables
-
-```bash
-export COMPOSIO_API_KEY="your_api_key"      # alternative to composio login
-export COMPOSIO_BASE_URL="https://..."       # for self-hosted instances
-export COMPOSIO_LOG_LEVEL="debug"            # enable debug logging
-```
-
----
-
 ## Command Help
 
 Every command supports `--help` for detailed options:
