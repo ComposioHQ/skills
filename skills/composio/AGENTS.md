@@ -40,6 +40,24 @@ Use 1000+ external apps via Composio - either directly through the CLI or by bui
 
 Use the Composio CLI to search, connect, and execute tools directly — no code writing required. Ideal for agents taking actions on behalf of the user.
 
+## Prerequisites (first-time setup)
+
+If the CLI is not installed or the user is not authenticated:
+
+```bash
+# Install
+curl -fsSL https://composio.dev/install | bash
+composio --version   # verify
+
+# Authenticate
+composio login       # OAuth flow; interactive org/project picker after login (use -y to skip)
+composio whoami      # verify org_id, project_id, user_id (API keys are never displayed)
+```
+
+> **Note**: Use `whoami` only to verify login status — do not hardcode these values in code. `whoami` shows hints for `composio orgs switch` and `composio init` when relevant.
+
+**Login behavior**: By default, `composio login` shows an interactive org/project picker after OAuth. Use `composio login -y` to skip the picker and use session defaults. JSON output is emitted only after the picker finishes (or immediately with `-y`), so piped/scripted usage gets the correct `org_id` and `project_id`.
+
 ## Primary Workflow: search → link → execute
 
 ### Step 1 — Find the right tool
@@ -52,6 +70,8 @@ composio search "post slack message"
 
 The search results include connection status, so you can see immediately if the user is already connected to the required app.
 
+> **Important**: Do not trim the output of `composio search` (e.g. with `head`). Use the full results to pick the right tool — truncating can hide the best match.
+
 ### Step 2 — Connect an account (if needed)
 
 If the user is not connected to the app, link their account:
@@ -62,7 +82,7 @@ composio link github
 composio link slack
 ```
 
-This opens an OAuth flow or prompts for credentials. Only needed once per app.
+This opens an OAuth flow or prompts for credentials. Only needed once per app. By default, `composio link` waits until the connected account is ACTIVE (opens browser, polls). Use `--no-wait` for scripted or agent usage: it prints link info and JSON to stdout (JQ-friendly) and exits immediately. Output includes `status`, `connected_account_id`, `redirect_url`, and `toolkit`.
 
 ### Step 3 — Execute the tool
 
@@ -70,7 +90,6 @@ This opens an OAuth flow or prompts for credentials. Only needed once per app.
 composio execute GMAIL_SEND_EMAIL --data '{"recipient_email":"you@example.com","subject":"Hello","body":"Test"}'
 composio execute GITHUB_CREATE_AN_ISSUE --data '{"owner":"acme","repo":"my-repo","title":"Bug report"}'
 ```
-
 To see a tool's input parameters before executing:
 ```bash
 composio execute GMAIL_SEND_EMAIL --help
@@ -95,6 +114,21 @@ Streams real-time trigger events to the terminal.
 ```bash
 composio execute GMAIL_SEND_EMAIL --user-id "user_123" --data '{"recipient_email":"them@example.com","subject":"Hi"}'
 ```
+
+## Best Practices
+
+1. **Use `jq` for JSON** — Pipe CLI output to `jq` for filtering and extraction instead of parsing raw JSON.
+2. **Control output at source** — When fetching large amounts of data, use the tool's filters (if supported) to limit what is returned.
+3. **Offload analysis** — After understanding the schema, use inline bash scripts for heavy data analysis instead of manual inspection. Avoid using composio SDK for personal usecases only use the SDKs when building apps.
+4. **Parallelize independent actions** — For tools/actions that don't depend on each other, run them in parallel with `&` and `wait`. Use `xargs -P` or `parallel` only when the backend can handle the load.
+5. **Avoid large terminal dumps** — Filter, search, and summarize instead of outputting full datasets:
+   - Quick text filtering: `grep -E`, `rg` (ripgrep), `awk`, `sed`
+   - Summarize: `sort | uniq -c | sort -nr`, `wc -l`, `head`, `tail`
+   - For large output: `less`, `lnav` (logs), `tail -f` for streaming
+6. **Minimize file creation** — Use ephemeral files only when needed; create files only when the user explicitly asks.
+7. **Respect rate limits** — Be mindful of pagination and API/CLI rate limits when parallelizing.
+8. **Never invent tool slugs or app names** — Only use tools returned by `composio search`. For app names, use `composio toolkits info <slug>` or `composio tools info <tool>` to verify.
+9. **Do not trim `composio search` output** — Never pipe search results through `head`, `tail`, or similar. Use the full output to find the best tool match.
 
 ---
 
@@ -180,18 +214,6 @@ composio tools list --toolkits "gmail" | jq -r '.[].name'
 # Filter active connections
 composio connected-accounts list --status ACTIVE | jq -r '.[].id'
 ```
-
----
-
-## Environment Variables
-
-```bash
-export COMPOSIO_API_KEY="your_api_key"      # alternative to composio login
-export COMPOSIO_BASE_URL="https://..."       # for self-hosted instances
-export COMPOSIO_LOG_LEVEL="debug"            # enable debug logging
-```
-
----
 
 ## Command Help
 
@@ -355,5 +377,5 @@ Using incorrect slugs causes runtime errors.
 
 ---
 
-_This file was automatically generated from individual rule files on 2026-03-06T04:15:36.818Z_
+_This file was automatically generated from individual rule files on 2026-03-13T05:59:22.056Z_
 _To update, run: `npm run build:agents`_

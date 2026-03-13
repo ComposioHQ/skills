@@ -19,11 +19,13 @@ curl -fsSL https://composio.dev/install | bash
 composio --version   # verify
 
 # Authenticate
-composio login       # returns URL for user to complete OAuth
-composio whoami      # verify project_id, user_id, etc.
+composio login       # OAuth flow; interactive org/project picker after login (use -y to skip)
+composio whoami      # verify org_id, project_id, user_id (API keys are never displayed)
 ```
 
-> **Note**: Use `whoami` only to verify login status — do not hardcode these values in code.
+> **Note**: Use `whoami` only to verify login status — do not hardcode these values in code. `whoami` shows hints for `composio orgs switch` and `composio init` when relevant.
+
+**Login behavior**: By default, `composio login` shows an interactive org/project picker after OAuth. Use `composio login -y` to skip the picker and use session defaults. JSON output is emitted only after the picker finishes (or immediately with `-y`), so piped/scripted usage gets the correct `org_id` and `project_id`.
 
 ## Primary Workflow: search → link → execute
 
@@ -49,7 +51,7 @@ composio link github
 composio link slack
 ```
 
-This opens an OAuth flow or prompts for credentials. Only needed once per app.
+This opens an OAuth flow or prompts for credentials. Only needed once per app. By default, `composio link` waits until the connected account is ACTIVE (opens browser, polls). Use `--no-wait` for scripted or agent usage: it prints link info and JSON to stdout (JQ-friendly) and exits immediately. Output includes `status`, `connected_account_id`, `redirect_url`, and `toolkit`.
 
 ### Step 3 — Execute the tool
 
