@@ -20,8 +20,8 @@ curl -fsSL https://composio.dev/install | bash
 
 After installation, restart your terminal or source your shell config, then authenticate:
 ```bash
-composio login
-composio whoami
+composio login       # OAuth; interactive org/project picker (use -y to skip)
+composio whoami      # verify org_id, project_id, user_id
 ```
 
 ---
@@ -33,7 +33,7 @@ composio whoami
 Key commands (new top-level aliases):
 - `composio search "<query>"` — find tools by use case
 - `composio execute "<TOOL_SLUG>" -d '{...<input params>}'` — execute a tool
-- `composio link [toolkit]` — connect a user account to an app
+- `composio link [toolkit]` — connect a user account to an app (agents: always use `--no-wait` for non-interactive mode)
 - `composio listen` — listen for real-time trigger events
 
 Typical workflow: **search → link (if needed) → execute**

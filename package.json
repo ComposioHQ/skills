@@ -1,6 +1,6 @@
 {
   "name": "@composiohq/skills",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "description": "Agent skills for Composio developers",
   "type": "module",
   "license": "MIT",
