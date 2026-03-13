@@ -21,6 +21,8 @@ composio --version   # verify
 # Authenticate
 composio login       # OAuth flow; interactive org/project picker after login (use -y to skip)
 composio whoami      # verify org_id, project_id, user_id (API keys are never displayed)
+# Run upgrade in case you run into errors or starting with a new project
+composio upgrade
 ```
 
 > **Note**: Use `whoami` only to verify login status — do not hardcode these values in code. `whoami` shows hints for `composio orgs switch` and `composio init` when relevant.
