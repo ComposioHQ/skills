@@ -23,6 +23,7 @@ After installation, restart your terminal or source your shell config, then auth
 composio login       # OAuth; interactive org/project picker (use -y to skip)
 composio whoami      # verify org_id, project_id, user_id
 ```
+For agents without direct browser access: `composio login --no-wait | jq` to get URL/key, share URL with user, then `composio login --key <cli_key> --no-wait` once they complete login.
 
 ---
 

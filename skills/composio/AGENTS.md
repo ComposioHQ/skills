@@ -52,11 +52,28 @@ composio --version   # verify
 # Authenticate
 composio login       # OAuth flow; interactive org/project picker after login (use -y to skip)
 composio whoami      # verify org_id, project_id, user_id (API keys are never displayed)
+# Run upgrade in case you run into errors or starting with a new project
+composio upgrade
 ```
 
 > **Note**: Use `whoami` only to verify login status — do not hardcode these values in code. `whoami` shows hints for `composio orgs switch` and `composio init` when relevant.
 
 **Login behavior**: By default, `composio login` shows an interactive org/project picker after OAuth. Use `composio login -y` to skip the picker and use session defaults. JSON output is emitted only after the picker finishes (or immediately with `-y`), so piped/scripted usage gets the correct `org_id` and `project_id`.
+
+**Agent login (no direct browser access)**: For agents that cannot open a browser for the user, use a two-step flow:
+
+1. **Get login URL and session key** — Print login URL and JSON (jq-parseable) then exit without opening browser or waiting:
+   ```bash
+   composio login --no-wait | jq
+   ```
+   Share the login URL with the agent's user to complete login in their browser.
+
+2. **Complete login with session key** — Use the `key` from the previous output to check if the user has logged in:
+   ```bash
+   composio login --key "<key>"
+   ```
+   Without `--no-wait`: polls until the session is linked (same as browser flow after printing URL).
+   With `--no-wait`: checks once and fails if not linked. For agents, once the user completes login, run with `--no-wait` to avoid blocking.
 
 ## Primary Workflow: search → link → execute
 
@@ -108,6 +125,7 @@ Streams real-time trigger events to the terminal.
 ## Tips for Agents
 
 - **All commands output JSON** — pipe to `jq` for filtering and extraction
+- **Agent login** — When the agent has no direct browser access, use `composio login --no-wait` to get the URL and key, share the URL with the user, then `composio login --key <key> --no-wait` once they complete login
 - **Parallel execution** — use `&` and `wait` or shell scripts for complex multi-step tasks
 - The default user context is the project's `test_user_id`. Pass `--user-id <id>` to act on behalf of a specific user.
 
@@ -213,6 +231,10 @@ composio tools list --toolkits "gmail" | jq -r '.[].name'
 
 # Filter active connections
 composio connected-accounts list --status ACTIVE | jq -r '.[].id'
+
+# Extract login URL and key from agent login flow
+composio login --no-wait | jq -r '.login_url'
+composio login --no-wait | jq -r '.key'
 ```
 
 ## Command Help
@@ -221,6 +243,7 @@ Every command supports `--help` for detailed options:
 
 ```bash
 composio --help
+composio login --help
 composio search --help
 composio execute --help
 composio link --help
@@ -377,5 +400,5 @@ Using incorrect slugs causes runtime errors.
 
 ---
 
-_This file was automatically generated from individual rule files on 2026-03-13T05:59:22.056Z_
+_This file was automatically generated from individual rule files on 2026-03-13T12:37:41.138Z_
 _To update, run: `npm run build:agents`_
