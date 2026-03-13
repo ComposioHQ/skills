@@ -13,3 +13,8 @@ Thumbs.db
 # Environment
 .env
 .env.local
+
+# AI things
+.claude
+.agents
+
