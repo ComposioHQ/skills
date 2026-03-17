@@ -127,8 +127,8 @@ Never guess toolkit, tool, or trigger names. Always verify:
 
 ```bash
 composio search "send email"
-composio tools info "GMAIL_SEND_EMAIL"
-composio toolkits info "gmail"
+composio manage tools info "GMAIL_SEND_EMAIL"
+composio manage toolkits info "gmail"
 ```
 
 Using incorrect slugs causes runtime errors.

@@ -25,7 +25,7 @@ composio whoami      # verify org_id, project_id, user_id (API keys are never di
 composio upgrade
 ```
 
-> **Note**: Use `whoami` only to verify login status — do not hardcode these values in code. `whoami` shows hints for `composio orgs switch` and `composio init` when relevant.
+> **Note**: Use `whoami` only to verify login status — do not hardcode these values in code. `whoami` shows hints for `composio manage orgs switch` and `composio init` when relevant.
 
 **Login behavior**: By default, `composio login` shows an interactive org/project picker after OAuth. Use `composio login -y` to skip the picker and use session defaults. JSON output is emitted only after the picker finishes (or immediately with `-y`), so piped/scripted usage gets the correct `org_id` and `project_id`.
 
@@ -114,7 +114,7 @@ composio execute GMAIL_SEND_EMAIL --user-id "user_123" --data '{"recipient_email
    - For large output: `less`, `lnav` (logs), `tail -f` for streaming
 6. **Minimize file creation** — Use ephemeral files only when needed; create files only when the user explicitly asks.
 7. **Respect rate limits** — Be mindful of pagination and API/CLI rate limits when parallelizing.
-8. **Never invent tool slugs or app names** — Only use tools returned by `composio search`. For app names, use `composio toolkits info <slug>` or `composio tools info <tool>` to verify.
+8. **Never invent tool slugs or app names** — Only use tools returned by `composio search`. For app names, use `composio manage toolkits info <slug>` or `composio manage tools info <tool>` to verify.
 9. **Do not trim `composio search` output** — Never pipe search results through `head`, `tail`, or similar. Use the full output to find the best tool match.
 
 ---
@@ -125,29 +125,29 @@ composio execute GMAIL_SEND_EMAIL --user-id "user_123" --data '{"recipient_email
 
 ```bash
 # List all toolkits
-composio toolkits list
+composio manage toolkits list
 
 # Get details about a specific toolkit
-composio toolkits info "gmail"
+composio manage toolkits info "gmail"
 
 # List tools in a toolkit
-composio tools list --toolkits "gmail"
+composio manage tools list --toolkits "gmail"
 
 # Get a tool's full schema
-composio tools info "GMAIL_SEND_EMAIL"
+composio manage tools info "GMAIL_SEND_EMAIL"
 ```
 
 ### Connected Accounts
 
 ```bash
 # List active connections
-composio connected-accounts list --status ACTIVE
+composio manage connected-accounts list --status ACTIVE
 
 # Link an account (full form with options)
-composio connected-accounts link --auth-config "ac_..." --user-id "user_123"
+composio manage connected-accounts link --auth-config "ac_..." --user-id "user_123"
 
 # Delete a connection
-composio connected-accounts delete <id>
+composio manage connected-accounts delete <id>
 ```
 
 ### Auth Configs
@@ -155,37 +155,37 @@ composio connected-accounts delete <id>
 > Only needed when building apps with custom OAuth credentials. For personal use and agents, `composio link` handles this automatically.
 
 ```bash
-composio auth-configs list --toolkits "gmail"
-composio auth-configs create
-composio auth-configs info <id>
-composio auth-configs delete <id>
+composio manage auth-configs list --toolkits "gmail"
+composio manage auth-configs create
+composio manage auth-configs info <id>
+composio manage auth-configs delete <id>
 ```
 
 ### Triggers
 
 ```bash
 # List available trigger types
-composio triggers list
-composio triggers info "GMAIL_NEW_GMAIL_MESSAGE"
+composio manage triggers list
+composio manage triggers info "GMAIL_NEW_GMAIL_MESSAGE"
 
 # Manage trigger instances
-composio triggers create <trigger-name>
-composio triggers enable <id>
-composio triggers disable <id>
-composio triggers status
+composio manage triggers create <trigger-name>
+composio manage triggers enable <id>
+composio manage triggers disable <id>
+composio manage triggers status
 ```
 
 ### Debugging & Logs
 
 ```bash
 # View recent tool executions
-composio logs tools
+composio manage logs tools
 
 # Get detailed logs for a specific execution
-composio logs tools "log_abc123"
+composio manage logs tools "log_abc123"
 
 # Monitor trigger events
-composio logs triggers
+composio manage logs triggers
 ```
 ---
 
@@ -193,13 +193,13 @@ composio logs triggers
 
 ```bash
 # Extract toolkit slugs
-composio toolkits list | jq -r '.[].slug'
+composio manage toolkits list | jq -r '.[].slug'
 
 # Get tool names from a toolkit
-composio tools list --toolkits "gmail" | jq -r '.[].name'
+composio manage tools list --toolkits "gmail" | jq -r '.[].name'
 
 # Filter active connections
-composio connected-accounts list --status ACTIVE | jq -r '.[].id'
+composio manage connected-accounts list --status ACTIVE | jq -r '.[].id'
 
 # Extract login URL and key from agent login flow
 composio login --no-wait | jq -r '.login_url'
@@ -217,7 +217,7 @@ composio search --help
 composio execute --help
 composio link --help
 composio listen --help
-composio tools --help
-composio toolkits --help
-composio triggers --help
+composio manage tools --help
+composio manage toolkits --help
+composio manage triggers --help
 ```

@@ -8,8 +8,8 @@ tags: [tools, versions, stability, production, pinning]
 # Tool Version Management
 
 > **⚠️ CRITICAL:** Never assume or make up toolkit names or version numbers. Always verify before using:
-> - Use `composio toolkits list` / `composio toolkits info "..."` to discover toolkits (CLI) or `composio.toolkits.get()` (SDK)
-> - Use `composio toolkits info "..."` to view available versions (CLI) or `composio.toolkits.get('toolkit_name')` (SDK) or check the [dashboard](https://platform.composio.dev)
+> - Use `composio manage toolkits list` / `composio manage toolkits info "..."` to discover toolkits (CLI) or `composio.toolkits.get()` (SDK)
+> - Use `composio manage toolkits info "..."` to view available versions (CLI) or `composio.toolkits.get('toolkit_name')` (SDK) or check the [dashboard](https://platform.composio.dev)
 > - Using non-existent toolkit slugs or versions will cause runtime errors
 >
 > See [Composio CLI Reference](./composio-cli.md) for discovery commands.

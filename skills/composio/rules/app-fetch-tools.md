@@ -10,7 +10,7 @@ tags: [tools, fetch, discovery, apps, providers]
 When building applications (non-agent workflows), use direct tool fetching methods to discover and retrieve tools from Composio.
 
 > **⚠️ IMPORTANT:** Do NOT make up or guess tool or toolkit names. Always verify slugs before using them:
-> - Use `composio toolkits list` / `composio toolkits info "..."` and `composio tools list --toolkits "..."` / `composio tools info "..."` (CLI)
+> - Use `composio manage toolkits list` / `composio manage toolkits info "..."` and `composio manage tools list --toolkits "..."` / `composio manage tools info "..."` (CLI)
 > - Use `composio.tools.get()` to discover available tools programmatically (SDK)
 >
 > See [Composio CLI Reference](./composio-cli.md) for discovery commands.
@@ -224,7 +224,7 @@ const result = await composio.tools.execute('GITHUB_GET_REPOSITORY', { // ❌ Wr
 const result = await composio.tools.execute('GITHUB_GET_REPO', {
   userId: 'user_123',
   arguments: { owner: 'composio', repo: 'sdk' },
-  version: '12082025_00' // ❌ This might be outdated, use `composio toolkits info "github"` to get the latest version
+  version: '12082025_00' // ❌ This might be outdated, use `composio manage toolkits info "github"` to get the latest version
 });
 ```
 
