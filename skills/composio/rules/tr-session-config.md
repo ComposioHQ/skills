@@ -10,8 +10,8 @@ tags: [tool-router, configuration, toolkits, tools, session]
 Tool Router sessions support rich configuration for fine-grained control over toolkit and tool access.
 
 > **⚠️ IMPORTANT:** Do NOT make up or guess toolkit or tool names. Always verify slugs before using them:
-> - Use `composio toolkits list` / `composio toolkits info "..."` to discover and view toolkit details (CLI)
-> - Use `composio tools list --toolkits "..."` / `composio tools info "..."` to discover and view tool schemas (CLI)
+> - Use `composio manage toolkits list` / `composio manage toolkits info "..."` to discover and view toolkit details (CLI)
+> - Use `composio manage tools list --toolkits "..."` / `composio manage tools info "..."` to discover and view tool schemas (CLI)
 > - Use `composio.tools.get()` to discover tools programmatically (SDK)
 >
 > See [Composio CLI Reference](./composio-cli.md) for discovery commands.

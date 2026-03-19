@@ -23,7 +23,7 @@ const result = await composio.tools.execute('GITHUB_GET_ISSUES', {
 ## Discovering Available Tools
 
 > **⚠️ IMPORTANT:** Do NOT make up or guess tool or toolkit names/versions. Always verify slugs before using them:
-> - Use `composio tools list --toolkits "..."` to discover and `composio tools info "..."` to view tool schema (CLI)
+> - Use `composio manage tools list --toolkits "..."` to discover and `composio manage tools info "..."` to view tool schema (CLI)
 > - Use `composio.tools.get()` to discover available tools programmatically (SDK)
 >
 > See [Composio CLI Reference](./composio-cli.md) for discovery commands.
